@@ -843,6 +843,8 @@ input[type="range"] {
   align-items: center;
   justify-content: space-between;
 }
+.footer__about { display: grid; gap: 4px; }
+.footer__authors strong { color: var(--c-accent); }
 .footer__sources { font-size: 0.85rem; }
 
 .footer__credits {
