@@ -5,10 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Долината диша – екологична инициатива за чистия въздух, горите и отпадъците в Казанлъшката долина.">
   <title>Долината диша</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%BF%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Unbounded:wght@600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <!-- Отбелязваме, че JavaScript работи – само тогава CSS скрива елементите за анимациите -->
+  <script>document.documentElement.classList.add("js");</script>
 </head>
 <body>
 
@@ -42,7 +45,7 @@
     <section class="hero" id="home">
       <div class="hero__content">
         <p class="hero__eyebrow">Казанлъшка долина · Екологична инициатива</p>
-        <h1 class="hero__title">Долината <span>диша.</span><br>Но с какво?</h1>
+        <h1 class="hero__title split-words">Долината <span class="hero__accent">диша.</span><br>Но с какво?</h1>
         <p class="hero__text">
           Между Балкана и Средна гора лежи една затворена „купа“.
           Всичко, което изгаряме, изхвърляме и запалваме, остава вътре – при нас.
@@ -58,7 +61,7 @@
     <section class="section problem" id="problem">
       <div class="container">
         <p class="section__eyebrow">Проблем №1</p>
-        <h2 class="section__title">Зимният смог над Казанлък</h2>
+        <h2 class="section__title split-words">Зимният смог над Казанлък</h2>
         <p class="section__lead">
           Всяка зима над града се събира сив похлупак. Причината не е само в това,
           какво горим, а и в това <strong>къде</strong> живеем.
@@ -92,11 +95,20 @@
       </div>
     </section>
 
+    <!-- ===== ИЗРЕЧЕНИЕ НА ЦЯЛ ЕКРАН ===== -->
+    <section class="statement">
+      <h2 class="statement__text split-words">Планините, които ни пазят, зиме ни <em>заключват.</em></h2>
+      <p class="statement__sub reveal">
+        При температурна инверсия студеният въздух остава долу в котловината,
+        а с него и димът от комините.
+      </p>
+    </section>
+
     <!-- ===== 3. СИМУЛАТОР ===== -->
     <section class="section simulator" id="simulator">
       <div class="container">
         <p class="section__eyebrow">Интерактивно</p>
-        <h2 class="section__title">Изчисти небето над Казанлък</h2>
+        <h2 class="section__title split-words">Изчисти небето над Казанлък</h2>
         <p class="section__lead">Промени навиците на града и виж как се променя въздухът.</p>
 
         <div class="sim">
@@ -136,7 +148,7 @@
     <section class="section threats" id="fire">
       <div class="container">
         <p class="section__eyebrow">Още заплахи</p>
-        <h2 class="section__title">Огън и отпадъци</h2>
+        <h2 class="section__title split-words">Огън и отпадъци</h2>
 
         <div class="threats__grid">
           <article class="threat threat--fire reveal">
@@ -167,7 +179,7 @@
     <section class="section action" id="action">
       <div class="container">
         <p class="section__eyebrow">Твоят ход</p>
-        <h2 class="section__title">Какво мога да направя аз?</h2>
+        <h2 class="section__title split-words">Какво мога да направя аз?</h2>
         <p class="section__lead">Отбележи нещата, които обещаваш да правиш.</p>
 
         <ul class="pledge" id="pledge">
