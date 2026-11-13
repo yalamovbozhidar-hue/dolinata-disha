@@ -68,7 +68,7 @@ a { color: inherit; text-decoration: none; }
   background: var(--c-accent);
   color: var(--c-bg);
   font-weight: 800;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out);
 }
 .btn { box-shadow: var(--glow); }
 .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(126, 224, 161, 0.55); }
@@ -227,9 +227,9 @@ a { color: inherit; text-decoration: none; }
   padding: 64px 48px;
   border: 1px solid var(--c-border);
   border-radius: 28px;
-  background: rgba(15, 26, 23, 0.8);
-  backdrop-filter: blur(14px) saturate(120%);
-  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  /* Без backdrop-filter: размазването над движещото се небе
+     се преизчислява всеки кадър и прави скрола накъсан */
+  background: rgba(15, 26, 23, 0.88);
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
 }
 
@@ -262,10 +262,14 @@ a { color: inherit; text-decoration: none; }
 /* Панелите изплуват плавно от долу (само ако JS работи) */
 .js .section > .container {
   opacity: 0;
-  transform: translateY(60px) scale(0.97);
-  transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+  translate: 0 70px;
+  scale: 0.97;
+  transition:
+    opacity 1s var(--ease-out),
+    translate 1.2s var(--ease-out),
+    scale 1.2s var(--ease-out);
 }
-.js .section > .container.is-visible { opacity: 1; transform: none; }
+.js .section > .container.is-visible { opacity: 1; translate: none; scale: none; }
 
 /* Заглавия дума по дума: всяка дума закъснява с --i × 70ms */
 .split-words .word {
@@ -274,9 +278,9 @@ a { color: inherit; text-decoration: none; }
   transform: translateY(0.5em);
   filter: blur(8px);
   transition:
-    opacity 0.7s ease,
-    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1),
-    filter 0.7s ease;
+    opacity 0.8s var(--ease-out),
+    transform 0.9s var(--ease-out),
+    filter 0.8s var(--ease-out);
   transition-delay: calc(var(--i) * 70ms);
 }
 .split-words.is-visible .word { opacity: 1; transform: none; filter: none; }
@@ -284,10 +288,30 @@ a { color: inherit; text-decoration: none; }
 /* Анимация при скрол */
 .reveal {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
+  translate: 0 40px;
+  transition:
+    opacity 0.9s var(--ease-out) var(--delay, 0s),
+    translate 1s var(--ease-out) var(--delay, 0s);
 }
-.reveal.is-visible { opacity: 1; transform: none; }
+.reveal.is-visible { opacity: 1; translate: none; }
+
+/* Снимките: плавно появяване, щом се заредят (класът го слага js/effects.js).
+   Ползваме animation, а не transition, за да не се „бие“ с hover ефектите. */
+.js img[loading="lazy"]:not(.is-loaded) { opacity: 0; }
+.js img.is-loaded { animation: image-in 0.9s var(--ease-out); }
+
+@keyframes image-in {
+  from { opacity: 0; }
+}
+
+/* Снимките в карти бавно „отдалечават“ кадъра, когато се появят */
+.photo img,
+.threat__img {
+  scale: 1.08;
+  transition: scale 1.8s var(--ease-out);
+}
+.photo.is-visible img,
+.threat.is-visible .threat__img { scale: 1; }
 
 /* =========================================
    ИЗРЕЧЕНИЕ НА ЦЯЛ ЕКРАН
@@ -368,12 +392,21 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid var(--c-border);
   border-radius: var(--radius);
   padding: 28px;
-  transition: transform 0.3s, border-color 0.3s;
+  /* Появяването (opacity, translate) е със закъснение, hover-ът (transform) – веднага */
+  transition:
+    opacity 0.9s var(--ease-out) var(--delay, 0s),
+    translate 1s var(--ease-out) var(--delay, 0s),
+    transform 0.4s var(--ease-out),
+    border-color 0.3s,
+    box-shadow 0.3s;
 }
 .card:hover { transform: translateY(-6px); border-color: var(--c-accent); box-shadow: var(--glow); }
-.card:nth-child(2) { transition-delay: 0.1s; }
-.card:nth-child(3) { transition-delay: 0.2s; }
-.card:nth-child(4) { transition-delay: 0.3s; }
+.card:nth-child(2) { --delay: 0.1s; }
+.card:nth-child(3) { --delay: 0.2s; }
+.card:nth-child(4) { --delay: 0.3s; }
+.photo:nth-child(2),
+.threat:nth-child(2),
+.gallery__item:nth-child(3) { --delay: 0.15s; }
 
 /* Иконката: SVG в кръг със зелено сияние */
 .card__icon {
@@ -891,7 +924,9 @@ input[type="range"] {
     scroll-behavior: auto !important;
   }
   .reveal,
-  .js .section > .container { opacity: 1; transform: none; }
+  .js .section > .container { opacity: 1; translate: none; scale: none; }
+  .photo img,
+  .threat__img { scale: none; }
 }
 
 /* Текстовата статистика при сметищата е по-дълга – по-малък шрифт */

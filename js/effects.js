@@ -101,3 +101,57 @@ const panelObserver = new IntersectionObserver(
 document.querySelectorAll(".section > .container").forEach((panel) => {
   panelObserver.observe(panel);
 });
+
+/* -----------------------------------------
+   Снимките се показват плавно, щом се заредят
+   (CSS ги държи невидими дотогава).
+   ----------------------------------------- */
+document.querySelectorAll('img[loading="lazy"]').forEach((img) => {
+  const showImage = () => img.classList.add("is-loaded");
+
+  // naturalWidth > 0 значи, че снимката вече е заредена (напр. от кеша)
+  if (img.complete && img.naturalWidth > 0) showImage();
+  else {
+    img.addEventListener("load", showImage, { once: true });
+    img.addEventListener("error", showImage, { once: true }); // да не остане празно място
+  }
+});
+
+/* -----------------------------------------
+   PARALLAX
+   Текстът в началото се отдалечава и избледнява,
+   а снимката на долината се движи по-бавно от страницата.
+   Изчисляваме само веднъж на кадър (requestAnimationFrame).
+   ----------------------------------------- */
+const heroContent = document.querySelector(".hero__content");
+const parallaxPhotos = document.querySelectorAll(".statement__bg");
+let parallaxQueued = false;
+
+function updateParallax() {
+  parallaxQueued = false;
+  const viewHeight = window.innerHeight;
+  const scrolled = window.scrollY;
+
+  // Началният текст: движи се по-бавно и избледнява, докато излезе от екрана
+  if (scrolled < viewHeight) {
+    heroContent.style.transform = `translateY(${scrolled * 0.35}px)`;
+    heroContent.style.opacity = clamp(1 - scrolled / (viewHeight * 0.85), 0, 1);
+  }
+
+  // Снимката на долината: от +8% до -8%, докато секцията минава през екрана
+  parallaxPhotos.forEach((photo) => {
+    const rect = photo.parentElement.getBoundingClientRect();
+    if (rect.bottom < 0 || rect.top > viewHeight) return; // извън екрана – не правим нищо
+    const progress = (rect.top + rect.height / 2 - viewHeight / 2) / (viewHeight / 2 + rect.height / 2);
+    photo.style.transform = `translateY(${progress * 8}%)`;
+  });
+}
+
+if (!reduceMotion) {
+  window.addEventListener("scroll", () => {
+    if (parallaxQueued) return;
+    parallaxQueued = true;
+    requestAnimationFrame(updateParallax);
+  }, { passive: true });
+  updateParallax();
+}

@@ -32,8 +32,10 @@ for (let x = 0.03; x < 0.97; x += 0.018 + Math.random() * 0.02) {
   buildings.push({ x, width: 0.01 + Math.random() * 0.012, height: 0.012 + Math.random() * 0.035 });
 }
 
-// Облачетата смог – също в части от екрана
-const smogPuffs = Array.from({ length: 48 }, (_, i) => ({
+// Облачетата смог – също в части от екрана.
+// На телефон са по-малко, за да върви плавно.
+const PUFF_COUNT = window.innerWidth < 720 ? 28 : 44;
+const smogPuffs = Array.from({ length: PUFF_COUNT }, (_, i) => ({
   x: Math.random(),
   y: 0.25 + Math.random() * 0.7,          // повече смог в ниската част
   radius: 0.12 + Math.random() * 0.2,     // спрямо по-голямата страна на екрана
@@ -41,7 +43,7 @@ const smogPuffs = Array.from({ length: 48 }, (_, i) => ({
   alpha: 0.25 + Math.random() * 0.35,
   // Праг: облачетата с по-нисък праг изчезват по-рано –
   // така смогът изтънява постепенно, а не наведнъж
-  threshold: i / 48,
+  threshold: i / PUFF_COUNT,
 }));
 
 // Едно меко „петно“ смог, нарисувано веднъж в малък скрит canvas.
@@ -60,9 +62,11 @@ let skyHeight = 0;
 let targetClean = 0;  // колко чист трябва да е въздухът според скрола (0–1)
 let clean = 0;        // колко чист е в момента (плавно гони targetClean)
 
-// Настройва размера на canvas според екрана (и острите екрани на телефоните)
+// Настройва размера на canvas според екрана.
+// Небето и смогът са меки, затова не рисуваме в двойна резолюция
+// на острите екрани – така телефонът рисува 2–4 пъти по-малко пиксели.
 function resizeSky() {
-  const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
+  const ratio = 1;
   skyWidth = window.innerWidth;
   skyHeight = window.innerHeight;
   skyCanvas.width = Math.round(skyWidth * ratio);
@@ -193,7 +197,7 @@ function drawSky() {
 // Анимационен цикъл: всеки кадър доближаваме clean до targetClean.
 // Така преходът е плавен дори при рязък скрол.
 function animateSky() {
-  clean = lerp(clean, targetClean, 0.06);
+  clean = lerp(clean, targetClean, 0.05);
   drawSky();
   requestAnimationFrame(animateSky);
 }
