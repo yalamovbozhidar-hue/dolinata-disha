@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Долината диша – екологична инициатива за чистия въздух, горите и отпадъците в Казанлъшката долина.">
+  <title>Долината диша</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Unbounded:wght@600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ===== НАВИГАЦИЯ ===== -->
+  <header class="header">
+    <nav class="nav" aria-label="Основна навигация">
+      <a href="#home" class="nav__logo">Долината <span>диша</span></a>
+
+      <button class="nav__toggle" aria-label="Отвори менюто" aria-expanded="false" aria-controls="nav-menu">
+        <span></span><span></span><span></span>
+      </button>
+
+      <ul class="nav__menu" id="nav-menu">
+        <li><a href="#problem" class="nav__link">Проблемът</a></li>
+        <li><a href="#simulator" class="nav__link">Изчисти небето</a></li>
+        <li><a href="#fire" class="nav__link">Огън и отпадъци</a></li>
+        <li><a href="#action" class="nav__link nav__link--cta">Действай</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ===== 1. НАЧАЛО ===== -->
+    <section class="hero" id="home">
+      <canvas class="hero__smog" id="hero-smog" aria-hidden="true"></canvas>
+
+      <div class="hero__content">
+        <p class="hero__eyebrow">Казанлъшка долина · Екологична инициатива</p>
+        <h1 class="hero__title">Долината <span>диша.</span><br>Но с какво?</h1>
+        <p class="hero__text">
+          Между Балкана и Средна гора лежи една затворена „купа“.
+          Всичко, което изгаряме, изхвърляме и запалваме, остава вътре – при нас.
+        </p>
+        <a href="#problem" class="btn">Виж проблема</a>
+      </div>
+
+      <!-- Силует на долината: Балкан отзад, град с светлини, Средна гора отпред -->
+      <svg class="hero__valley" viewBox="0 0 1440 320" preserveAspectRatio="none" aria-hidden="true">
+        <path class="valley__far" d="M0,140 L120,80 L220,120 L340,40 L460,110 L560,60 L700,130 L820,50 L960,120 L1080,70 L1200,130 L1320,60 L1440,110 L1440,320 L0,320 Z"/>
+        <path class="valley__near" d="M0,250 Q240,200 480,240 T960,230 T1440,240 L1440,320 L0,320 Z"/>
+        <g class="valley__lights">
+          <circle cx="420" cy="232" r="2"/><circle cx="460" cy="228" r="2"/><circle cx="510" cy="236" r="2"/>
+          <circle cx="560" cy="230" r="2"/><circle cx="620" cy="234" r="2"/><circle cx="680" cy="228" r="2"/>
+          <circle cx="730" cy="236" r="2"/><circle cx="790" cy="230" r="2"/><circle cx="850" cy="234" r="2"/>
+          <circle cx="900" cy="228" r="2"/><circle cx="960" cy="232" r="2"/>
+        </g>
+      </svg>
+    </section>
+
+    <!-- ===== 2. ПРОБЛЕМЪТ ===== -->
+    <section class="section problem" id="problem">
+      <div class="container">
+        <p class="section__eyebrow">Проблем №1</p>
+        <h2 class="section__title">Зимният смог над Казанлък</h2>
+        <p class="section__lead">
+          Всяка зима над града се събира сив похлупак. Причината не е само в това,
+          какво горим, а и в това <strong>къде</strong> живеем.
+        </p>
+
+        <div class="cards">
+          <article class="card reveal">
+            <div class="card__icon" aria-hidden="true">⛰️</div>
+            <h3 class="card__title">Затворена котловина</h3>
+            <p>Долината е заобиколена от планини. При зимни температурни инверсии студеният въздух остава долу и „заключва“ дима над града.</p>
+          </article>
+
+          <article class="card reveal">
+            <div class="card__icon" aria-hidden="true">🔥</div>
+            <h3 class="card__title">Отопление с дърва и въглища</h3>
+            <p>Изгарянето на твърди горива в домовете е сред основните източници на фини прахови частици в региона, заедно с транспорта.</p>
+          </article>
+
+          <article class="card reveal">
+            <div class="card__icon" aria-hidden="true">🫁</div>
+            <h3 class="card__title">Удар по здравето</h3>
+            <p>Фините прахови частици (ФПЧ2.5) са толкова малки, че проникват дълбоко в белите дробове и в кръвта. Най-уязвими са децата и възрастните.</p>
+          </article>
+
+          <article class="card reveal">
+            <div class="card__icon" aria-hidden="true">⚖️</div>
+            <h3 class="card__title">Проблем на цяла България</h3>
+            <p>Европейската комисия съди България, защото страната не се справя с мръсния въздух. Решението започва от всеки град.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 3. СИМУЛАТОР ===== -->
+    <section class="section simulator" id="simulator">
+      <div class="container">
+        <p class="section__eyebrow">Интерактивно</p>
+        <h2 class="section__title">Изчисти небето над Казанлък</h2>
+        <p class="section__lead">Промени навиците на града и виж как се променя въздухът.</p>
+
+        <div class="sim">
+          <div class="sim__view">
+            <canvas id="sim-canvas" aria-label="Симулация на небето над града"></canvas>
+            <div class="sim__badge" id="sim-badge" role="status" aria-live="polite">
+              <span class="sim__badge-label">Въздух</span>
+              <span class="sim__badge-value" id="sim-status">Много замърсен</span>
+            </div>
+          </div>
+
+          <div class="sim__controls">
+            <label class="sim__label" for="clean-heating">
+              Домове с чисто отопление (газ, термопомпа, топлофикация):
+              <strong><output id="clean-heating-value">10</output>%</strong>
+            </label>
+            <input type="range" id="clean-heating" min="0" max="100" value="10" step="5">
+
+            <fieldset class="sim__options">
+              <legend>Още промени</legend>
+              <label class="check"><input type="checkbox" data-effect="15"> Горим само сухи дърва</label>
+              <label class="check"><input type="checkbox" data-effect="10"> Изолирани домове</label>
+              <label class="check"><input type="checkbox" data-effect="10"> Никой не гори боклук</label>
+              <label class="check"><input type="checkbox" data-effect="10"> Повече пеша и с колело</label>
+            </fieldset>
+
+            <div class="meter" aria-hidden="true">
+              <div class="meter__bar" id="meter-bar"></div>
+            </div>
+            <p class="sim__note">* Опростена симулация с образователна цел, а не реални измервания.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 4. ОГЪН И ОТПАДЪЦИ ===== -->
+    <section class="section threats" id="fire">
+      <div class="container">
+        <p class="section__eyebrow">Още заплахи</p>
+        <h2 class="section__title">Огън и отпадъци</h2>
+
+        <div class="threats__grid">
+          <article class="threat threat--fire reveal">
+            <!-- ЗАМЕНЕТЕ със собствена снимка: img/fire.jpg -->
+            <div class="threat__img" style="background-image: url('img/fire.jpg');" role="img" aria-label="Изгоряла гора край Казанлък"></div>
+            <div class="threat__body">
+              <h3>Горските пожари</h3>
+              <p class="threat__stat"><span class="counter" data-target="500">0</span> ха</p>
+              <p>Толкова храсти и гори обхвана един пожар в общините Казанлък и Мъглиж, заради който бе обявено частично бедствено положение. Повечето пожари започват от човешка небрежност: хвърлен фас, палене на стърнища, искра.</p>
+            </div>
+          </article>
+
+          <article class="threat threat--waste reveal">
+            <!-- ЗАМЕНЕТЕ със собствена снимка: img/waste.jpg -->
+            <div class="threat__img" style="background-image: url('img/waste.jpg');" role="img" aria-label="Нерегламентирано сметище край Казанлък"></div>
+            <div class="threat__body">
+              <h3>Нерегламентирани сметища</h3>
+              <p class="threat__stat">Строителни отпадъци, гуми, пластмаса</p>
+              <p>В РИОСВ – Стара Загора редовно постъпват сигнали за незаконно изхвърлени отпадъци около Казанлък. Когато такова сметище се запали, димът отново остава в долината.</p>
+              <a class="link" href="https://stz.riew.gov.bg/" target="_blank" rel="noopener">Подай сигнал в РИОСВ →</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 5. ДЕЙСТВАЙ ===== -->
+    <section class="section action" id="action">
+      <div class="container">
+        <p class="section__eyebrow">Твоят ход</p>
+        <h2 class="section__title">Какво мога да направя аз?</h2>
+        <p class="section__lead">Отбележи нещата, които обещаваш да правиш.</p>
+
+        <ul class="pledge" id="pledge">
+          <li><label class="pledge__item"><input type="checkbox"> <span>Ще кажа на семейството си да гори само сухи дърва</span></label></li>
+          <li><label class="pledge__item"><input type="checkbox"> <span>Никога няма да горя боклук или пластмаса</span></label></li>
+          <li><label class="pledge__item"><input type="checkbox"> <span>Няма да паля огън в гората и сухи треви</span></label></li>
+          <li><label class="pledge__item"><input type="checkbox"> <span>Ще сигнализирам, когато видя сметище</span></label></li>
+          <li><label class="pledge__item"><input type="checkbox"> <span>Ще ходя повече пеша и с колело</span></label></li>
+        </ul>
+
+        <div class="pledge__progress">
+          <div class="pledge__bar"><div class="pledge__fill" id="pledge-fill"></div></div>
+          <p id="pledge-text">0 от 5 обещания</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== ФУТЪР ===== -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p><strong>Долината диша</strong> – училищен проект, Казанлък, 2026</p>
+      <p class="footer__sources">
+        Източници: РИОСВ – Стара Загора, БНР, БНТ, „Капитал“.
+      </p>
+      <a href="#home" class="footer__top" aria-label="Към началото">↑</a>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

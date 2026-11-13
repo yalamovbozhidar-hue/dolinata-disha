@@ -1,0 +1,493 @@
+/* =========================================
+   Долината диша – основни стилове
+   ========================================= */
+
+/* ----- Променливи (цветове, шрифтове) ----- */
+:root {
+  --c-bg: #0f1a17;          /* тъмнозелено-черно */
+  --c-bg-alt: #15241f;
+  --c-surface: #1c2f29;
+  --c-text: #e8efe9;
+  --c-muted: #9fb3a9;
+  --c-accent: #7ee0a1;      /* свеж зелен акцент */
+  --c-smog: #8a8172;        /* цвят на смога */
+  --c-fire: #ff8a4c;
+  --c-border: rgba(255, 255, 255, 0.08);
+
+  --f-head: "Unbounded", sans-serif;
+  --f-body: "Manrope", sans-serif;
+
+  --radius: 18px;
+  --max-w: 1120px;
+  --header-h: 68px;
+}
+
+/* ----- Основа ----- */
+*,
+*::before,
+*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; scroll-padding-top: var(--header-h); }
+
+body {
+  font-family: var(--f-body);
+  background: var(--c-bg);
+  color: var(--c-text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+
+.container {
+  width: 100%;
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ----- Бутон ----- */
+.btn {
+  display: inline-block;
+  padding: 14px 28px;
+  border-radius: 999px;
+  background: var(--c-accent);
+  color: var(--c-bg);
+  font-weight: 800;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(126, 224, 161, 0.3); }
+
+:focus-visible { outline: 3px solid var(--c-accent); outline-offset: 3px; }
+
+/* =========================================
+   НАВИГАЦИЯ
+   ========================================= */
+.header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 100;
+  height: var(--header-h);
+  transition: background 0.3s, backdrop-filter 0.3s;
+}
+.header.is-scrolled {
+  background: rgba(15, 26, 23, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--c-border);
+}
+
+.nav {
+  max-width: var(--max-w);
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav__logo { font-family: var(--f-head); font-weight: 800; font-size: 1.1rem; }
+.nav__logo span { color: var(--c-accent); }
+
+.nav__menu { display: flex; gap: 8px; list-style: none; }
+
+.nav__link {
+  display: block;
+  padding: 8px 14px;
+  border-radius: 999px;
+  color: var(--c-muted);
+  font-weight: 600;
+  transition: color 0.2s, background 0.2s;
+}
+.nav__link:hover,
+.nav__link.is-active { color: var(--c-text); background: var(--c-surface); }
+.nav__link--cta { color: var(--c-bg); background: var(--c-accent); }
+.nav__link--cta:hover,
+.nav__link--cta.is-active { color: var(--c-bg); background: var(--c-accent); }
+
+/* Бургер бутон (само на телефон) */
+.nav__toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 8px;
+}
+.nav__toggle span {
+  width: 24px;
+  height: 2px;
+  background: var(--c-text);
+  transition: transform 0.3s, opacity 0.3s;
+}
+.nav__toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav__toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.nav__toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* =========================================
+   НАЧАЛО (HERO)
+   ========================================= */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: linear-gradient(180deg, #2a2a2e 0%, #4a4438 55%, #6b6050 100%);
+}
+
+.hero__smog {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hero__content {
+  position: relative;
+  z-index: 2;
+  max-width: var(--max-w);
+  width: 100%;
+  margin: 0 auto;
+  padding: 120px 20px 200px;
+}
+
+.hero__eyebrow {
+  color: var(--c-accent);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+}
+
+.hero__title {
+  font-family: var(--f-head);
+  font-size: clamp(2.4rem, 7vw, 5rem);
+  line-height: 1.05;
+  margin-bottom: 24px;
+}
+.hero__title span { color: var(--c-accent); }
+
+.hero__text {
+  max-width: 520px;
+  font-size: 1.15rem;
+  color: #d6dcd4;
+  margin-bottom: 32px;
+}
+
+.hero__valley {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40%;
+  z-index: 1;
+}
+.valley__far { fill: #2c3a33; }
+.valley__near { fill: var(--c-bg); }
+.valley__lights circle { fill: #ffd27a; animation: flicker 3s infinite alternate; }
+.valley__lights circle:nth-child(odd) { animation-delay: 1.2s; }
+
+@keyframes flicker {
+  from { opacity: 0.4; }
+  to { opacity: 1; }
+}
+
+/* =========================================
+   СЕКЦИИ – общо
+   ========================================= */
+.section { padding: 110px 0; }
+.section:nth-of-type(even) { background: var(--c-bg-alt); }
+
+.section__eyebrow {
+  color: var(--c-accent);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+}
+
+.section__title {
+  font-family: var(--f-head);
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+
+.section__lead {
+  max-width: 620px;
+  color: var(--c-muted);
+  font-size: 1.1rem;
+  margin-bottom: 48px;
+}
+.section__lead strong { color: var(--c-text); }
+
+/* Анимация при скрол */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.is-visible { opacity: 1; transform: none; }
+
+/* =========================================
+   ПРОБЛЕМЪТ – карти
+   ========================================= */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 28px;
+  transition: transform 0.3s, border-color 0.3s;
+}
+.card:hover { transform: translateY(-6px); border-color: var(--c-accent); }
+.card:nth-child(2) { transition-delay: 0.1s; }
+.card:nth-child(3) { transition-delay: 0.2s; }
+.card:nth-child(4) { transition-delay: 0.3s; }
+
+.card__icon { font-size: 2rem; margin-bottom: 14px; }
+.card__title { font-size: 1.15rem; margin-bottom: 10px; }
+.card p { color: var(--c-muted); }
+
+/* =========================================
+   СИМУЛАТОР
+   ========================================= */
+.sim {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.sim__view {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--c-border);
+  aspect-ratio: 16 / 10;
+}
+#sim-canvas { width: 100%; height: 100%; display: block; }
+
+.sim__badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+}
+.sim__badge-label { display: block; font-size: 0.75rem; color: var(--c-muted); text-transform: uppercase; }
+.sim__badge-value { font-weight: 800; font-size: 1.1rem; }
+
+.sim__controls {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+
+.sim__label { display: block; margin-bottom: 12px; }
+.sim__label strong { color: var(--c-accent); }
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--c-accent);
+  margin-bottom: 24px;
+  cursor: pointer;
+}
+
+.sim__options { border: 0; margin-bottom: 20px; }
+.sim__options legend { font-weight: 800; margin-bottom: 10px; }
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  cursor: pointer;
+  color: var(--c-muted);
+}
+.check input { width: 18px; height: 18px; accent-color: var(--c-accent); }
+.check:has(input:checked) { color: var(--c-text); }
+
+.meter {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.meter__bar {
+  height: 100%;
+  width: 20%;
+  border-radius: 999px;
+  background: #c9583c; /* цветът се сменя от JS според замърсяването */
+  transition: width 0.5s ease, background-color 0.5s ease;
+}
+
+.sim__note { font-size: 0.8rem; color: var(--c-muted); }
+
+/* =========================================
+   ОГЪН И ОТПАДЪЦИ
+   ========================================= */
+.threats__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.threat {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.threat__img {
+  height: 220px;
+  background-size: cover;
+  background-position: center;
+}
+/* Резервен фон, ако снимката още липсва */
+.threat--fire .threat__img { background-color: #4a2416; }
+.threat--waste .threat__img { background-color: #3a3a2c; }
+
+.threat__body { padding: 28px; }
+.threat__body h3 { font-size: 1.3rem; margin-bottom: 8px; }
+.threat__body p { color: var(--c-muted); margin-bottom: 12px; }
+
+.threat__stat {
+  font-family: var(--f-head);
+  font-size: 1.6rem;
+  color: var(--c-text) !important;
+}
+.threat--fire .threat__stat { color: var(--c-fire) !important; }
+
+.link { color: var(--c-accent); font-weight: 600; }
+.link:hover { text-decoration: underline; }
+
+/* =========================================
+   ДЕЙСТВАЙ – обещания
+   ========================================= */
+.pledge {
+  list-style: none;
+  display: grid;
+  gap: 12px;
+  max-width: 680px;
+  margin-bottom: 28px;
+}
+
+.pledge__item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: border-color 0.3s, background 0.3s;
+}
+.pledge__item input { width: 22px; height: 22px; accent-color: var(--c-accent); flex-shrink: 0; }
+.pledge__item:has(input:checked) {
+  border-color: var(--c-accent);
+  background: rgba(126, 224, 161, 0.08);
+}
+
+.pledge__progress { max-width: 680px; }
+.pledge__bar {
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.pledge__fill {
+  height: 100%;
+  width: 0;
+  background: var(--c-accent);
+  transition: width 0.4s ease;
+}
+
+/* =========================================
+   ФУТЪР
+   ========================================= */
+.footer {
+  padding: 40px 0;
+  border-top: 1px solid var(--c-border);
+  color: var(--c-muted);
+}
+.footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer__sources { font-size: 0.85rem; }
+.footer__top {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--c-surface);
+  color: var(--c-accent);
+  font-size: 1.2rem;
+}
+
+/* =========================================
+   АДАПТИВНОСТ (телефон / таблет)
+   ========================================= */
+@media (max-width: 860px) {
+  .sim,
+  .threats__grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 720px) {
+  .nav__toggle { display: flex; }
+
+  .nav__menu {
+    position: fixed;
+    top: var(--header-h);
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    padding: 20px;
+    background: var(--c-bg);
+    border-bottom: 1px solid var(--c-border);
+    transform: translateY(-10px);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s;
+  }
+  .nav__menu.is-open { transform: translateY(0); opacity: 1; visibility: visible; }
+  .nav__link { padding: 14px 16px; }
+
+  .section { padding: 80px 0; }
+  .hero__content { padding-bottom: 160px; }
+}
+
+/* Уважаваме хората, които са изключили анимациите */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+}
+
+/* Текстовата статистика при сметищата е по-дълга – по-малък шрифт */
+.threat--waste .threat__stat { font-size: 1.15rem; }
