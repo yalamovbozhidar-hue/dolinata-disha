@@ -34,6 +34,7 @@
         <li><a href="#problem" class="nav__link">Проблемът</a></li>
         <li><a href="#simulator" class="nav__link">Изчисти небето</a></li>
         <li><a href="#fire" class="nav__link">Огън и отпадъци</a></li>
+        <li><a href="#game" class="nav__link">Игра</a></li>
         <li><a href="#action" class="nav__link nav__link--cta">Действай</a></li>
       </ul>
     </nav>
@@ -175,7 +176,75 @@
       </div>
     </section>
 
-    <!-- ===== 5. ДЕЙСТВАЙ ===== -->
+    <!-- ===== ИЗРЕЧЕНИЕ НА ЦЯЛ ЕКРАН ===== -->
+    <section class="statement">
+      <h2 class="statement__text statement__text--fire split-words">Всичко, което изгаряме и изхвърляме, <em>остава тук.</em></h2>
+      <p class="statement__sub reveal">
+        Затова и решението е тук – започва от това къде изхвърляме
+        една бутилка или една батерия.
+      </p>
+    </section>
+
+    <!-- ===== 5. ИГРА „СОРТИРАЙ ОТПАДЪЦИТЕ“ ===== -->
+    <section class="section game" id="game">
+      <div class="container">
+        <p class="section__eyebrow">Мини игра</p>
+        <h2 class="section__title split-words">Сортирай отпадъците</h2>
+        <p class="section__lead">
+          Хвани падащите отпадъци и ги пусни в правилния контейнер, преди да паднат на земята.
+          Имаш 60 секунди, а отпадъците падат все по-бързо.
+        </p>
+
+        <div class="game__hud">
+          <p>Точки: <strong id="game-score">0</strong></p>
+          <p>Време: <strong id="game-time">60</strong> с</p>
+          <p>Рекорд: <strong id="game-best">0</strong></p>
+        </div>
+
+        <!-- Игровото поле: отпадъците се добавят тук от js/game.js -->
+        <div class="game__field" id="game-field" tabindex="0" role="group"
+             aria-label="Игрово поле" aria-describedby="game-help">
+
+          <div class="game__overlay" id="game-overlay">
+            <p class="game__overlay-title" id="game-overlay-title">Готов ли си?</p>
+            <p class="game__overlay-text" id="game-overlay-text">
+              Пластмаса и метал – в жълтия, хартия – в синия, стъкло – в зеления,
+              а батериите – в специалната кутия.
+            </p>
+            <button class="btn" id="game-start" type="button">Старт</button>
+          </div>
+
+          <div class="game__bins">
+            <button class="bin bin--yellow" type="button" data-bin="yellow">
+              <span class="bin__icon" aria-hidden="true">🧴</span>
+              <span class="bin__name">Пластмаса и метал</span>
+            </button>
+            <button class="bin bin--blue" type="button" data-bin="blue">
+              <span class="bin__icon" aria-hidden="true">📰</span>
+              <span class="bin__name">Хартия</span>
+            </button>
+            <button class="bin bin--green" type="button" data-bin="green">
+              <span class="bin__icon" aria-hidden="true">🍾</span>
+              <span class="bin__name">Стъкло</span>
+            </button>
+            <button class="bin bin--battery" type="button" data-bin="battery">
+              <span class="bin__icon" aria-hidden="true">🔋</span>
+              <span class="bin__name">Батерии</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Подсказки след грешка – екранният четец ги прочита -->
+        <p class="game__hint" id="game-hint" role="status" aria-live="polite"></p>
+        <p class="game__help" id="game-help">
+          Управление: влачи отпадъка с мишката или с пръст и го пусни върху контейнер.
+          Можеш и само да натиснеш контейнер – в него отива най-ниският отпадък.
+          С клавиатура: ← и → избират контейнер, Enter или ↓ пуска най-ниския отпадък.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===== 6. ДЕЙСТВАЙ ===== -->
     <section class="section action" id="action">
       <div class="container">
         <p class="section__eyebrow">Твоят ход</p>
@@ -216,6 +285,7 @@
   <script src="js/effects.js" defer></script>
   <script src="js/hero.js" defer></script>
   <script src="js/simulator.js" defer></script>
+  <script src="js/game.js" defer></script>
   <script src="js/pledge.js" defer></script>
 </body>
 </html>

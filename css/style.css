@@ -466,6 +466,131 @@ input[type="range"] {
 .link:hover { text-decoration: underline; }
 
 /* =========================================
+   МИНИ ИГРА „СОРТИРАЙ ОТПАДЪЦИТЕ“
+   ========================================= */
+.game__hud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.game__hud p {
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+}
+.game__hud strong { color: var(--c-accent); font-family: var(--f-head); }
+
+/* Полето: тук падат отпадъците */
+.game__field {
+  position: relative;
+  height: 480px;
+  overflow: hidden;
+  border-radius: var(--radius);
+  border: 1px solid var(--c-border);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(126, 224, 161, 0.08), transparent 60%),
+    linear-gradient(180deg, #10201b 0%, #182b24 100%);
+}
+.game__field.is-playing { border-color: rgba(126, 224, 161, 0.4); }
+
+/* Начален / краен екран върху полето */
+.game__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px;
+  text-align: center;
+  background: rgba(10, 18, 16, 0.85);
+}
+.game__overlay[hidden] { display: none; }
+.game__overlay-title { font-family: var(--f-head); font-size: clamp(1.4rem, 4vw, 2rem); }
+.game__overlay-text { max-width: 420px; color: var(--c-muted); }
+.game__overlay .btn { border: 0; font: inherit; font-weight: 800; cursor: pointer; }
+
+/* Падащ отпадък */
+.game__item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 76px;
+  padding: 6px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.07);
+  cursor: grab;
+  touch-action: none;   /* пръстът влачи отпадъка, а не страницата */
+  user-select: none;
+  will-change: transform;
+}
+.game__item-emoji { font-size: 2.1rem; line-height: 1.1; }
+.game__item-name { font-size: 0.68rem; line-height: 1.2; text-align: center; color: var(--c-text); }
+.game__item.is-active { outline: 2px dashed var(--c-accent); outline-offset: 2px; }
+.game__item.is-dragging { z-index: 2; cursor: grabbing; background: rgba(126, 224, 161, 0.18); }
+
+/* Контейнерите в долната част на полето */
+.game__bins {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 0 8px 8px;
+}
+
+.bin {
+  height: 92px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border: 0;
+  border-radius: 16px 16px 10px 10px;
+  color: var(--c-bg);    /* тъмен текст – добър контраст на всички цветове */
+  font: inherit;
+  font-weight: 800;
+  font-size: 0.8rem;
+  line-height: 1.2;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+.bin__icon { font-size: 1.5rem; }
+.bin--yellow { background: #f2c94c; }
+.bin--blue { background: #78b2f2; }
+.bin--green { background: #6fd39a; }
+.bin--battery { background: #f39a72; }
+
+.bin.is-selected { transform: translateY(-8px); outline: 3px solid var(--c-text); outline-offset: 2px; }
+.bin.is-correct { box-shadow: 0 0 30px rgba(126, 224, 161, 0.9); }
+.bin.is-wrong { box-shadow: 0 0 30px rgba(255, 90, 70, 0.9); animation: shake 0.3s; }
+
+@keyframes shake {
+  25% { translate: -5px 0; }
+  75% { translate: 5px 0; }
+}
+
+.game__hint {
+  min-height: 3.2em;   /* място за подсказката, за да не „подскача“ страницата */
+  margin-top: 14px;
+  color: #ffc49b;
+  font-weight: 600;
+}
+.game__help { font-size: 0.9rem; color: var(--c-muted); }
+
+/* =========================================
    ДЕЙСТВАЙ – обещания
    ========================================= */
 .pledge {
@@ -544,7 +669,7 @@ input[type="range"] {
   .threats__grid { grid-template-columns: 1fr; }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 900px) {
   .nav__toggle { display: flex; }
 
   .nav__menu {
@@ -563,10 +688,19 @@ input[type="range"] {
   }
   .nav__menu.is-open { transform: translateY(0); opacity: 1; visibility: visible; }
   .nav__link { padding: 14px 16px; }
+}
 
+@media (max-width: 720px) {
   .section { padding: 40px 0; }
   .section > .container { width: calc(100% - 24px); padding: 40px 20px; border-radius: 22px; }
   .hero__content { padding-bottom: 160px; }
+
+  /* Играта на телефон: по-ниско поле, по-малки отпадъци и контейнери */
+  .game__field { height: 440px; }
+  .game__item { width: 66px; }
+  .game__item-emoji { font-size: 1.8rem; }
+  .bin { height: 84px; font-size: 0.7rem; }
+  .game__bins { gap: 6px; padding: 0 6px 6px; }
 }
 
 /* Уважаваме хората, които са изключили анимациите */
