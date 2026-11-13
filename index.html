@@ -15,13 +15,13 @@
 </head>
 <body>
 
-  <!-- ===== НАВИГАЦИЯ ===== -->
   <!-- Небето над долината: фон зад целия сайт, рисува се от js/hero.js -->
   <canvas class="sky" id="sky" aria-hidden="true"></canvas>
 
   <!-- Прогрес бар: колко от страницата е прочетено -->
   <div class="read-progress" id="read-progress" aria-hidden="true"></div>
 
+  <!-- ===== НАВИГАЦИЯ ===== -->
   <header class="header">
     <nav class="nav" aria-label="Основна навигация">
       <a href="#home" class="nav__logo">Долината <span>диша</span></a>
@@ -70,25 +70,50 @@
 
         <div class="cards">
           <article class="card reveal">
-            <div class="card__icon" aria-hidden="true">⛰️</div>
+            <div class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Планини и „похлупак“ от смог над тях -->
+                <path d="M2 20 9 8l4 6 3-4 6 10Z"/>
+                <path d="M3 4.5h18" stroke-dasharray="2 2.5"/>
+              </svg>
+            </div>
             <h3 class="card__title">Затворена котловина</h3>
             <p>Долината е заобиколена от планини. При зимни температурни инверсии студеният въздух остава долу и „заключва“ дима над града.</p>
           </article>
 
           <article class="card reveal">
-            <div class="card__icon" aria-hidden="true">🔥</div>
+            <div class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Пламък -->
+                <path d="M12 22c4 0 7-2.8 7-6.8 0-3.5-2.3-5.6-4.2-8.2-.5 2.2-1.7 3.4-3 3.9.3-3.1-.8-6-3.3-7.9.2 3.6-3.5 6.2-3.5 11.2C5 19.2 8 22 12 22Z"/>
+              </svg>
+            </div>
             <h3 class="card__title">Отопление с дърва и въглища</h3>
             <p>Изгарянето на твърди горива в домовете е сред основните източници на фини прахови частици в региона, заедно с транспорта.</p>
           </article>
 
           <article class="card reveal">
-            <div class="card__icon" aria-hidden="true">🫁</div>
+            <div class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Бели дробове -->
+                <path d="M12 3v8m0 0c-1.2 1.2-2.6 1.8-4 2m4-2c1.2 1.2 2.6 1.8 4 2"/>
+                <path d="M9.5 7C6 7.5 3 12 3 17.5 3 19.6 4.4 21 6.5 21S10 19.6 10 17.5V9"/>
+                <path d="M14.5 7C18 7.5 21 12 21 17.5c0 2.1-1.4 3.5-3.5 3.5S14 19.6 14 17.5V9"/>
+              </svg>
+            </div>
             <h3 class="card__title">Удар по здравето</h3>
             <p>Фините прахови частици (ФПЧ2.5) са толкова малки, че проникват дълбоко в белите дробове и в кръвта. Най-уязвими са децата и възрастните.</p>
           </article>
 
           <article class="card reveal">
-            <div class="card__icon" aria-hidden="true">⚖️</div>
+            <div class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Везни (съдът) -->
+                <path d="M12 3v18M8 21h8M5 7h14"/>
+                <path d="m5 7-3 6a3 3 0 0 0 6 0Z"/>
+                <path d="m19 7-3 6a3 3 0 0 0 6 0Z"/>
+              </svg>
+            </div>
             <h3 class="card__title">Проблем на цяла България</h3>
             <p>Европейската комисия съди България, защото страната не се справя с мръсния въздух. Решението започва от всеки град.</p>
           </article>

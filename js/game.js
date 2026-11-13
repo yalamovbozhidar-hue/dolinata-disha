@@ -22,15 +22,16 @@ const POINTS_CORRECT = 10;
 const POINTS_WRONG = 5;       // толкова точки губиш при грешка
 const BEST_STORAGE_KEY = "dolinata-game-best";
 
-// Видовете отпадъци и в кой контейнер отиват
+// Видовете отпадъци и в кой контейнер отиват.
+// Ползваме само емоджита, които се виждат и на по-стари системи (напр. Windows 10).
 const WASTE_TYPES = [
   { emoji: "🧴", name: "Пластмасова бутилка", bin: "yellow" },
+  { emoji: "🥤", name: "Пластмасова чаша", bin: "yellow" },
   { emoji: "🥫", name: "Метално кенче", bin: "yellow" },
   { emoji: "📰", name: "Вестник", bin: "blue" },
   { emoji: "📦", name: "Кашон", bin: "blue" },
   { emoji: "📄", name: "Лист хартия", bin: "blue" },
   { emoji: "🍾", name: "Стъклена бутилка", bin: "green" },
-  { emoji: "🫙", name: "Стъклен буркан", bin: "green" },
   { emoji: "🔋", name: "Батерия", bin: "battery" },
 ];
 
