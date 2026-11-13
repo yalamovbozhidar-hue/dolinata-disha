@@ -118,11 +118,38 @@
             <p>Европейската комисия съди България, защото страната не се справя с мръсния въздух. Решението започва от всеки град.</p>
           </article>
         </div>
+
+        <!-- Снимки: браузърът сам избира размера (960, 1920 или 3840 px) според екрана -->
+        <div class="photo-row">
+          <figure class="photo photo--wide reveal">
+            <img src="img/city-1920.jpg"
+                 srcset="img/city-960.jpg 960w, img/city-1920.jpg 1920w, img/city-3840.jpg 3840w"
+                 sizes="(max-width: 860px) 100vw, 640px"
+                 width="1920" height="1440" loading="lazy" decoding="async"
+                 alt="Покривите на източната част на Казанлък, погледнати отвисоко">
+            <figcaption>Източната част на Казанлък, погледната отвисоко.</figcaption>
+          </figure>
+          <figure class="photo reveal">
+            <img src="img/chimney-1920.jpg"
+                 srcset="img/chimney-960.jpg 960w, img/chimney-1920.jpg 1920w, img/chimney-3840.jpg 3840w"
+                 sizes="(max-width: 860px) 100vw, 400px"
+                 width="1920" height="1278" loading="lazy" decoding="async"
+                 alt="Комин на къща, от който излиза тъмен дим">
+            <figcaption>Тъмният дим означава непълно изгаряне – мокри дърва, въглища или боклук.</figcaption>
+          </figure>
+        </div>
       </div>
     </section>
 
     <!-- ===== ИЗРЕЧЕНИЕ НА ЦЯЛ ЕКРАН ===== -->
-    <section class="statement">
+    <section class="statement statement--photo">
+      <!-- Снимката на долината е фон; при скрол се движи по-бавно (parallax в js/effects.js) -->
+      <img class="statement__bg"
+           src="img/valley-1920.jpg"
+           srcset="img/valley-960.jpg 960w, img/valley-1920.jpg 1920w, img/valley-3840.jpg 3840w"
+           sizes="100vw"
+           width="1920" height="1086" loading="lazy" decoding="async"
+           alt="Казанлъшката долина и язовир „Копринка“, погледнати от връх Шипка">
       <h2 class="statement__text split-words">Планините, които ни пазят, зиме ни <em>заключват.</em></h2>
       <p class="statement__sub reveal">
         При температурна инверсия студеният въздух остава долу в котловината,
@@ -178,8 +205,13 @@
 
         <div class="threats__grid">
           <article class="threat threat--fire reveal">
-            <!-- ЗАМЕНЕТЕ със собствена снимка: img/fire.jpg -->
-            <div class="threat__img" style="background-image: url('img/fire.jpg');" role="img" aria-label="Изгоряла гора край Казанлък"></div>
+            <!-- Илюстративна снимка – авторът и лицензът са във футъра -->
+            <img class="threat__img"
+                 src="img/fire-1920.jpg"
+                 srcset="img/fire-960.jpg 960w, img/fire-1920.jpg 1920w, img/fire-3840.jpg 3840w"
+                 sizes="(max-width: 860px) 100vw, 520px"
+                 width="1920" height="1440" loading="lazy" decoding="async"
+                 alt="Горски пожар вечер: пламъци зад силуета на гората (илюстративна снимка)">
             <div class="threat__body">
               <h3>Горските пожари</h3>
               <p class="threat__stat"><span class="counter" data-target="500">0</span> ха</p>
@@ -188,8 +220,13 @@
           </article>
 
           <article class="threat threat--waste reveal">
-            <!-- ЗАМЕНЕТЕ със собствена снимка: img/waste.jpg -->
-            <div class="threat__img" style="background-image: url('img/waste.jpg');" role="img" aria-label="Нерегламентирано сметище край Казанлък"></div>
+            <!-- Илюстративна снимка – авторът и лицензът са във футъра -->
+            <img class="threat__img"
+                 src="img/waste-1920.jpg"
+                 srcset="img/waste-960.jpg 960w, img/waste-1920.jpg 1920w, img/waste-3840.jpg 3840w"
+                 sizes="(max-width: 860px) 100vw, 520px"
+                 width="1920" height="1446" loading="lazy" decoding="async"
+                 alt="Изхвърлени отпадъци и стари уреди в гора (илюстративна снимка)">
             <div class="threat__body">
               <h3>Нерегламентирани сметища</h3>
               <p class="threat__stat">Строителни отпадъци, гуми, пластмаса</p>
@@ -269,7 +306,59 @@
       </div>
     </section>
 
-    <!-- ===== 6. ДЕЙСТВАЙ ===== -->
+    <!-- ===== 6. ГАЛЕРИЯ „ДОЛИНАТА, КОЯТО ПАЗИМ“ ===== -->
+    <section class="section gallery" id="gallery">
+      <div class="container">
+        <p class="section__eyebrow">Галерия</p>
+        <h2 class="section__title split-words">Долината, която пазим</h2>
+        <p class="section__lead">
+          Розите, язовирът, планините – ето заради какво си струва да пазим въздуха чист.
+          Натисни снимка, за да я видиш в пълен размер.
+        </p>
+
+        <div class="gallery__grid">
+          <figure class="gallery__item gallery__item--big reveal">
+            <button class="gallery__open" type="button" data-photo="roses" aria-label="Отвори в пълен размер: Розовата долина между Балкана и Средна гора">
+              <img src="img/roses-1920.jpg"
+                   srcset="img/roses-960.jpg 960w, img/roses-1920.jpg 1920w, img/roses-3840.jpg 3840w"
+                   sizes="(max-width: 860px) 100vw, 1020px"
+                   width="1920" height="1289" loading="lazy" decoding="async"
+                   alt="Розови насаждения в долината, а зад тях – заснежените върхове на Балкана">
+            </button>
+            <figcaption>Розовата долина между Балкана и Средна гора</figcaption>
+          </figure>
+          <figure class="gallery__item reveal">
+            <button class="gallery__open" type="button" data-photo="rose-pickers" aria-label="Отвори в пълен размер: Розобер в Казанлък – празник с народни носии">
+              <img src="img/rose-pickers-1920.jpg"
+                   srcset="img/rose-pickers-960.jpg 960w, img/rose-pickers-1920.jpg 1920w, img/rose-pickers-3840.jpg 3840w"
+                   sizes="(max-width: 860px) 100vw, 500px"
+                   width="1920" height="1280" loading="lazy" decoding="async"
+                   alt="Млади момичета в народни носии сред розите">
+            </button>
+            <figcaption>Розобер в Казанлък – празник с народни носии</figcaption>
+          </figure>
+          <figure class="gallery__item reveal">
+            <button class="gallery__open" type="button" data-photo="buzludzha" aria-label="Отвори в пълен размер: Язовир „Копринка“ и село Шейново, погледнати от Бузлуджа">
+              <img src="img/buzludzha-1920.jpg"
+                   srcset="img/buzludzha-960.jpg 960w, img/buzludzha-1920.jpg 1920w, img/buzludzha-3840.jpg 3840w"
+                   sizes="(max-width: 860px) 100vw, 500px"
+                   width="1920" height="1080" loading="lazy" decoding="async"
+                   alt="Язовир „Копринка“ и село Шейново далеч долу в долината">
+            </button>
+            <figcaption>Язовир „Копринка“ и село Шейново, погледнати от Бузлуджа</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- Прозорец за снимка в пълен размер – отваря се от js/gallery.js -->
+    <dialog class="lightbox" id="lightbox" aria-label="Снимка в пълен размер">
+      <img class="lightbox__img" id="lightbox-img" src="img/roses-960.jpg" alt="Розовата долина">
+      <p class="lightbox__caption" id="lightbox-caption"></p>
+      <button class="lightbox__close" id="lightbox-close" type="button" aria-label="Затвори снимката">×</button>
+    </dialog>
+
+    <!-- ===== 7. ДЕЙСТВАЙ ===== -->
     <section class="section action" id="action">
       <div class="container">
         <p class="section__eyebrow">Твоят ход</p>
@@ -301,6 +390,20 @@
         Източници: РИОСВ – Стара Загора, БНР, БНТ, „Капитал“.
       </p>
       <a href="#home" class="footer__top" aria-label="Към началото">↑</a>
+      <!-- Снимките са от Wikimedia Commons – посочваме автора и лиценза, както изисква лицензът -->
+      <details class="footer__credits">
+        <summary>Снимки и лицензи (Wikimedia Commons)</summary>
+        <ul>
+          <li><a href="https://commons.wikimedia.org/wiki/File:The_Koprinka_Reservoir_seen_from_Shipka_peak.jpg" target="_blank" rel="noopener">Язовир „Копринка“ от връх Шипка</a> – Ivano Giambattista, <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener">CC0</a></li>
+          <li><a href="https://commons.wikimedia.org/wiki/File:Oestlicher_Teil_der_Stadt_Kasanlak.jpg" target="_blank" rel="noopener">Източната част на Казанлък</a> – Kazanlak Dani, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a></li>
+          <li><a href="https://commons.wikimedia.org/wiki/File:House_chimney_with_dark_smoke_pollution_-_This_photo_has_been_released_into_the_public_domain._There_are_no_copyrights_you_can_use_and_modify_this_photo_without_asking,_and_without_attribution.jpg" target="_blank" rel="noopener">Комин с тъмен дим</a> – Kiwiev, <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener">CC0</a></li>
+          <li><a href="https://commons.wikimedia.org/wiki/File:High_Intensity_Fire_from_the_KNP_Complex.jpg_(704a5870-6772-4288-82f1-f39628facab4).jpg" target="_blank" rel="noopener">Горски пожар (САЩ)</a> – U.S. National Park Service, обществено достояние</li>
+          <li><a href="https://commons.wikimedia.org/wiki/File:Fly_tipping_near_High_Beech,_Essex.jpg" target="_blank" rel="noopener">Отпадъци в гора (Англия)</a> – The wub, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a></li>
+          <li><a href="https://commons.wikimedia.org/wiki/File:VALLEY_OF_ROSES,_BULGARIA.jpg" target="_blank" rel="noopener">Розовата долина</a> – Jerrye and Roy Klotz MD, <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a></li>
+          <li><a href="https://commons.wikimedia.org/wiki/File:Young_rose_pickers_are_documenting_their_grandma%27s_outfits_(Kazanlak,_Bulgaria).jpg" target="_blank" rel="noopener">Розобер в Казанлък</a> – Dachegraphy, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a></li>
+          <li><a href="https://commons.wikimedia.org/wiki/File:Koprinka_lake,_Sheynovo_village_viewed_from_Buzludzha_03.JPG" target="_blank" rel="noopener">„Копринка“ и Шейново от Бузлуджа</a> – Scroch, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a></li>
+        </ul>
+      </details>
     </div>
   </footer>
 
@@ -311,6 +414,7 @@
   <script src="js/hero.js" defer></script>
   <script src="js/simulator.js" defer></script>
   <script src="js/game.js" defer></script>
+  <script src="js/gallery.js" defer></script>
   <script src="js/pledge.js" defer></script>
 </body>
 </html>
