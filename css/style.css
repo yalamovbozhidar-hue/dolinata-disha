@@ -143,20 +143,22 @@ a { color: inherit; text-decoration: none; }
 /* =========================================
    НАЧАЛО (HERO)
    ========================================= */
+/* Небето: canvas зад цялото съдържание */
+.sky {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+}
+
 .hero {
   position: relative;
   min-height: 100vh;
+  min-height: 100svh; /* на телефон не зависи от лентата на браузъра */
   display: flex;
   align-items: center;
-  overflow: hidden;
-  background: linear-gradient(180deg, #2a2a2e 0%, #4a4438 55%, #6b6050 100%);
-}
-
-.hero__smog {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45);
 }
 
 .hero__content {
@@ -192,29 +194,29 @@ a { color: inherit; text-decoration: none; }
   margin-bottom: 32px;
 }
 
-.hero__valley {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 40%;
-  z-index: 1;
-}
-.valley__far { fill: #2c3a33; }
-.valley__near { fill: var(--c-bg); }
-.valley__lights circle { fill: #ffd27a; animation: flicker 3s infinite alternate; }
-.valley__lights circle:nth-child(odd) { animation-delay: 1.2s; }
-
-@keyframes flicker {
-  from { opacity: 0.4; }
-  to { opacity: 1; }
+.hero__hint {
+  max-width: 420px;
+  margin-top: 28px;
+  font-size: 0.95rem;
+  color: #d6dcd4;
 }
 
 /* =========================================
    СЕКЦИИ – общо
    ========================================= */
-.section { padding: 110px 0; }
-.section:nth-of-type(even) { background: var(--c-bg-alt); }
+.section { padding: 70px 0; }
+
+/* Всяка секция е „стъклен“ панел над небето */
+.section > .container {
+  width: calc(100% - 40px);
+  padding: 64px 48px;
+  border: 1px solid var(--c-border);
+  border-radius: 28px;
+  background: rgba(15, 26, 23, 0.8);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+}
 
 .section__eyebrow {
   color: var(--c-accent);
@@ -439,6 +441,7 @@ input[type="range"] {
    ========================================= */
 .footer {
   padding: 40px 0;
+  background: rgba(15, 26, 23, 0.9);
   border-top: 1px solid var(--c-border);
   color: var(--c-muted);
 }
@@ -489,7 +492,8 @@ input[type="range"] {
   .nav__menu.is-open { transform: translateY(0); opacity: 1; visibility: visible; }
   .nav__link { padding: 14px 16px; }
 
-  .section { padding: 80px 0; }
+  .section { padding: 40px 0; }
+  .section > .container { width: calc(100% - 24px); padding: 40px 20px; border-radius: 22px; }
   .hero__content { padding-bottom: 160px; }
 }
 
