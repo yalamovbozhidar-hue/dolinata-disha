@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Долината диша – екологична инициатива за чистия въздух, горите и отпадъците в Казанлъшката долина.">
   <meta name="author" content="Божидар Ялъмов и Георги Даракчиев">
+
+  <!-- Как изглежда линкът, когато се сподели (Facebook, Viber, Messenger…) -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="bg_BG">
+  <meta property="og:title" content="Долината диша">
+  <meta property="og:description" content="Зимният смог, горските пожари и сметищата в Казанлъшката долина – и какво можем да направим ние.">
+  <meta property="og:url" content="https://yalamovbozhidar-hue.github.io/dolinata-disha/">
+  <meta property="og:image" content="https://yalamovbozhidar-hue.github.io/dolinata-disha/img/valley-1920.jpg">
+  <meta property="og:image:alt" content="Казанлъшката долина, погледната от връх Шипка">
+  <meta name="twitter:card" content="summary_large_image">
   <title>Долината диша</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%BF%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,6 +25,9 @@
   <script>document.documentElement.classList.add("js");</script>
 </head>
 <body>
+
+  <!-- Скрит линк: появява се при първото натискане на Tab и прескача менюто -->
+  <a class="skip-link" href="#content">Към съдържанието</a>
 
   <!-- Небето над долината: фон зад целия сайт, рисува се от js/hero.js -->
   <canvas class="sky" id="sky" aria-hidden="true"></canvas>
@@ -36,12 +49,13 @@
         <li><a href="#simulator" class="nav__link">Изчисти небето</a></li>
         <li><a href="#fire" class="nav__link">Огън и отпадъци</a></li>
         <li><a href="#game" class="nav__link">Игра</a></li>
+        <li><a href="#gallery" class="nav__link">Галерия</a></li>
         <li><a href="#action" class="nav__link nav__link--cta">Действай</a></li>
       </ul>
     </nav>
   </header>
 
-  <main>
+  <main id="content" tabindex="-1">
 
     <!-- ===== 1. НАЧАЛО ===== -->
     <section class="hero" id="home">
