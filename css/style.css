@@ -589,6 +589,17 @@ input[type="range"] {
 }
 .threat--fire .threat__stat { color: var(--c-fire) !important; }
 
+/* Малък ред „Източник: …“ под всеки факт */
+.source {
+  margin-top: 10px;
+  font-size: 0.8rem;
+  color: var(--c-muted);
+}
+.source a,
+.footer__sources a { text-decoration: underline; text-underline-offset: 2px; }
+.source a:hover,
+.footer__sources a:hover { color: var(--c-accent); }
+
 .link { color: var(--c-accent); font-weight: 600; }
 .link:hover { text-decoration: underline; }
 
