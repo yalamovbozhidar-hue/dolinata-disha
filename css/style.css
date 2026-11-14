@@ -480,6 +480,104 @@ main:focus { outline: none; }
 }
 
 /* =========================================
+   СРАВНЕНИЕ „ЗИМЕН СМОГ / ЧИСТ ВЪЗДУХ“
+   --pos (0%–100%) идва от js/compare.js
+   ========================================= */
+.compare { margin-top: 28px; }
+
+.compare__frame {
+  --pos: 50%;
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  user-select: none;
+}
+.compare__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Горната снимка със „смог“ се вижда само вляво от чертата */
+.compare__smog {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(0 calc(100% - var(--pos)) 0 0);
+}
+.compare__smog img { filter: sepia(0.55) saturate(0.6) brightness(0.78) contrast(0.75) blur(1.2px); }
+.compare__smog::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(120, 105, 80, 0.25), rgba(140, 120, 90, 0.6));
+}
+
+/* Чертата с кръгче по средата */
+.compare__handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--pos);
+  width: 3px;
+  translate: -50% 0;
+  background: var(--c-text);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+.compare__handle::after {
+  content: "⇆";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--c-accent);
+  color: var(--c-bg);
+  font-size: 1.3rem;
+  font-weight: 800;
+  box-shadow: var(--glow);
+}
+
+.compare__label {
+  position: absolute;
+  top: 14px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.6);
+  font-size: 0.8rem;
+  font-weight: 700;
+  pointer-events: none;
+}
+.compare__label--smog { left: 14px; }
+.compare__label--clean { right: 14px; }
+
+/* Невидимият плъзгач покрива цялата снимка */
+.compare__frame .compare__range {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: ew-resize;
+}
+.compare__frame:has(.compare__range:focus-visible) { outline: 3px solid var(--c-accent); outline-offset: 3px; }
+
+.compare figcaption {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: var(--c-muted);
+}
+.compare figcaption strong { color: var(--c-text); }
+
+/* =========================================
    СИМУЛАТОР
    ========================================= */
 .sim {

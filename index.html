@@ -156,6 +156,33 @@
             <figcaption>Тъмният дим означава непълно изгаряне – мокри дърва, въглища или боклук.</figcaption>
           </figure>
         </div>
+
+        <!-- Сравнение „смог / чист въздух“ (js/compare.js).
+             Плъзгачът е <input type="range"> – работи и с клавиатура. -->
+        <figure class="compare reveal">
+          <div class="compare__frame" id="compare">
+            <img class="compare__img" src="img/city-1920.jpg"
+                 srcset="img/city-960.jpg 960w, img/city-1920.jpg 1920w, img/city-3840.jpg 3840w"
+                 sizes="(max-width: 860px) 100vw, 1020px"
+                 width="1920" height="1440" loading="lazy" decoding="async"
+                 alt="Казанлък, погледнат отвисоко, в ясен ден">
+            <div class="compare__smog" aria-hidden="true">
+              <img class="compare__img" src="img/city-1920.jpg"
+                   srcset="img/city-960.jpg 960w, img/city-1920.jpg 1920w, img/city-3840.jpg 3840w"
+                   sizes="(max-width: 860px) 100vw, 1020px"
+                   width="1920" height="1440" loading="lazy" decoding="async" alt="">
+            </div>
+            <span class="compare__label compare__label--smog" aria-hidden="true">Зимен смог</span>
+            <span class="compare__label compare__label--clean" aria-hidden="true">Чист въздух</span>
+            <span class="compare__handle" aria-hidden="true"></span>
+            <input class="compare__range" id="compare-range" type="range" min="0" max="100" value="50"
+                   aria-label="Колко от снимката да е в смог">
+          </div>
+          <figcaption>
+            <strong>Една долина – два въздуха.</strong> Плъзни чертата.
+            Смогът е симулиран с ефект върху истинска снимка на Казанлък.
+          </figcaption>
+        </figure>
       </div>
     </section>
 
@@ -442,6 +469,7 @@
   <script src="js/hero.js" defer></script>
   <script src="js/simulator.js" defer></script>
   <script src="js/game.js" defer></script>
+  <script src="js/compare.js" defer></script>
   <script src="js/gallery.js" defer></script>
   <script src="js/pledge.js" defer></script>
 </body>
