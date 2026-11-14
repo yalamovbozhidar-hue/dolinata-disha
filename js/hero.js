@@ -44,6 +44,9 @@ const smogPuffs = Array.from({ length: PUFF_COUNT }, (_, i) => ({
   // Праг: облачетата с по-нисък праг изчезват по-рано –
   // така смогът изтънява постепенно, а не наведнъж
   threshold: i / PUFF_COUNT,
+  // Колко пиксела го е отместил „вятърът“ (виж blowWind по-долу)
+  pushX: 0,
+  pushY: 0,
 }));
 
 // Едно меко „петно“ смог, нарисувано веднъж в малък скрит canvas.
@@ -57,21 +60,30 @@ puffGradient.addColorStop(1, "rgba(160, 146, 122, 0)");
 puffCtx.fillStyle = puffGradient;
 puffCtx.fillRect(0, 0, 128, 128);
 
+// Два скрити canvas-а за вятъра:
+// cleanView – същата долина, но в напълно чист въздух (рисува се веднъж);
+// windLayer – само парчетата от cleanView, които вятърът „отваря“.
+const cleanView = document.createElement("canvas");
+const cleanCtx = cleanView.getContext("2d");
+const windLayer = document.createElement("canvas");
+const windCtx = windLayer.getContext("2d");
+
 let skyWidth = 0;
 let skyHeight = 0;
 let targetClean = 0;  // колко чист трябва да е въздухът според скрола (0–1)
 let clean = 0;        // колко чист е в момента (плавно гони targetClean)
 
-// Настройва размера на canvas според екрана.
+// Настройва размера на canvas-ите според екрана.
 // Небето и смогът са меки, затова не рисуваме в двойна резолюция
 // на острите екрани – така телефонът рисува 2–4 пъти по-малко пиксели.
 function resizeSky() {
-  const ratio = 1;
   skyWidth = window.innerWidth;
   skyHeight = window.innerHeight;
-  skyCanvas.width = Math.round(skyWidth * ratio);
-  skyCanvas.height = Math.round(skyHeight * ratio);
-  skyCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  [skyCanvas, cleanView, windLayer].forEach((canvas) => {
+    canvas.width = skyWidth;
+    canvas.height = skyHeight;
+  });
+  drawValley(cleanCtx, skyWidth, skyHeight, 1); // чистата долина – веднъж при всяка промяна на размера
   if (reduceMotion) drawSky();
 }
 
@@ -88,71 +100,86 @@ function updateTargetClean() {
   }
 }
 
-// Помощна функция: цвят от SKY_COLORS според текущата чистота
-const skyColor = (name) => mixColor(SKY_COLORS[name][0], SKY_COLORS[name][1], clean);
+/* -----------------------------------------
+   РИСУВАНЕ НА ДОЛИНАТА
+   Всяка функция получава къде да рисува (ctx),
+   размерите (w, h) и колко е чист въздухът (c: 0–1).
+   ----------------------------------------- */
 
-function drawSkyGradient(w, h) {
-  const gradient = skyCtx.createLinearGradient(0, 0, 0, h * 0.7);
-  gradient.addColorStop(0, skyColor("top"));
-  gradient.addColorStop(0.55, skyColor("middle"));
-  gradient.addColorStop(1, skyColor("horizon"));
-  skyCtx.fillStyle = gradient;
-  skyCtx.fillRect(0, 0, w, h);
+// Помощна функция: цвят от SKY_COLORS според чистотата c
+const skyColor = (name, c) => mixColor(SKY_COLORS[name][0], SKY_COLORS[name][1], c);
+
+function drawSkyGradient(ctx, w, h, c) {
+  const gradient = ctx.createLinearGradient(0, 0, 0, h * 0.7);
+  gradient.addColorStop(0, skyColor("top", c));
+  gradient.addColorStop(0.55, skyColor("middle", c));
+  gradient.addColorStop(1, skyColor("horizon", c));
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, w, h);
 }
 
 // Слънцето: бледо петно в смога, ярко и с ореол в чистия въздух
-function drawSun(w, h) {
+function drawSun(ctx, w, h, c) {
   const x = w * 0.78;
   const y = h * 0.22;
   const r = Math.min(w, h) * 0.05;
 
-  const glow = skyCtx.createRadialGradient(x, y, r * 0.5, x, y, r * 5);
-  glow.addColorStop(0, `rgba(255, 236, 170, ${0.05 + clean * 0.35})`);
+  const glow = ctx.createRadialGradient(x, y, r * 0.5, x, y, r * 5);
+  glow.addColorStop(0, `rgba(255, 236, 170, ${0.05 + c * 0.35})`);
   glow.addColorStop(1, "rgba(255, 236, 170, 0)");
-  skyCtx.fillStyle = glow;
-  skyCtx.fillRect(x - r * 5, y - r * 5, r * 10, r * 10);
+  ctx.fillStyle = glow;
+  ctx.fillRect(x - r * 5, y - r * 5, r * 10, r * 10);
 
-  skyCtx.fillStyle = `rgba(255, 238, 180, ${0.15 + clean * 0.8})`;
-  skyCtx.beginPath();
-  skyCtx.arc(x, y, r, 0, Math.PI * 2);
-  skyCtx.fill();
+  ctx.fillStyle = `rgba(255, 238, 180, ${0.15 + c * 0.8})`;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fill();
 }
 
-function drawBalkan(w, h) {
-  skyCtx.fillStyle = skyColor("balkan");
-  skyCtx.beginPath();
-  skyCtx.moveTo(0, h);
-  BALKAN_PEAKS.forEach(([x, y]) => skyCtx.lineTo(w * x, h * y));
-  skyCtx.lineTo(w, h);
-  skyCtx.fill();
+function drawBalkan(ctx, w, h, c) {
+  ctx.fillStyle = skyColor("balkan", c);
+  ctx.beginPath();
+  ctx.moveTo(0, h);
+  BALKAN_PEAKS.forEach(([x, y]) => ctx.lineTo(w * x, h * y));
+  ctx.lineTo(w, h);
+  ctx.fill();
 }
 
 // Дъното на долината с града и светлините в прозорците
-function drawCity(w, h) {
+function drawCity(ctx, w, h, c) {
   const groundY = h * 0.74;
-  skyCtx.fillStyle = skyColor("valley");
-  skyCtx.fillRect(0, groundY, w, h - groundY);
+  ctx.fillStyle = skyColor("valley", c);
+  ctx.fillRect(0, groundY, w, h - groundY);
 
   buildings.forEach((b) => {
-    skyCtx.fillRect(w * b.x, groundY - h * b.height, w * b.width, h * b.height + 1);
+    ctx.fillRect(w * b.x, groundY - h * b.height, w * b.width, h * b.height + 1);
   });
 
   // Светлините се виждат през смога и избледняват на дневна светлина
-  skyCtx.fillStyle = `rgba(255, 210, 122, ${0.25 + (1 - clean) * 0.45})`;
+  ctx.fillStyle = `rgba(255, 210, 122, ${0.25 + (1 - c) * 0.45})`;
   buildings.forEach((b, i) => {
-    if (i % 2 === 0) skyCtx.fillRect(w * (b.x + b.width / 3), groundY - h * b.height * 0.6, 2, 2);
+    if (i % 2 === 0) ctx.fillRect(w * (b.x + b.width / 3), groundY - h * b.height * 0.6, 2, 2);
   });
 }
 
-function drawSrednaGora(w, h) {
-  skyCtx.fillStyle = skyColor("sredna");
-  skyCtx.beginPath();
-  skyCtx.moveTo(0, h * 0.88);
-  skyCtx.quadraticCurveTo(w * 0.25, h * 0.81, w * 0.5, h * 0.87);
-  skyCtx.quadraticCurveTo(w * 0.75, h * 0.93, w, h * 0.85);
-  skyCtx.lineTo(w, h);
-  skyCtx.lineTo(0, h);
-  skyCtx.fill();
+function drawSrednaGora(ctx, w, h, c) {
+  ctx.fillStyle = skyColor("sredna", c);
+  ctx.beginPath();
+  ctx.moveTo(0, h * 0.88);
+  ctx.quadraticCurveTo(w * 0.25, h * 0.81, w * 0.5, h * 0.87);
+  ctx.quadraticCurveTo(w * 0.75, h * 0.93, w, h * 0.85);
+  ctx.lineTo(w, h);
+  ctx.lineTo(0, h);
+  ctx.fill();
+}
+
+// Цялата долина без смога: небе, слънце, планини, град
+function drawValley(ctx, w, h, c) {
+  drawSkyGradient(ctx, w, h, c);
+  drawSun(ctx, w, h, c);
+  drawBalkan(ctx, w, h, c);
+  drawCity(ctx, w, h, c);
+  drawSrednaGora(ctx, w, h, c);
 }
 
 // Смогът: облачета, които бавно се носят, плюс общ „похлупак“
@@ -166,13 +193,16 @@ function drawSmog(w, h) {
     if (visibility > 0) {
       const r = puff.radius * size;
       skyCtx.globalAlpha = puff.alpha * visibility;
-      skyCtx.drawImage(puffSprite, puff.x * w - r, puff.y * h - r, r * 2, r * 2);
+      skyCtx.drawImage(puffSprite, puff.x * w + puff.pushX - r, puff.y * h + puff.pushY - r, r * 2, r * 2);
     }
     // Облачето се носи надясно; когато излезе от екрана, се връща отляво
     if (!reduceMotion) {
       puff.x += puff.speed;
       if (puff.x > 1.4) puff.x = -0.4;
     }
+    // Отместването от вятъра бавно отшумява и облачето се връща
+    puff.pushX *= 0.98;
+    puff.pushY *= 0.98;
   });
   skyCtx.globalAlpha = 1;
 
@@ -184,14 +214,86 @@ function drawSmog(w, h) {
   skyCtx.fillRect(0, 0, w, h);
 }
 
+/* -----------------------------------------
+   ВЯТЪР ОТ РЪКАТА ТИ
+   Мишката или пръстът „духат“ смога: зад тях остава
+   следа от чист въздух, която бавно се затваря,
+   а облачетата наблизо се отместват по посоката на движението.
+   ----------------------------------------- */
+const windTrail = [];   // следата: точки { x, y, life }, life пада от 1 до 0
+let lastWind = null;    // предишната точка, за да знаем посоката
+
+function blowWind(x, y) {
+  const now = performance.now();
+  if (lastWind && Math.hypot(x - lastWind.x, y - lastWind.y) < 10) return; // твърде малко движение
+
+  // Посока на вятъра; ако е минало много време, започваме „на чисто“
+  const isFresh = !lastWind || now - lastWind.time > 150;
+  const dx = isFresh ? 0 : x - lastWind.x;
+  const dy = isFresh ? 0 : y - lastWind.y;
+  lastWind = { x, y, time: now };
+
+  windTrail.push({ x, y, life: 1 });
+  if (windTrail.length > 40) windTrail.shift(); // пазим само последните 40 точки
+
+  // Облачетата близо до ръката се отместват по посоката на движението
+  const size = Math.max(skyWidth, skyHeight);
+  smogPuffs.forEach((puff) => {
+    const reach = puff.radius * size;
+    const distance = Math.hypot(puff.x * skyWidth + puff.pushX - x, puff.y * skyHeight + puff.pushY - y);
+    if (distance < reach) {
+      const strength = 1 - distance / reach; // по-близо = по-силно
+      puff.pushX += dx * strength * 1.5;
+      puff.pushY += dy * strength * 1.5;
+    }
+  });
+}
+
+// Рисува следата на вятъра: там, където е духнал, се вижда чистата долина
+function drawWind(w, h) {
+  if (windTrail.length === 0) return;
+  const radius = Math.min(w, h) * 0.16;
+  const strength = 1 - clean; // когато въздухът вече е чист, няма какво да „издухваме“
+
+  // 1) Рисуваме „маска“ – меки кръгове по следата
+  windCtx.clearRect(0, 0, w, h);
+  windTrail.forEach((point) => {
+    const spot = windCtx.createRadialGradient(point.x, point.y, 0, point.x, point.y, radius);
+    spot.addColorStop(0, `rgba(0, 0, 0, ${point.life * strength})`);
+    spot.addColorStop(1, "rgba(0, 0, 0, 0)");
+    windCtx.fillStyle = spot;
+    windCtx.fillRect(point.x - radius, point.y - radius, radius * 2, radius * 2);
+    point.life -= 0.01; // за около 1.5 секунди следата изчезва
+  });
+
+  // 2) source-in: чистата долина остава само там, където има маска
+  windCtx.globalCompositeOperation = "source-in";
+  windCtx.drawImage(cleanView, 0, 0);
+  windCtx.globalCompositeOperation = "source-over";
+
+  // 3) Слагаме парчетата чист въздух върху смога
+  skyCtx.drawImage(windLayer, 0, 0);
+
+  // Махаме точките, които вече са изчезнали
+  while (windTrail.length && windTrail[0].life <= 0) windTrail.shift();
+}
+
+// Мишка и писалка: pointermove. Пръст: touchmove – той продължава
+// да идва и докато страницата се скролва.
+if (!reduceMotion) {
+  window.addEventListener("pointermove", (event) => {
+    if (event.pointerType !== "touch") blowWind(event.clientX, event.clientY);
+  }, { passive: true });
+  window.addEventListener("touchmove", (event) => {
+    blowWind(event.touches[0].clientX, event.touches[0].clientY);
+  }, { passive: true });
+}
+
 // Рисува един кадър от небето
 function drawSky() {
-  drawSkyGradient(skyWidth, skyHeight);
-  drawSun(skyWidth, skyHeight);
-  drawBalkan(skyWidth, skyHeight);
-  drawCity(skyWidth, skyHeight);
-  drawSrednaGora(skyWidth, skyHeight);
+  drawValley(skyCtx, skyWidth, skyHeight, clean);
   drawSmog(skyWidth, skyHeight);
+  drawWind(skyWidth, skyHeight);
 }
 
 // Анимационен цикъл: всеки кадър доближаваме clean до targetClean.

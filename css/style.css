@@ -234,6 +234,12 @@ main:focus { outline: none; }
   font-size: 0.95rem;
   color: #d6dcd4;
 }
+.hero__wind {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--c-accent);
+  font-weight: 600;
+}
 
 /* =========================================
    СЕКЦИИ – общо
