@@ -421,7 +421,16 @@
 
         <div class="pledge__progress">
           <div class="pledge__bar"><div class="pledge__fill" id="pledge-fill"></div></div>
-          <p id="pledge-text">0 от 5 обещания</p>
+          <p id="pledge-text" role="status">0 от 5 обещания</p>
+        </div>
+
+        <!-- Розовото поле: с всяко обещание цъфтят още рози.
+             Розите се добавят от js/pledge.js. -->
+        <div class="rose-field" id="rose-field-box" aria-hidden="true">
+          <svg class="rose-field__svg" id="rose-field" viewBox="0 0 800 200" preserveAspectRatio="xMidYMax slice">
+            <path class="rose-field__hill rose-field__hill--far" d="M0 150 Q200 112 400 140 T800 128 V200 H0 Z"/>
+            <path class="rose-field__hill" d="M0 172 Q220 146 420 168 T800 158 V200 H0 Z"/>
+          </svg>
         </div>
       </div>
     </section>
