@@ -1,7 +1,7 @@
 /* =========================================
-   3D КАРТИ И СВЕТЛИНА СЛЕД МИШКАТА
+   3D КАРТИ И МАГНИТНИ БУТОНИ
    Картите се накланят към мишката, а ръбът им светва.
-   Върху панелите на секциите се движи меко петно светлина.
+   Бутоните леко се притеглят към мишката, когато е над тях.
    Само за мишка (на телефон няма „hover“) и само ако анимациите са включени.
    ========================================= */
 const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
@@ -24,14 +24,6 @@ function trackPointer(element, onMove) {
 }
 
 if (canHover && !reduceMotion) {
-  // Панелите: петното светлина отива там, където е мишката
-  document.querySelectorAll(".section > .container").forEach((panel) => {
-    trackPointer(panel, (x, y) => {
-      panel.style.setProperty("--mx", `${x}px`);
-      panel.style.setProperty("--my", `${y}px`);
-    });
-  });
-
   // Картите: наклон по двете оси според мястото на мишката
   document.querySelectorAll(".card, .threat").forEach((card) => {
     card.classList.add("tilt");
@@ -48,5 +40,26 @@ if (canHover && !reduceMotion) {
 
     // Мишката излезе – картата плавно се изправя (transition в CSS)
     card.addEventListener("pointerleave", () => { card.style.transform = ""; });
+  });
+
+  // Магнитни бутони: изминават част от разстоянието до мишката (най-много 10 px).
+  // Центърът се запомня при влизане на мишката, за да не „бяга“, докато бутонът се мести.
+  const MAGNET = 0.3;
+  document.querySelectorAll(".btn, .nav__link--cta, .strip__btn, .nav__sound").forEach((button) => {
+    let center = null;
+    button.addEventListener("pointerenter", () => {
+      const rect = button.getBoundingClientRect();
+      center = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+    });
+    button.addEventListener("pointermove", (event) => {
+      if (!center) return;
+      const dx = clamp((event.clientX - center.x) * MAGNET, -10, 10);
+      const dy = clamp((event.clientY - center.y) * MAGNET, -10, 10);
+      button.style.translate = `${dx.toFixed(1)}px ${dy.toFixed(1)}px`;
+    });
+    button.addEventListener("pointerleave", () => {
+      center = null;
+      button.style.translate = "";
+    });
   });
 }

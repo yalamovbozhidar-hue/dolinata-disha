@@ -169,3 +169,54 @@ function updatePledges(byUser) {
 pledgeBoxes.forEach((box) => box.addEventListener("change", () => updatePledges(true)));
 loadPledges();
 updatePledges();
+
+/* -----------------------------------------
+   КАРТИТЕ МИНАВАТ НАСТРАНИ
+   Частта с картите „залепва“ под менюто (position: sticky),
+   а докато скролваш надолу, лентата с карти се мести наляво.
+   Колкото по-широка е лентата от екрана, толкова по-висока
+   правим секцията – това е пътят, който изминава скролът.
+   ----------------------------------------- */
+const pledgeTrack = document.getElementById("pledge-track");
+const pledgeSticky = document.getElementById("pledge-sticky");
+const pledgeViewport = document.getElementById("pledge-viewport");
+const pledgeList = document.getElementById("pledge");
+const siteHeader = document.querySelector(".header");
+let pledgeDistance = 0;   // с колко пиксела трябва да се премести лентата
+let pledgeQueued = false;
+
+function movePledges() {
+  pledgeQueued = false;
+  const pinnedFor = siteHeader.offsetHeight - pledgeTrack.getBoundingClientRect().top;
+  const progress = pledgeDistance > 0 ? clamp(pinnedFor / pledgeDistance, 0, 1) : 0;
+  pledgeList.style.transform = `translateX(${(-progress * pledgeDistance).toFixed(1)}px)`;
+}
+
+function layoutPledgeTrack() {
+  pledgeDistance = Math.max(0, pledgeList.scrollWidth - pledgeViewport.clientWidth);
+  pledgeTrack.style.height = `${pledgeSticky.offsetHeight + pledgeDistance}px`;
+  movePledges();
+}
+
+// При изключени анимации остава обикновена лента, която се плъзга с пръст
+if (!reduceMotion) {
+  pledgeTrack.classList.add("is-pinned");
+  layoutPledgeTrack();
+  window.addEventListener("resize", layoutPledgeTrack);
+  window.addEventListener("load", layoutPledgeTrack); // шрифтовете може да сменят височината
+  window.addEventListener("scroll", () => {
+    if (pledgeQueued) return;
+    pledgeQueued = true;
+    requestAnimationFrame(movePledges);
+  }, { passive: true });
+
+  // С Tab до карта, която е извън екрана: скролваме така, че картата да дойде в средата
+  pledgeList.addEventListener("focusin", (event) => {
+    if (pledgeDistance === 0) return;
+    const card = event.target.closest(".pledge__card");
+    const wanted = card.offsetLeft - (pledgeViewport.clientWidth - card.offsetWidth) / 2;
+    const progress = clamp(wanted / pledgeDistance, 0, 1);
+    const trackTop = pledgeTrack.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({ top: trackTop - siteHeader.offsetHeight + progress * pledgeDistance, behavior: "instant" });
+  });
+}

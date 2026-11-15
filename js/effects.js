@@ -87,10 +87,42 @@ function splitIntoWords(element) {
   walk(element);
 }
 
+/* -----------------------------------------
+   Заглавия на секциите – буква по буква.
+   Всяка дума е в отделен <span> (за да не се къса на два реда),
+   а в нея всяка буква е <span class="letter"> с пореден номер --i.
+   Екранният четец чете целия текст от aria-label, а буквите пропуска.
+   ----------------------------------------- */
+function splitIntoLetters(element) {
+  const text = element.textContent.trim().replace(/\s+/g, " ");
+  element.setAttribute("aria-label", text);
+  element.textContent = "";
+
+  let index = 0;
+  text.split(" ").forEach((wordText, wordIndex) => {
+    if (wordIndex > 0) element.appendChild(document.createTextNode(" "));
+    const word = document.createElement("span");
+    word.className = "letters-word";
+    word.setAttribute("aria-hidden", "true");
+    Array.from(wordText).forEach((char) => {
+      const letter = document.createElement("span");
+      letter.className = "letter";
+      letter.style.setProperty("--i", index++);
+      letter.textContent = char;
+      word.appendChild(letter);
+    });
+    element.appendChild(word);
+  });
+}
+
 // При изключени анимации не разделяме – текстът си стои както е
 if (!reduceMotion) {
   document.querySelectorAll(".split-words").forEach((title) => {
     splitIntoWords(title);
+    revealObserver.observe(title);
+  });
+  document.querySelectorAll(".split-letters").forEach((title) => {
+    splitIntoLetters(title);
     revealObserver.observe(title);
   });
 }
@@ -135,6 +167,7 @@ document.querySelectorAll('img[loading="lazy"]').forEach((img) => {
    ----------------------------------------- */
 const heroContent = document.querySelector(".hero__content");
 const parallaxPhotos = document.querySelectorAll(".statement__bg");
+const growingTexts = document.querySelectorAll(".statement__text");
 let parallaxQueued = false;
 
 function updateParallax() {
@@ -155,6 +188,15 @@ function updateParallax() {
     const progress = (rect.top + rect.height / 2 - viewHeight / 2) / (viewHeight / 2 + rect.height / 2);
     photo.style.transform = `translateY(${progress * 8}%)`;
   });
+
+  // Големите изречения растат, докато стигнат средата на екрана,
+  // и леко се смаляват след това (от 0.9 до 1.04)
+  growingTexts.forEach((text) => {
+    const rect = text.getBoundingClientRect();
+    if (rect.bottom < 0 || rect.top > viewHeight) return;
+    const fromCenter = Math.abs(rect.top + rect.height / 2 - viewHeight / 2) / viewHeight; // 0 = в средата
+    text.style.setProperty("--grow", (1.04 - clamp(fromCenter, 0, 1) * 0.14).toFixed(3));
+  });
 }
 
 if (!reduceMotion) {
@@ -174,3 +216,20 @@ if (!reduceMotion) {
 document.querySelectorAll(".marquee__track").forEach((track) => {
   track.append(...Array.from(track.children, (item) => item.cloneNode(true)));
 });
+
+/* -----------------------------------------
+   ЦВЕТЪТ НА ФОНА СЕ ПРЕЛИВА
+   Секцията в средата на екрана казва своя цвят (--mood),
+   а CSS плавно преминава към него (@property --tint).
+   ----------------------------------------- */
+const tintObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      const mood = getComputedStyle(entry.target).getPropertyValue("--mood").trim();
+      document.body.style.setProperty("--tint", mood || "rgba(0, 0, 0, 0)");
+    });
+  },
+  { rootMargin: "-45% 0px -50% 0px" }
+);
+document.querySelectorAll("main > section").forEach((section) => tintObserver.observe(section));

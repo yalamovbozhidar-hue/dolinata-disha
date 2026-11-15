@@ -22,12 +22,28 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Unbounded:wght@600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <!-- Отбелязваме, че JavaScript работи – само тогава CSS скрива елементите за анимациите -->
-  <script>document.documentElement.classList.add("js");</script>
+  <script>
+    document.documentElement.classList.add("js");
+    // Въведението „Вдишай… издишай“ се показва само първия път в този раздел на браузъра
+    try {
+      if (sessionStorage.getItem("dolinata-intro")) document.documentElement.classList.add("no-intro");
+      else sessionStorage.setItem("dolinata-intro", "1");
+    } catch (error) {
+      // Без sessionStorage просто го показваме
+    }
+  </script>
 </head>
 <body>
 
   <!-- Скрит линк: появява се при първото натискане на Tab и прескача менюто -->
   <a class="skip-link" href="#content">Към съдържанието</a>
+
+  <!-- Въведение: кръг, който „диша“, и две думи. Само CSS – изчезва само след 2 секунди. -->
+  <div class="intro" aria-hidden="true">
+    <span class="intro__circle"></span>
+    <p class="intro__word intro__word--in">Вдишай…</p>
+    <p class="intro__word intro__word--out">издишай.</p>
+  </div>
 
   <!-- Небето над долината: фон зад целия сайт, рисува се от js/hero.js -->
   <canvas class="sky" id="sky" aria-hidden="true"></canvas>
@@ -55,10 +71,15 @@
       <ul class="nav__menu" id="nav-menu">
         <li><a href="#problem" class="nav__link">Проблемът</a></li>
         <li><a href="#simulator" class="nav__link">Изчисти небето</a></li>
-        <li><a href="#fire" class="nav__link">Огън и отпадъци</a></li>
+        <li><a href="#fire" class="nav__link">Заплахи</a></li>
         <li><a href="#game" class="nav__link">Игра</a></li>
         <li><a href="#gallery" class="nav__link">Галерия</a></li>
         <li><a href="#action" class="nav__link nav__link--cta">Действай</a></li>
+        <!-- Звукът на долината (js/sound.js) – изключен, докато не го пуснеш -->
+        <li><button class="nav__sound" id="sound-toggle" type="button" aria-pressed="false">
+          <span class="nav__sound-icon" aria-hidden="true">🔈</span>
+          <span class="nav__sound-label">Звук на долината</span>
+        </button></li>
       </ul>
     </nav>
   </header>
@@ -88,7 +109,7 @@
     <section class="section problem" id="problem">
       <div class="container">
         <p class="section__eyebrow">Проблем №1</p>
-        <h2 class="section__title split-words">Зимният смог над Казанлък</h2>
+        <h2 class="section__title split-letters">Зимният смог над Казанлък</h2>
         <p class="section__lead">
           Всяка зима над града се събира сив похлупак. Причината не е само в това,
           какво горим, а и в това <strong>къде</strong> живеем.
@@ -196,6 +217,106 @@
       </div>
     </section>
 
+    <!-- ===== КАК СТАВА ИНВЕРСИЯТА (js/story.js) =====
+         Рисунката стои на място, а при скрол минават три стъпки. -->
+    <section class="section story" id="inversion">
+      <div class="container">
+        <p class="section__eyebrow">Как става</p>
+        <h2 class="section__title split-letters">Капанът на инверсията</h2>
+        <p class="section__lead">Скролни бавно – рисунката показва какво става с въздуха над Казанлък за едно денонощие.</p>
+
+        <div class="story__layout">
+          <div class="story__sticky">
+            <svg class="story__svg" id="story-svg" viewBox="0 0 600 380" data-step="1" role="img" aria-labelledby="story-svg-title">
+              <title id="story-svg-title">Напречен разрез на котловината: Стара планина вляво, Средна гора вдясно и градът на дъното</title>
+              <defs>
+                <linearGradient id="story-day" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f6fb8"/><stop offset="1" stop-color="#a9d4f2"/></linearGradient>
+                <linearGradient id="story-night" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1330"/><stop offset="1" stop-color="#3a3366"/></linearGradient>
+                <linearGradient id="story-morning" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5d7aa6"/><stop offset="1" stop-color="#e9c2a6"/></linearGradient>
+              </defs>
+
+              <!-- Небето: три варианта, които се сменят плавно -->
+              <rect class="story__sky" width="600" height="380" fill="url(#story-day)"/>
+              <rect class="story__sky s2" width="600" height="380" fill="url(#story-night)"/>
+              <rect class="story__sky s3" width="600" height="380" fill="url(#story-morning)"/>
+
+              <!-- Звезди нощем -->
+              <g class="story__stars s2">
+                <circle cx="80" cy="40" r="1.6"/><circle cx="150" cy="70" r="1.2"/><circle cx="230" cy="30" r="1.8"/>
+                <circle cx="300" cy="60" r="1.2"/><circle cx="360" cy="25" r="1.5"/><circle cx="430" cy="55" r="1.2"/>
+                <circle cx="520" cy="35" r="1.7"/><circle cx="260" cy="95" r="1.1"/><circle cx="470" cy="100" r="1.3"/>
+              </g>
+
+              <!-- Слънцето: високо денем, бледо и ниско сутрин -->
+              <circle class="story__sun" cx="470" cy="70" r="26"/>
+
+              <!-- Планините: Стара планина вляво (север), Средна гора вдясно (юг) -->
+              <path class="story__mountain" d="M0 380 V110 L50 80 L95 120 L140 172 L190 248 L232 300 V380 Z"/>
+              <path class="story__mountain" d="M600 380 V140 L560 118 L515 150 L470 196 L420 262 L368 300 V380 Z"/>
+              <text class="story__area" x="14" y="70">Стара планина</text>
+              <text class="story__area" x="586" y="106" text-anchor="end">Средна гора</text>
+              <rect class="story__floor" y="300" width="600" height="80"/>
+
+              <!-- Студеният пласт на дъното – точно между двата склона -->
+              <path class="story__pool s2 s3" d="M180 232 H442 L368 300 H232 Z"/>
+
+              <!-- Капакът: по-топъл въздух над студения пласт (сутрин) -->
+              <path class="story__lid s3" d="M156 196 H470 L446 228 H177 Z"/>
+              <text class="story__label story__label--lid s3" x="300" y="186">по-топъл въздух – капак</text>
+
+              <!-- Студеният въздух се стича по склоновете (вечер) -->
+              <g class="story__cold s2 s3">
+                <path d="M62 96 L184 226"/><path d="M548 108 L424 232"/>
+              </g>
+              <text class="story__label story__label--cold s2" x="300" y="215">студеният въздух се стича надолу</text>
+
+              <!-- Топлият въздух се издига (денем) -->
+              <g class="story__warm s1">
+                <path d="M262 262 V150"/><path d="M300 250 V125"/><path d="M338 262 V150"/>
+                <text x="300" y="112">топлият въздух се издига</text>
+              </g>
+
+              <!-- Градът: къщи с комини -->
+              <g class="story__houses">
+                <path d="M248 300 v-16 l12 -10 l12 10 v16 Z"/><rect x="264" y="270" width="4" height="9"/>
+                <path d="M284 300 v-20 l14 -12 l14 12 v20 Z"/><rect x="302" y="262" width="4" height="11"/>
+                <path d="M324 300 v-15 l11 -9 l11 9 v15 Z"/><rect x="338" y="272" width="4" height="8"/>
+              </g>
+
+              <!-- Димът: денем се издига високо, сутрин остава под капака -->
+              <g class="story__smoke story__smoke--rise s1">
+                <circle cx="266" cy="268" r="6"/><circle cx="304" cy="260" r="7"/><circle cx="340" cy="270" r="6"/>
+                <circle cx="266" cy="268" r="6"/><circle cx="304" cy="260" r="7"/><circle cx="340" cy="270" r="6"/>
+              </g>
+              <g class="story__smoke story__smoke--trapped s3">
+                <ellipse cx="300" cy="244" rx="120" ry="16"/>
+                <circle cx="266" cy="268" r="6"/><circle cx="304" cy="260" r="7"/><circle cx="340" cy="270" r="6"/>
+              </g>
+              <text class="story__label story__label--smog s3" x="300" y="330">смогът остава над града</text>
+            </svg>
+          </div>
+
+          <div class="story__steps">
+            <article class="story__step" data-step="1">
+              <p class="story__time">1 · Денем</p>
+              <h3>Топлото отнася дима</h3>
+              <p>Слънцето затопля земята, а тя – въздуха до нея. Топлият въздух е по-лек, издига се и отнася дима нагоре, където вятърът го разнася.</p>
+            </article>
+            <article class="story__step" data-step="2">
+              <p class="story__time">2 · Вечер и нощем</p>
+              <h3>Студеното се стича надолу</h3>
+              <p>Земята изстива бързо. Студеният въздух е по-тежък – той се стича по склоновете на Балкана и Средна гора и се събира на дъното на котловината, точно над града.</p>
+            </article>
+            <article class="story__step" data-step="3">
+              <p class="story__time">3 · Сутрин</p>
+              <h3>Капакът се затваря</h3>
+              <p>Над студения пласт остава по-топъл въздух. Той е като капак: димът от комините се издига, удря се в него и остава долу. Това е температурната инверсия. В тихите зимни дни без вятър капакът не се отваря с часове.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ===== ИЗРЕЧЕНИЕ НА ЦЯЛ ЕКРАН ===== -->
     <section class="statement statement--photo">
       <!-- Снимката на долината е фон; при скрол се движи по-бавно (parallax в js/effects.js) -->
@@ -218,7 +339,7 @@
     <section class="section map-section" id="map">
       <div class="container">
         <p class="section__eyebrow">Картата</p>
-        <h2 class="section__title split-words">Долината отгоре</h2>
+        <h2 class="section__title split-letters">Долината отгоре</h2>
         <p class="section__lead">
           Стара планина на север, Средна гора на юг, а помежду им – Казанлък.
           Натисни точка на картата, за да научиш повече.
@@ -264,8 +385,8 @@
               <text class="valley-map__area" x="40" y="440">Средна гора</text>
 
               <!-- Река Тунджа и язовир „Копринка“ -->
-              <path class="valley-map__river" d="M0 268 C80 262 160 290 250 284 C330 280 360 304 430 308 C500 312 560 318 640 312 C700 308 750 326 800 332"/>
-              <ellipse class="valley-map__lake" cx="296" cy="284" rx="46" ry="15"/>
+              <path class="valley-map__river" d="M0 266 C90 262 190 270 258 262 L350 262 C380 266 400 296 440 302 C510 312 570 318 640 312 C700 308 750 326 800 332"/>
+              <ellipse class="valley-map__lake" cx="304" cy="262" rx="46" ry="14"/>
               <text class="valley-map__river-name" x="660" y="340">р. Тунджа</text>
 
               <!-- Похлупакът: зиме смогът стои над града -->
@@ -288,8 +409,8 @@
                     style="--x: 49.12%; --y: 17.39%" aria-pressed="false" aria-controls="map-info">
               <span class="map-pin__label">Бузлуджа</span>
             </button>
-            <button class="map-pin map-pin--water" type="button" data-place="koprinka"
-                    style="--x: 37.00%; --y: 61.74%" aria-pressed="false" aria-controls="map-info">
+            <button class="map-pin map-pin--water map-pin--below" type="button" data-place="koprinka"
+                    style="--x: 38.00%; --y: 56.96%" aria-pressed="false" aria-controls="map-info">
               <span class="map-pin__label">Язовир „Копринка“</span>
             </button>
             <button class="map-pin map-pin--small" type="button" data-place="maglizh"
@@ -299,6 +420,10 @@
             <button class="map-pin map-pin--fire" type="button" data-place="fire"
                     style="--x: 60.75%; --y: 60.00%" aria-pressed="false" aria-controls="map-info">
               <span class="map-pin__label">Пожарът 2023</span>
+            </button>
+            <button class="map-pin map-pin--factory" type="button" data-place="kastamonu"
+                    style="--x: 23.62%; --y: 46.96%" aria-pressed="false" aria-controls="map-info">
+              <span class="map-pin__label">„Кастамону“</span>
             </button>
           </div>
 
@@ -320,7 +445,7 @@
     <section class="section simulator" id="simulator">
       <div class="container">
         <p class="section__eyebrow">Интерактивно</p>
-        <h2 class="section__title split-words">Изчисти небето над Казанлък</h2>
+        <h2 class="section__title split-letters">Изчисти небето над Казанлък</h2>
         <p class="section__lead">Промени навиците на града и виж как се променя въздухът.</p>
 
         <div class="sim">
@@ -345,6 +470,7 @@
               <label class="check"><input type="checkbox" data-effect="10"> Изолирани домове</label>
               <label class="check"><input type="checkbox" data-effect="10"> Никой не гори боклук</label>
               <label class="check"><input type="checkbox" data-effect="10"> Повече пеша и с колело</label>
+              <label class="check"><input type="checkbox" data-effect="10"> Заводите ползват добри филтри</label>
             </fieldset>
 
             <div class="meter" aria-hidden="true">
@@ -376,7 +502,7 @@
     <section class="section threats" id="fire">
       <div class="container">
         <p class="section__eyebrow">Още заплахи</p>
-        <h2 class="section__title split-words">Огън и отпадъци</h2>
+        <h2 class="section__title split-letters">Огън и отпадъци</h2>
 
         <div class="threats__grid">
           <article class="threat threat--fire reveal">
@@ -414,8 +540,133 @@
               <h3>Нерегламентирани сметища</h3>
               <p class="threat__stat">Строителни отпадъци, гуми, пластмаса</p>
               <p>В РИОСВ – Стара Загора редовно постъпват сигнали за незаконно изхвърлени отпадъци около Казанлък. Когато такова сметище се запали, димът отново остава в долината.</p>
-              <a class="link" href="https://stz.riew.gov.bg/" target="_blank" rel="noopener">Подай сигнал в РИОСВ →</a>
+              <a class="link" href="https://riosv-stz.bg/" target="_blank" rel="noopener">Подай сигнал в РИОСВ →</a>
             </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== ЗАВОДИТЕ =====
+         Числа и твърдения – само с източник. По „Кастамону“ има спор,
+         затова показваме какво казва всяка страна. -->
+    <section class="section industry" id="industry">
+      <div class="container">
+        <p class="section__eyebrow">Промишлеността</p>
+        <h2 class="section__title split-letters">Заводите в долината</h2>
+        <p class="section__lead">
+          Фините прахови частици идват основно от три места: <strong>отоплението с твърдо гориво,
+          промишлеността и транспорта</strong>. Затова освен за комините на къщите трябва да говорим и за заводите.
+        </p>
+        <p class="source">Източник: <a href="https://www.eea.europa.eu/en/analysis/publications/europes-air-quality-status-2024" target="_blank" rel="noopener">Европейска агенция за околна среда, 2024</a></p>
+
+        <div class="industry__layout">
+          <!-- Рисунка (SVG), а не снимка: свободни снимки на заводите в долината няма -->
+          <figure class="industry__art reveal">
+            <svg viewBox="0 0 520 340" role="img" aria-labelledby="industry-art-title">
+              <title id="industry-art-title">Рисунка: завод с два комина и филтър, а до него – станция, която измерва въздуха</title>
+              <defs>
+                <linearGradient id="industry-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a3a5c"/><stop offset="1" stop-color="#c9a48f"/></linearGradient>
+              </defs>
+              <rect width="520" height="340" fill="url(#industry-sky)"/>
+              <path class="industry__hill" d="M0 250 C90 200 170 230 260 205 C350 180 430 220 520 196 V340 H0 Z"/>
+              <!-- Димът от комините -->
+              <g class="industry__smoke">
+                <circle cx="150" cy="70" r="14"/><circle cx="150" cy="70" r="14"/><circle cx="150" cy="70" r="14"/>
+                <circle cx="210" cy="92" r="12"/><circle cx="210" cy="92" r="12"/><circle cx="210" cy="92" r="12"/>
+              </g>
+              <!-- Заводът -->
+              <g class="industry__plant">
+                <rect x="140" y="78" width="20" height="160"/>
+                <rect x="200" y="100" width="20" height="138"/>
+                <path d="M90 300 V200 l50 -28 v28 l50 -28 v28 l50 -28 v28 l50 -28 V300 Z"/>
+                <rect x="60" y="240" width="300" height="60"/>
+              </g>
+              <!-- Филтърът (кутията при комина) -->
+              <rect class="industry__filter" x="226" y="186" width="44" height="40" rx="4"/>
+              <text class="industry__tag" x="248" y="178">филтър</text>
+              <!-- Станцията за измерване и сигналът ѝ -->
+              <g class="industry__station">
+                <rect x="410" y="246" width="54" height="54" rx="4"/>
+                <path d="M437 246 V206"/>
+                <circle cx="437" cy="200" r="5"/>
+              </g>
+              <g class="industry__waves">
+                <path d="M450 190 a16 16 0 0 1 0 22"/><path d="M458 182 a28 28 0 0 1 0 38"/>
+              </g>
+              <text class="industry__tag" x="437" y="322">измерване</text>
+              <rect class="industry__ground" y="300" width="520" height="40"/>
+            </svg>
+            <figcaption>Рисунка – не е снимка на конкретен завод.</figcaption>
+          </figure>
+
+          <div class="industry__case reveal">
+            <h3 class="industry__case-title">Случаят „Кастамону“</h3>
+            <p class="industry__case-lead">
+              Заводът за плочи от дървесина на „Кастамону България“ АД е в с. Горно Сахране, община Павел баня
+              (ул. „Шипченска епопея“ 24) – в западната част на долината.
+              <a href="https://www.kastamonuentegre.com/" target="_blank" rel="noopener">Сайт на фирмата</a>
+            </p>
+            <ol class="timeline">
+              <li>
+                <time>януари 2023</time>
+                <p>РИОСВ одобрява доклада за ОВОС за разширяване на завода с нова инсталация за формалин.
+                Десетки жители протестират пред завода и обжалват решението.
+                <a class="timeline__src" href="https://utroruse.com/article/899855/" target="_blank" rel="noopener">БТА</a></p>
+              </li>
+              <li>
+                <time>февруари 2023</time>
+                <p>Кметът на Казанлък и местен бизнес осигуряват три станции за измерване на въздуха –
+                при Голямо Дряново, язовир „Копринка“ и в общината.
+                <a class="timeline__src" href="https://www.kazanlak.bg/otnosno-razshiryavaneto-na-instalatsiyata-na-kastamonu-kmetat-galina-stoyanova-savmestno-sas-zainteresovaniya-mesten-biznes-predpriemat-merki-za-zakupuvane-na-tri-izmervatelni-stantsii-na-kachestvoto" target="_blank" rel="noopener">Община Казанлък</a></p>
+              </li>
+              <li>
+                <time>март 2023</time>
+                <p>РИОСВ определя изводите в сигнал на сдружение „България за чиста Розова долина“
+                за формалдехид като „неверни и заблуждаващи“.
+                <a class="timeline__src" href="https://www.bta.bg/bg/news/bulgaria/433655-spored-riosv-stara-zagora-izlozhenite-v-signala-na-mestno-sdruzhenie-izvodi-za" target="_blank" rel="noopener">БТА</a></p>
+              </li>
+              <li>
+                <time>февруари 2025</time>
+                <p>След нов сигнал РИОСВ проверява завода: филтърът работи, а емисиите са в нормите.
+                Данните от станциите извън националната система инспекцията не приема за надеждни.
+                <a class="timeline__src" href="https://www.focus-news.net/novini/regioni/RIOSV-Stara-Zagora-kum-Obshtina-Kazanluk-Ne-sa-dostoverni-dannite-ot-stanciite-za-zamursyavane-na-vuzduha-s-formaldehid-2462741" target="_blank" rel="noopener">Фокус</a></p>
+              </li>
+            </ol>
+            <p class="industry__takeaway">
+              Жителите се тревожат, а фирмата и РИОСВ казват, че нормите се спазват.
+              Точно затова въздухът трябва да се измерва <strong>надеждно и открито</strong> – тогава спорът се решава с данни.
+              Снимки от протестите и от завода има в статиите в източниците.
+            </p>
+          </div>
+        </div>
+
+        <h3 class="industry__subtitle">Какво можем да направим</h3>
+        <div class="actions">
+          <article class="action-card reveal">
+            <span class="action-card__icon" aria-hidden="true">📞</span>
+            <h4>Подай сигнал</h4>
+            <p>Дим, миризма или изхвърлени отпадъци? „Зелен телефон“ на РИОСВ – Стара Загора:
+            <a href="tel:+35942692200">042 692 200</a> (в работно време) и <a href="tel:+359885632494">0885 632 494</a> (извън него).</p>
+            <a class="link" href="https://riosv-stz.bg/" target="_blank" rel="noopener">Сайт на РИОСВ →</a>
+          </article>
+          <article class="action-card reveal">
+            <span class="action-card__icon" aria-hidden="true">📊</span>
+            <h4>Следи данните</h4>
+            <p>Изпълнителната агенция по околна среда публикува всеки ден бюлетин за качеството на въздуха в страната.</p>
+            <a class="link" href="https://riosv-stz.bg/info/192/ezhednevni-byuletini-za-sastoyanieto-na-vazduha" target="_blank" rel="noopener">Към бюлетина →</a>
+          </article>
+          <article class="action-card reveal">
+            <span class="action-card__icon" aria-hidden="true">🗣️</span>
+            <h4>Кажи мнението си</h4>
+            <p>Преди нов завод или разширение има оценка на въздействието върху околната среда (ОВОС).
+            Решението може да се обжалва – както направиха жителите през 2023 г.</p>
+          </article>
+          <article class="action-card reveal">
+            <span class="action-card__icon" aria-hidden="true">📡</span>
+            <h4>Повече официални станции</h4>
+            <p>РИОСВ приема само данни от станции в националната система. Повече такива станции в долината
+            значат надеждни данни за всички.</p>
           </article>
         </div>
       </div>
@@ -436,7 +687,7 @@
     <section class="section game" id="game">
       <div class="container">
         <p class="section__eyebrow">Мини игра</p>
-        <h2 class="section__title split-words">Сортирай отпадъците</h2>
+        <h2 class="section__title split-letters">Сортирай отпадъците</h2>
         <p class="section__lead">
           Хвани падащите отпадъци и ги пусни в правилния контейнер, преди да паднат на земята.
           Имаш 60 секунди, а отпадъците падат все по-бързо.
@@ -495,7 +746,7 @@
     <section class="section gallery" id="gallery">
       <div class="container">
         <p class="section__eyebrow">Галерия</p>
-        <h2 class="section__title split-words">Долината, която пазим</h2>
+        <h2 class="section__title split-letters">Долината, която пазим</h2>
         <p class="section__lead">
           Розите, язовирът, планините – ето заради какво си струва да пазим въздуха чист.
           Плъзни лентата и натисни снимка, за да я видиш в пълен размер.
@@ -576,21 +827,62 @@
     <section class="section action" id="action">
       <div class="container">
         <p class="section__eyebrow">Твоят ход</p>
-        <h2 class="section__title split-words">Какво мога да направя аз?</h2>
-        <p class="section__lead">Отбележи нещата, които обещаваш да правиш.</p>
+        <h2 class="section__title split-letters">Какво мога да направя аз?</h2>
+        <p class="section__lead">Отбележи нещата, които обещаваш да правиш – с всяко обещание долината разцъфва.</p>
 
-        <ul class="pledge" id="pledge">
-          <li><label class="pledge__item"><input type="checkbox"> <span>Ще кажа на семейството си да гори само сухи дърва</span></label></li>
-          <li><label class="pledge__item"><input type="checkbox"> <span>Никога няма да горя боклук или пластмаса</span></label></li>
-          <li><label class="pledge__item"><input type="checkbox"> <span>Няма да паля огън в гората и сухи треви</span></label></li>
-          <li><label class="pledge__item"><input type="checkbox"> <span>Ще сигнализирам, когато видя сметище</span></label></li>
-          <li><label class="pledge__item"><input type="checkbox"> <span>Ще ходя повече пеша и с колело</span></label></li>
-        </ul>
+        <!-- Картите се движат настрани, докато скролваш (js/pledge.js).
+             Без JS или при изключени анимации – лента, която се плъзга с пръст. -->
+        <div class="pledge-track" id="pledge-track">
+          <div class="pledge-track__sticky" id="pledge-sticky">
+            <div class="pledge__viewport" id="pledge-viewport">
+              <ul class="pledge" id="pledge">
+              <li class="pledge__card">
+                <label class="pledge__item">
+                  <span class="pledge__num">01</span>
+                  <span class="pledge__icon" aria-hidden="true">🏠</span>
+                  <span class="pledge__text">Ще кажа на семейството си да гори само сухи дърва</span>
+                  <span class="pledge__check"><input type="checkbox"> Обещавам</span>
+                </label>
+              </li>
+              <li class="pledge__card">
+                <label class="pledge__item">
+                  <span class="pledge__num">02</span>
+                  <span class="pledge__icon" aria-hidden="true">🚯</span>
+                  <span class="pledge__text">Никога няма да горя боклук или пластмаса</span>
+                  <span class="pledge__check"><input type="checkbox"> Обещавам</span>
+                </label>
+              </li>
+              <li class="pledge__card">
+                <label class="pledge__item">
+                  <span class="pledge__num">03</span>
+                  <span class="pledge__icon" aria-hidden="true">🌲</span>
+                  <span class="pledge__text">Няма да паля огън в гората и сухи треви</span>
+                  <span class="pledge__check"><input type="checkbox"> Обещавам</span>
+                </label>
+              </li>
+              <li class="pledge__card">
+                <label class="pledge__item">
+                  <span class="pledge__num">04</span>
+                  <span class="pledge__icon" aria-hidden="true">📞</span>
+                  <span class="pledge__text">Ще сигнализирам, когато видя сметище</span>
+                  <span class="pledge__check"><input type="checkbox"> Обещавам</span>
+                </label>
+              </li>
+              <li class="pledge__card">
+                <label class="pledge__item">
+                  <span class="pledge__num">05</span>
+                  <span class="pledge__icon" aria-hidden="true">🚲</span>
+                  <span class="pledge__text">Ще ходя повече пеша и с колело</span>
+                  <span class="pledge__check"><input type="checkbox"> Обещавам</span>
+                </label>
+              </li>
+              </ul>
+            </div>
 
-        <div class="pledge__progress">
-          <div class="pledge__bar"><div class="pledge__fill" id="pledge-fill"></div></div>
-          <p id="pledge-text" role="status">0 от 5 обещания</p>
-        </div>
+            <div class="pledge__progress">
+              <div class="pledge__bar"><div class="pledge__fill" id="pledge-fill"></div></div>
+              <p id="pledge-text" role="status">0 от 5 обещания</p>
+            </div>
 
         <!-- Розовото поле: с всяко обещание цъфтят още рози.
              Розите се добавят от js/pledge.js. -->
@@ -599,6 +891,8 @@
             <path class="rose-field__hill rose-field__hill--far" d="M0 150 Q200 112 400 140 T800 128 V200 H0 Z"/>
             <path class="rose-field__hill" d="M0 172 Q220 146 420 168 T800 158 V200 H0 Z"/>
           </svg>
+        </div>
+          </div>
         </div>
       </div>
     </section>
@@ -620,7 +914,12 @@
         Източници: <a href="https://stz.riew.gov.bg/files/File/II.1%20%D0%9A%D0%90%D0%A7%D0%95%D0%A1%D0%A2%D0%92%D0%9E%20%D0%9D%D0%90%20%D0%90%D0%A2%D0%9C%D0%9E%D0%A1%D0%A4%D0%95%D0%A0%D0%9D%D0%98%D0%AF%20%D0%92%D0%AA%D0%97%D0%94%D0%A3%D0%A5.pdf" target="_blank" rel="noopener">РИОСВ – Стара Загора</a>,
         <a href="https://www.capital.bg/kakvo_stava/2017/04/05/2948185_bulgariia_beshe_osudena_v_ljuksemburg_zaradi_mrusniia/" target="_blank" rel="noopener">„Капитал“</a>,
         <a href="https://www.bgonair.bg/a/2-bulgaria/316629-chastichno-bedstveno-polozhenie-pozharat-mezhdu-kazanlak-i-maglizh-obhvana-500-dka" target="_blank" rel="noopener">Bgonair</a>,
-        <a href="https://btvnovinite.bg/bulgaria/golemijat-gorski-pozhar-mezhdu-kazanlak-i-maglizh-e-chastichno-ovladjan.html" target="_blank" rel="noopener">bTV</a>.
+        <a href="https://btvnovinite.bg/bulgaria/golemijat-gorski-pozhar-mezhdu-kazanlak-i-maglizh-e-chastichno-ovladjan.html" target="_blank" rel="noopener">bTV</a>,
+        <a href="https://www.eea.europa.eu/en/analysis/publications/europes-air-quality-status-2024" target="_blank" rel="noopener">ЕАОС</a>,
+        <a href="https://utroruse.com/article/899855/" target="_blank" rel="noopener">БТА (2023)</a>,
+        <a href="https://www.kazanlak.bg/otnosno-razshiryavaneto-na-instalatsiyata-na-kastamonu-kmetat-galina-stoyanova-savmestno-sas-zainteresovaniya-mesten-biznes-predpriemat-merki-za-zakupuvane-na-tri-izmervatelni-stantsii-na-kachestvoto" target="_blank" rel="noopener">Община Казанлък</a>,
+        <a href="https://www.bta.bg/bg/news/bulgaria/433655-spored-riosv-stara-zagora-izlozhenite-v-signala-na-mestno-sdruzhenie-izvodi-za" target="_blank" rel="noopener">БТА (март 2023)</a>,
+        <a href="https://www.focus-news.net/novini/regioni/RIOSV-Stara-Zagora-kum-Obshtina-Kazanluk-Ne-sa-dostoverni-dannite-ot-stanciite-za-zamursyavane-na-vuzduha-s-formaldehid-2462741" target="_blank" rel="noopener">„Фокус“ (2025)</a>.
       </p>
       <a href="#home" class="footer__top" aria-label="Към началото">↑</a>
       <!-- Снимките са от Wikimedia Commons – посочваме автора и лиценза, както изисква лицензът -->
@@ -653,5 +952,8 @@
   <script src="js/map.js" defer></script>
   <script src="js/gallery.js" defer></script>
   <script src="js/pledge.js" defer></script>
+  <script src="js/story.js" defer></script>
+  <script src="js/cursor.js" defer></script>
+  <script src="js/sound.js" defer></script>
 </body>
 </html>

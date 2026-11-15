@@ -44,13 +44,36 @@ body {
 html { scrollbar-color: #3d7a57 var(--c-bg); }
 
 /* Тъмни краища на екрана (винетка) – като на кино */
+/* --tint е цветът на секцията в средата на екрана (js/effects.js).
+   @property го прави „истински“ цвят – затова може плавно да преминава. */
+@property --tint {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(0, 0, 0, 0);
+}
+body { transition: --tint 1.5s ease; }
+
+/* Тъмни краища на екрана (винетка) и меко сияние в цвета на секцията */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.45) 100%);
+  background:
+    radial-gradient(ellipse 120% 55% at 50% 100%, color-mix(in srgb, var(--tint) 20%, transparent), transparent 70%),
+    radial-gradient(ellipse 80% 40% at 50% 0%, color-mix(in srgb, var(--tint) 10%, transparent), transparent 70%),
+    radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.45) 100%);
+}
+
+/* Скрит за очите текст, който екранният четец пак чете */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 /* Филмово зърно: фин шум върху небето, под съдържанието */
@@ -101,7 +124,7 @@ main:focus { outline: none; }
   background: var(--c-accent);
   color: var(--c-bg);
   font-weight: 800;
-  transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out);
+  transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out), translate 0.35s var(--ease-out);
 }
 .btn { box-shadow: var(--glow); }
 .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(126, 224, 161, 0.55); }
@@ -135,7 +158,7 @@ main:focus { outline: none; }
 .header.is-scrolled {
   background: rgba(15, 26, 23, 0.85);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--c-border);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);   /* мека сянка вместо черта */
 }
 
 .nav {
@@ -193,7 +216,36 @@ main:focus { outline: none; }
 }
 .nav__link:hover,
 .nav__link.is-active { color: var(--c-text); background: var(--c-surface); }
-.nav__link--cta { color: var(--c-bg); background: var(--c-accent); box-shadow: var(--glow); }
+.nav__link--cta { color: var(--c-bg); background: var(--c-accent); box-shadow: var(--glow); transition: color 0.2s, background 0.2s, translate 0.35s var(--ease-out); }
+
+/* Звукът: на компютър само иконка, в менюто на телефона – с надпис */
+.nav__sound {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 40px;
+  min-width: 40px;
+  justify-content: center;
+  padding: 0 10px;
+  border: 1px solid var(--c-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--c-muted);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, translate 0.35s var(--ease-out);
+}
+.nav__sound:hover { background: var(--c-surface); color: var(--c-text); }
+.nav__sound[aria-pressed="true"] { border-color: var(--c-accent); color: var(--c-accent); }
+.nav__sound-label {   /* скрит за очите на компютър, но се чете */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 .nav__link--cta:hover,
 .nav__link--cta.is-active { color: var(--c-bg); background: var(--c-accent); }
 
@@ -243,6 +295,9 @@ main:focus { outline: none; }
   position: absolute;
   inset: 0;
   background: linear-gradient(90deg, rgba(8, 14, 22, 0.6) 0%, rgba(8, 14, 22, 0.3) 45%, rgba(8, 14, 22, 0) 70%);
+  /* отдолу сянката избледнява – иначе в края на началния екран остава черта */
+  -webkit-mask-image: linear-gradient(#000 60%, transparent);
+  mask-image: linear-gradient(#000 60%, transparent);
   pointer-events: none;
 }
 
@@ -339,40 +394,92 @@ main { counter-reset: section; }   /* номерата 01, 02… на секци
 
 .section {
   --mood: var(--c-accent);   /* цветът на настроението на секцията */
-  padding: 70px 0;
+  padding: calc(var(--ridge-h) + 60px) 0 150px;   /* място за билото отгоре и за прехода отдолу */
   counter-increment: section;
 }
 .problem { --mood: #e0b072; }     /* смог */
+.story { --mood: #a9c7ff; }       /* студен въздух */
+.industry { --mood: #c3a6ff; }    /* заводи */
+.statement--embers { --mood: #ff8a4c; }
+.statement--photo { --mood: #e0b072; }
 .simulator { --mood: #8cc8ff; }   /* небе */
 .threats { --mood: #ff8a4c; }     /* огън */
 .gallery,
 .action { --mood: #f59ac0; }      /* рози */
 
-/* Всяка секция е „стъклен“ панел над небето */
+/* -----------------------------------------
+   ФОНЪТ НА СЕКЦИИТЕ
+   Тъмен пласт, който започва с билото на планина (SVG маска),
+   а отдолу и встрани плавно се разтваря в небето – без резки ръбове.
+   Маската има три слоя:
+   1) хоризонтален преход – краищата встрани избледняват;
+   2) билото на планината – горният ръб;
+   3) вертикален преход – плътно под билото, прозрачно най-долу.
+   Слоеве 2 и 3 се събират (add), а 1 ги „отрязва“ встрани (intersect).
+   ----------------------------------------- */
+:root {
+  /* Две различни била – назъбено (Балкан) и меко (Средна гора) */
+  --ridge-a: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 110' preserveAspectRatio='none'%3E%3Cpath d='M0 110V78l60-12 50 8 60-24 60 12 60-22 60 18 70-28 60 22 60-8 60 20 60-28 70 20 70-32 60 26 70-8 70 20 60-24 70 20 60-12 60 20 70-26 60 20 60-8v58z'/%3E%3C/svg%3E");
+  --ridge-b: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 110' preserveAspectRatio='none'%3E%3Cpath d='M0 110V72c120-34 220 8 340-14s220-24 360 2 240-26 380-6 240 16 360-12v68z'/%3E%3C/svg%3E");
+  --ridge-h: 110px;
+  --band: rgba(13, 23, 20, 0.92);
+}
+
+.section,
+.footer {
+  --ridge: var(--ridge-a);
+  --fade-bottom: 180px;
+  --side: max(14px, calc(50% - 620px));   /* встрани избледнява само извън текста */
+  position: relative;
+  isolation: isolate;
+}
+.map-section,
+.threats,
+.gallery,
+.footer { --ridge: var(--ridge-b); }
+
+.section::before,
+.footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  /* Цветно сияние според настроението на секцията */
+  background:
+    radial-gradient(ellipse 45% 30% at 88% 14%, color-mix(in srgb, var(--mood) 15%, transparent), transparent 70%),
+    radial-gradient(ellipse 40% 25% at 8% 92%, color-mix(in srgb, var(--mood) 8%, transparent), transparent 70%),
+    var(--band);
+  -webkit-mask-image:
+    linear-gradient(90deg, transparent, #000 var(--side), #000 calc(100% - var(--side)), transparent),
+    var(--ridge),
+    linear-gradient(transparent calc(var(--ridge-h) - 2px), #000 calc(var(--ridge-h) - 2px), #000 calc(100% - var(--fade-bottom)), transparent);
+  -webkit-mask-size: 100% 100%, 100% var(--ridge-h), 100% 100%;
+  -webkit-mask-position: 0 0, 0 0, 0 0;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-composite: source-in, source-over;
+  mask-image:
+    linear-gradient(90deg, transparent, #000 var(--side), #000 calc(100% - var(--side)), transparent),
+    var(--ridge),
+    linear-gradient(transparent calc(var(--ridge-h) - 2px), #000 calc(var(--ridge-h) - 2px), #000 calc(100% - var(--fade-bottom)), transparent);
+  mask-size: 100% 100%, 100% var(--ridge-h), 100% 100%;
+  mask-position: 0 0, 0 0, 0 0;
+  mask-repeat: no-repeat;
+  mask-composite: intersect, add;
+}
+
+/* Съдържанието на секцията – вече без кутия около него */
 .section > .container {
   position: relative;
-  isolation: isolate;   /* украсите със z-index: -1 остават вътре в панела */
-  overflow: clip;
-  width: calc(100% - 40px);
-  padding: 64px 48px;
-  border: 1px solid color-mix(in srgb, var(--mood) 18%, transparent);
-  border-radius: 28px;
-  /* Без backdrop-filter: размазването над движещото се небе
-     се преизчислява всеки кадър и прави скрола накъсан.
-     Отгоре: цветно сияние в ъглите според настроението. */
-  background:
-    radial-gradient(ellipse 60% 45% at 100% 0%, color-mix(in srgb, var(--mood) 16%, transparent), transparent 70%),
-    radial-gradient(ellipse 50% 40% at 0% 100%, color-mix(in srgb, var(--mood) 7%, transparent), transparent 70%),
-    rgba(15, 26, 23, 0.88);
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+  isolation: isolate;   /* големият номер със z-index: -1 остава зад текста */
 }
 
 /* Голям прозрачен номер в ъгъла: 01, 02… */
 .section > .container::after {
   content: counter(section, decimal-leading-zero);
   position: absolute;
-  top: 28px;
-  right: 40px;
+  top: -12px;
+  right: 20px;
   z-index: -1;
   font-family: var(--f-head);
   font-weight: 800;
@@ -382,25 +489,6 @@ main { counter-reset: section; }   /* номерата 01, 02… на секци
   -webkit-text-stroke: 1.5px color-mix(in srgb, var(--mood) 28%, transparent);
   pointer-events: none;
 }
-
-/* Петно светлина, което следва мишката (позицията идва от js/tilt.js) */
-.section > .container::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -1;
-  width: 700px;
-  height: 700px;
-  margin: -350px 0 0 -350px;
-  border-radius: 50%;
-  background: radial-gradient(circle, color-mix(in srgb, var(--mood) 9%, transparent), transparent 65%);
-  translate: var(--mx, -9999px) var(--my, -9999px);
-  opacity: 0;
-  transition: opacity 0.6s;
-  pointer-events: none;
-}
-.section > .container:hover::before { opacity: 1; }
 
 .section__eyebrow {
   display: flex;
@@ -464,6 +552,20 @@ main { counter-reset: section; }   /* номерата 01, 02… на секци
   transition-delay: calc(var(--i) * 70ms);
 }
 .split-words.is-visible .word { opacity: 1; transform: none; filter: none; }
+/* Заглавията на секциите: буква по буква, всяка изплува отдолу с --i × 22ms закъснение.
+   Думата е цяла (nowrap), за да не се разделя на два реда. */
+.letters-word { display: inline-block; white-space: nowrap; }
+.letter {
+  display: inline-block;
+  opacity: 0;
+  translate: 0 0.55em;
+  transition:
+    opacity 0.6s var(--ease-out),
+    translate 0.8s var(--ease-out);
+  transition-delay: calc(var(--i) * 22ms);
+}
+.split-letters.is-visible .letter { opacity: 1; translate: none; }
+
 /* Голямото заглавие в началото се появява без размазване – по-спокойно */
 .hero__title .word { filter: none; }
 
@@ -519,13 +621,14 @@ main { counter-reset: section; }   /* номерата 01, 02… на секци
   padding: 80px 20px;
   text-align: center;
   /* Тъмен ореол зад текста, за да се чете върху всяко небе */
-  background: radial-gradient(ellipse at center, rgba(10, 18, 16, 0.65) 0%, rgba(10, 18, 16, 0) 70%);
+  background: radial-gradient(ellipse closest-side, rgba(10, 18, 16, 0.65), rgba(10, 18, 16, 0));
   text-shadow: 0 2px 30px rgba(0, 0, 0, 0.6);
 }
 
 .statement__text {
   max-width: 1000px;
   margin: 0 auto;
+  scale: var(--grow, 1);   /* расте към средата на екрана (js/effects.js) */
   font-family: var(--f-head);
   font-size: clamp(1.8rem, 5.5vw, 4.4rem);
   line-height: 1.12;
@@ -541,14 +644,17 @@ main { counter-reset: section; }   /* номерата 01, 02… на секци
   overflow: hidden;
   min-height: 100vh;
   background: none;
+  /* Горе и долу снимката се разтваря в небето – без черта */
+  -webkit-mask-image: linear-gradient(transparent, #000 18%, #000 82%, transparent);
+  mask-image: linear-gradient(transparent, #000 18%, #000 82%, transparent);
 }
 .statement__bg {
   position: absolute;
-  top: -10%;
+  top: -20%;
   left: 0;
   z-index: -2;
   width: 100%;
-  height: 120%;         /* по-висока, за да има място за parallax */
+  height: 140%;         /* по-висока, за да не се вижда краят ѝ при parallax */
   object-fit: cover;
 }
 .statement--photo::before {
@@ -559,10 +665,10 @@ main { counter-reset: section; }   /* номерата 01, 02… на секци
   background:
     radial-gradient(ellipse at center, rgba(10, 18, 16, 0.55) 0%, rgba(10, 18, 16, 0) 65%),
     linear-gradient(180deg,
-      rgba(15, 26, 23, 0.95) 0%,
-      rgba(15, 26, 23, 0.3) 30%,
+      rgba(15, 26, 23, 0.35) 0%,
+      rgba(15, 26, 23, 0.2) 35%,
       rgba(110, 96, 72, 0.45) 75%,   /* кафеникав „похлупак“ ниско над долината */
-      rgba(15, 26, 23, 0.95) 100%);
+      rgba(15, 26, 23, 0.35) 100%);
 }
 
 /* Вариант с огън: оранжево сияние отдолу и искри (canvas от js/fire.js) */
@@ -571,8 +677,10 @@ main { counter-reset: section; }   /* номерата 01, 02… на секци
   isolation: isolate;
   overflow: hidden;
   background:
-    radial-gradient(ellipse 90% 60% at 50% 115%, rgba(255, 106, 40, 0.6), rgba(140, 40, 10, 0.25) 50%, transparent 78%),
-    radial-gradient(ellipse at center, rgba(10, 18, 16, 0.7) 0%, rgba(10, 18, 16, 0) 70%);
+    radial-gradient(ellipse 80% 45% at 50% 82%, rgba(255, 106, 40, 0.45), rgba(140, 40, 10, 0.18) 50%, transparent 75%),
+    radial-gradient(ellipse closest-side, rgba(10, 18, 16, 0.65), rgba(10, 18, 16, 0));
+  -webkit-mask-image: linear-gradient(transparent, #000 15%, #000 85%, transparent);
+  mask-image: linear-gradient(transparent, #000 15%, #000 85%, transparent);
 }
 .embers {
   position: absolute;
@@ -906,6 +1014,9 @@ main { counter-reset: section; }   /* номерата 01, 02… на секци
 .map-pin--small::before { inset: 10px; }
 .map-pin--water { --pin: #8cc8ff; }
 .map-pin--fire { --pin: var(--c-fire); }
+.map-pin--factory { --pin: #c3a6ff; }
+/* Надписът под точката – за да не се застъпва със съседната */
+.map-pin--below .map-pin__label { bottom: auto; top: 100%; }
 
 .map-pin:hover::before,
 .map-pin[aria-pressed="true"]::before { inset: 5px; }
@@ -1550,30 +1661,66 @@ input[type="range"] {
 /* =========================================
    ДЕЙСТВАЙ – обещания
    ========================================= */
+/* Лентата с карти. Без JS – плъзга се с пръст (scroll-snap).
+   С JS (.is-pinned) лентата „залепва“ и се мести при скрол (js/pledge.js). */
+.pledge-track__sticky {
+  padding: 8px 0 12px;
+}
+.pledge-track.is-pinned .pledge-track__sticky {
+  position: sticky;
+  top: var(--header-h);
+}
+.pledge__viewport {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  margin-bottom: 24px;
+  padding: 10px 0;
+}
+.pledge__viewport::-webkit-scrollbar { display: none; }
+.pledge-track.is-pinned .pledge__viewport { overflow: clip; overflow-clip-margin: 12px; }
+
 .pledge {
   list-style: none;
-  display: grid;
-  gap: 12px;
-  max-width: 680px;
-  margin-bottom: 28px;
+  display: flex;
+  gap: 18px;
+  width: max-content;
+  will-change: transform;
 }
+.pledge__card { scroll-snap-align: start; }
 
 .pledge__item {
   display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 18px 20px;
+  flex-direction: column;
+  gap: 12px;
+  width: 290px;
+  min-height: 230px;
+  padding: 22px;
   background: var(--c-surface);
   border: 1px solid var(--c-border);
-  border-radius: 14px;
+  border-radius: var(--radius);
   cursor: pointer;
-  transition: border-color 0.3s, background 0.3s;
+  transition: border-color 0.3s, background 0.3s, box-shadow 0.3s, translate 0.4s var(--ease-out);
 }
-.pledge__item input { width: 22px; height: 22px; accent-color: var(--c-accent); flex-shrink: 0; }
+.pledge__item:hover { translate: 0 -4px; }
+.pledge__num { font-family: var(--f-head); font-weight: 800; color: var(--mood); }
+.pledge__icon { font-size: 2.2rem; line-height: 1; }
+.pledge__text { flex: 1; font-weight: 600; line-height: 1.4; }
+.pledge__check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--c-muted);
+  font-size: 0.9rem;
+}
+.pledge__check input { width: 22px; height: 22px; accent-color: var(--mood); flex-shrink: 0; }
 .pledge__item:has(input:checked) {
-  border-color: var(--c-accent);
-  background: rgba(126, 224, 161, 0.08);
+  border-color: var(--mood);
+  background: color-mix(in srgb, var(--mood) 10%, var(--c-surface));
+  box-shadow: 0 0 30px color-mix(in srgb, var(--mood) 25%, transparent);
 }
+.pledge__item:has(input:checked) .pledge__check { color: var(--mood); font-weight: 700; }
+.pledge__item:has(input:focus-visible) { outline: 3px solid var(--c-accent); outline-offset: 3px; }
 
 .pledge__progress { max-width: 680px; }
 .pledge__bar {
@@ -1634,9 +1781,9 @@ input[type="range"] {
    ФУТЪР
    ========================================= */
 .footer {
-  padding: 40px 0;
-  background: rgba(15, 26, 23, 0.9);
-  border-top: 1px solid var(--c-border);
+  --mood: #f59ac0;
+  --fade-bottom: 0px;   /* футърът е най-отдолу – не избледнява */
+  padding: calc(var(--ridge-h) + 50px) 0 40px;
   color: var(--c-muted);
 }
 .footer__inner {
@@ -1688,10 +1835,295 @@ input[type="range"] {
 }
 
 /* =========================================
+   ВЪВЕДЕНИЕ „ВДИШАЙ… ИЗДИШАЙ“
+   Само CSS: кръгът се разширява (вдишване) и свива (издишване),
+   думите се сменят, а след 2 секунди всичко изчезва.
+   ========================================= */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: grid;
+  place-items: center;
+  background: var(--c-bg);
+  pointer-events: none;
+  animation: intro-out 0.7s var(--ease-out) 1.6s forwards;
+}
+.no-intro .intro { display: none; }
+.intro__circle {
+  grid-area: 1 / 1;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 2px solid rgba(126, 224, 161, 0.6);
+  background: radial-gradient(circle, rgba(126, 224, 161, 0.25), transparent 70%);
+  box-shadow: var(--glow);
+  animation: intro-breathe 1.6s ease-in-out forwards;
+}
+.intro__word {
+  grid-area: 1 / 1;
+  font-family: var(--f-head);
+  font-size: 1.3rem;
+  color: var(--c-accent);
+  opacity: 0;
+}
+.intro__word--in { animation: intro-word 0.8s ease-in-out 0s forwards; }
+.intro__word--out { animation: intro-word 0.8s ease-in-out 0.8s forwards; }
+
+@keyframes intro-breathe {
+  from { scale: 0.5; }
+  50% { scale: 1.15; }
+  to { scale: 0.8; }
+}
+@keyframes intro-word {
+  30%, 70% { opacity: 1; }
+}
+@keyframes intro-out {
+  to { opacity: 0; visibility: hidden; }
+}
+
+/* =========================================
+   КАК СТАВА ИНВЕРСИЯТА
+   Рисунката е „залепена“, а стъпките минават покрай нея.
+   data-step на рисунката (js/story.js) казва кои части да се виждат:
+   .s1, .s2, .s3 – видими само в съответната стъпка.
+   ========================================= */
+.story__layout {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+.story__sticky {
+  position: sticky;
+  top: calc(var(--header-h) + 40px);
+}
+.story__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.story__svg .s1,
+.story__svg .s2,
+.story__svg .s3 { opacity: 0; transition: opacity 0.9s var(--ease-out); }
+.story__svg[data-step="1"] .s1,
+.story__svg[data-step="2"] .s2,
+.story__svg[data-step="3"] .s3 { opacity: 1; }
+
+.story__stars { fill: #fff; }
+.story__sun { fill: #ffe7a8; transition: translate 1.2s var(--ease-out), opacity 1s, fill 1s; }
+.story__svg[data-step="2"] .story__sun { translate: 0 260px; opacity: 0; }
+.story__svg[data-step="3"] .story__sun { translate: -330px 60px; fill: #f6d2b0; }
+
+.story__mountain { fill: #1f3a2f; }
+.story__floor { fill: #2a4a37; }
+.story__houses { fill: #10201b; }
+.story__area { fill: rgba(232, 239, 233, 0.8); font: 700 15px var(--f-body); }
+
+.story__warm path { stroke: #ff9d5c; stroke-width: 4; stroke-linecap: round; stroke-dasharray: 10 8; animation: rise-dash 1s linear infinite; }
+.story__warm text,
+.story__label { font: 700 16px var(--f-body); text-anchor: middle; paint-order: stroke; stroke: rgba(10, 18, 16, 0.6); stroke-width: 4px; }
+.story__warm text { fill: #ffd2b0; }
+.story__label--cold { fill: #cfe3ff; }
+.story__label--lid { fill: #ffd2b0; }
+.story__label--smog { fill: #e8d6b8; }
+
+.story__cold path { stroke: #8cc8ff; stroke-width: 4; stroke-linecap: round; stroke-dasharray: 10 8; animation: rise-dash 1s linear infinite reverse; }
+.story__pool { fill: rgba(120, 190, 255, 0.45); transform-origin: 50% 100%; transform-box: fill-box; transition: opacity 0.9s, scale 1.2s var(--ease-out); }
+.story__svg[data-step="1"] .story__pool { scale: 1 0.2; }
+.story__lid { fill: rgba(255, 150, 90, 0.4); }
+
+@keyframes rise-dash {
+  to { stroke-dashoffset: 18; }
+}
+
+/* Димът: денем се издига високо, сутрин остава под капака */
+.story__smoke { fill: rgba(150, 140, 125, 0.75); }
+.story__smoke--rise circle { animation: smoke-rise 3s linear infinite; transform-box: fill-box; transform-origin: center; }
+.story__smoke--rise circle:nth-child(n + 4) { animation-delay: -1.5s; }
+.story__smoke--trapped circle { animation: smoke-trap 3s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+.story__smoke--trapped ellipse { fill: rgba(140, 125, 105, 0.6); }
+
+@keyframes smoke-rise {
+  from { translate: 0 0; scale: 1; opacity: 0.9; }
+  to { translate: 10px -190px; scale: 3; opacity: 0; }
+}
+@keyframes smoke-trap {
+  from { translate: 0 0; scale: 1; opacity: 0.9; }
+  to { translate: 30px -30px; scale: 2.6; opacity: 0; }
+}
+
+.story__step {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 26px;
+  opacity: 0.4;
+  transition: opacity 0.5s;
+}
+.story__step.is-active { opacity: 1; }
+.story__step h3 { margin: 6px 0 10px; font-family: var(--f-head); font-size: clamp(1.3rem, 2.6vw, 1.8rem); line-height: 1.2; }
+.story__step p { color: var(--c-muted); font-size: 1.05rem; }
+.story__time { color: var(--mood) !important; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.85rem !important; }
+
+/* =========================================
+   ЗАВОДИТЕ В ДОЛИНАТА
+   ========================================= */
+.industry .source { margin: -36px 0 40px; }
+
+.industry__layout {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 28px;
+  align-items: start;
+  margin-bottom: 48px;
+}
+
+.industry__art svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+.industry__art figcaption { margin-top: 10px; font-size: 0.85rem; color: var(--c-muted); }
+.industry__hill { fill: #2c4a3a; }
+.industry__ground { fill: #1d3329; }
+.industry__plant { fill: #3b3f52; }
+.industry__filter { fill: #c3a6ff; opacity: 0.85; }
+.industry__station { fill: #6fd3c4; stroke: #6fd3c4; stroke-width: 3; }
+.industry__waves { fill: none; stroke: #6fd3c4; stroke-width: 3; stroke-linecap: round; animation: waves 1.6s ease-in-out infinite; }
+.industry__tag { fill: #e8efe9; font: 700 14px var(--f-body); text-anchor: middle; paint-order: stroke; stroke: rgba(10, 18, 16, 0.6); stroke-width: 4px; }
+.industry__smoke { fill: rgba(225, 220, 212, 0.7); }
+.industry__smoke circle { animation: smoke-rise 3.2s linear infinite; transform-box: fill-box; transform-origin: center; }
+.industry__smoke circle:nth-child(3n + 2) { animation-delay: -1.1s; }
+.industry__smoke circle:nth-child(3n) { animation-delay: -2.2s; }
+
+@keyframes waves {
+  50% { opacity: 0.3; }
+}
+
+.industry__case-title { font-family: var(--f-head); font-size: 1.4rem; margin-bottom: 8px; }
+.industry__case-lead { color: var(--c-muted); margin-bottom: 18px; }
+.industry__case-lead a,
+.timeline__src { color: var(--mood); text-decoration: underline; text-underline-offset: 2px; font-size: 0.85rem; }
+
+/* Хронологията: линия с точки */
+.timeline {
+  list-style: none;
+  position: relative;
+  display: grid;
+  gap: 16px;
+  margin-bottom: 18px;
+  padding-left: 22px;
+}
+.timeline::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 5px;
+  width: 2px;
+  background: linear-gradient(var(--mood), transparent);
+}
+.timeline li { position: relative; }
+.timeline li::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: -22px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--c-bg);
+  border: 2px solid var(--mood);
+}
+.timeline time { display: block; color: var(--mood); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.timeline p { color: var(--c-muted); }
+
+.industry__takeaway {
+  padding: 16px 18px;
+  border-left: 3px solid var(--mood);
+  border-radius: 0 12px 12px 0;
+  background: color-mix(in srgb, var(--mood) 8%, transparent);
+}
+
+.industry__subtitle { font-family: var(--f-head); font-size: 1.4rem; margin-bottom: 18px; }
+.actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 18px;
+}
+.action-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 22px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-surface);
+}
+.action-card__icon { font-size: 1.8rem; }
+.action-card h4 { font-size: 1.1rem; }
+.action-card p { color: var(--c-muted); flex: 1; }
+.action-card p a { color: var(--c-text); text-decoration: underline; font-weight: 700; white-space: nowrap; }
+.action-card:nth-child(2) { --delay: 0.1s; }
+.action-card:nth-child(3) { --delay: 0.2s; }
+.action-card:nth-child(4) { --delay: 0.3s; }
+
+/* =========================================
+   СВЕТЕЩИЯТ КУРСОР (js/cursor.js)
+   Позицията се мени с transform; кръгчето вътре расте над бутони.
+   ========================================= */
+.cursor-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 250;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.cursor-glow.is-visible { opacity: 1; }
+.cursor-glow span {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border: 1.5px solid rgba(126, 224, 161, 0.55);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(126, 224, 161, 0.22), transparent 70%);
+  mix-blend-mode: screen;
+  transition: scale 0.3s var(--ease-out), border-color 0.3s;
+}
+.cursor-glow.is-big span { scale: 1.8; border-color: rgba(126, 224, 161, 0.85); }
+
+/* =========================================
    АДАПТИВНОСТ (телефон / таблет)
    ========================================= */
 @media (max-width: 860px) {
   .valley-map { grid-template-columns: 1fr; }
+  .industry__layout { grid-template-columns: 1fr; }
+
+  /* Инверсията на телефон: рисунката е залепена горе, а стъпките минават под нея */
+  .story__layout { grid-template-columns: 1fr; gap: 0; }
+  .story__sticky {
+    top: calc(var(--header-h) + 8px);
+    z-index: 2;
+    padding-bottom: 12px;
+    background: linear-gradient(var(--band) 85%, transparent);
+  }
+  .story__step {
+    min-height: 65vh;
+    justify-content: flex-end;
+    padding: 20px 4px 40px;
+  }
   /* На тесен екран надписите се виждат само на избраната точка – иначе се застъпват */
   .map-pin:not([aria-pressed="true"]) .map-pin__label { display: none; }
   .sim,
@@ -1710,6 +2142,9 @@ input[type="range"] {
 
 @media (max-width: 1000px) {
   .nav__toggle { display: flex; }
+  /* В менюто на телефона бутонът за звук е цял ред с надпис */
+  .nav__sound { width: 100%; height: auto; justify-content: flex-start; padding: 14px 16px; border-radius: 999px; }
+  .nav__sound-label { position: static; width: auto; height: auto; overflow: visible; clip-path: none; }
 
   .nav__menu {
     position: fixed;
@@ -1736,12 +2171,17 @@ input[type="range"] {
 }
 
 @media (max-width: 720px) {
-  .section { padding: 40px 0; }
-  .section > .container { width: calc(100% - 24px); padding: 40px 20px; border-radius: 22px; }
-  .section > .container::after { top: 20px; right: 18px; font-size: 3.4rem; }
+  :root { --ridge-h: 56px; }
+  .section { padding: calc(var(--ridge-h) + 36px) 0 110px; }
+  .section,
+  .footer { --fade-bottom: 120px; }
+  .footer { --fade-bottom: 0px; }
+  .section > .container::after { top: -8px; right: 16px; font-size: 3.4rem; }
   .air-chip { margin-left: 12px; padding: 5px 10px; }
   .air-chip__label { display: none; }   /* на телефон: само точка и дума */
   .hero__scroll { display: none; }
+  .pledge__item { width: 76vw; min-height: 210px; }
+  .industry .source { margin-top: -28px; }
   /* Надписите в самата карта стават твърде дребни – оставяме само точките */
   .valley-map__area,
   .valley-map__river-name,
@@ -1768,6 +2208,8 @@ input[type="range"] {
   .reveal,
   .js .section > .container { opacity: 1; translate: none; scale: none; }
   .card__icon .draw { stroke-dashoffset: 0; }
+  .intro { display: none; }
+  .statement__text { scale: none; }
   /* Игрищата показваме направо изгорели */
   .burn__grid.is-burning .burn__pitch { background: #3d2a22; }
   .photo img,
