@@ -45,7 +45,7 @@ if (canHover && !reduceMotion) {
   // Магнитни бутони: изминават част от разстоянието до мишката (най-много 10 px).
   // Центърът се запомня при влизане на мишката, за да не „бяга“, докато бутонът се мести.
   const MAGNET = 0.3;
-  document.querySelectorAll(".btn, .nav__link--cta, .strip__btn, .nav__sound").forEach((button) => {
+  document.querySelectorAll(".btn, .nav__link--cta, .strip__btn, .nav__sound, .action-btn").forEach((button) => {
     let center = null;
     button.addEventListener("pointerenter", () => {
       const rect = button.getBoundingClientRect();

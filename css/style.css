@@ -1329,8 +1329,79 @@ input[type="range"] {
 .source a:hover,
 .footer__sources a:hover { color: var(--c-accent); }
 
-.link { color: var(--c-accent); font-weight: 600; }
-.link:hover { text-decoration: underline; }
+/* -----------------------------------------
+   БУТОНИ ЗА ДЕЙСТВИЕ (сигнал, обаждане, данни)
+   Цветът идва от настроението на секцията (--mood).
+   При посочване стрелката се плъзга напред, а през бутона минава отблясък.
+   ----------------------------------------- */
+.btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.btn-row--stack { flex-direction: column; align-items: stretch; margin-top: auto; padding-top: 6px; }
+
+.action-btn {
+  --btn: var(--mood, var(--c-accent));
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 8px 8px 16px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--btn), color-mix(in srgb, var(--btn) 70%, #ffffff));
+  color: var(--c-bg);
+  font-weight: 800;
+  line-height: 1.2;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--btn) 35%, transparent);
+  transition: translate 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out);
+}
+.action-btn__icon { font-size: 1.15rem; }
+.action-btn__text { flex: 1; }
+.action-btn__text small { display: block; font-size: 0.72rem; font-weight: 600; opacity: 0.8; }
+
+/* Стрелката в кръгче вдясно */
+.action-btn__arrow {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: rgba(15, 26, 23, 0.18);
+  transition: translate 0.35s var(--ease-out), background 0.35s;
+}
+
+/* Отблясък: светла ивица, която минава през бутона при посочване */
+.action-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.45) 50%, transparent 70%);
+  translate: -110% 0;
+  transition: translate 0.7s var(--ease-out);
+}
+
+.action-btn:hover,
+.action-btn:focus-visible { box-shadow: 0 12px 34px color-mix(in srgb, var(--btn) 55%, transparent); }
+.action-btn:hover .action-btn__arrow,
+.action-btn:focus-visible .action-btn__arrow { translate: 4px 0; background: rgba(15, 26, 23, 0.3); }
+.action-btn:hover::after,
+.action-btn:focus-visible::after { translate: 110% 0; }
+
+/* По-лек вариант – само рамка (за телефоните) */
+.action-btn--ghost {
+  background: color-mix(in srgb, var(--btn) 10%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--btn) 55%, transparent);
+  color: var(--c-text);
+  box-shadow: none;
+}
+.action-btn--ghost .action-btn__arrow { background: color-mix(in srgb, var(--btn) 20%, transparent); color: var(--btn); }
+.action-btn--ghost:hover,
+.action-btn--ghost:focus-visible {
+  background: color-mix(in srgb, var(--btn) 18%, transparent);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--btn) 25%, transparent);
+}
+.action-btn--ghost::after { background: linear-gradient(110deg, transparent 30%, color-mix(in srgb, var(--btn) 35%, transparent) 50%, transparent 70%); }
 
 /* =========================================
    МИНИ ИГРА „СОРТИРАЙ ОТПАДЪЦИТЕ“
@@ -2077,9 +2148,10 @@ input[type="range"] {
 }
 
 .industry__subtitle { font-family: var(--f-head); font-size: 1.4rem; margin-bottom: 18px; }
+/* Две по две – картите са достатъчно широки, за да се събират бутоните на един ред */
 .actions {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 18px;
 }
 .action-card {
@@ -2132,6 +2204,7 @@ input[type="range"] {
 @media (max-width: 860px) {
   .valley-map { grid-template-columns: 1fr; }
   .industry__layout { grid-template-columns: 1fr; }
+  .actions { grid-template-columns: 1fr; }
 
   /* Инверсията на телефон: рисунката е залепена горе, а стъпките минават под нея */
   .story__layout { grid-template-columns: 1fr; gap: 0; }
