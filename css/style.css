@@ -171,7 +171,26 @@ main:focus { outline: none; }
   justify-content: space-between;
 }
 
-.nav__logo { font-family: var(--f-head); font-weight: 800; font-size: 1.1rem; white-space: nowrap; }
+.nav__logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--f-head);
+  font-weight: 800;
+  font-size: 1.1rem;
+  white-space: nowrap;
+}
+/* Знакът „диша“ заедно със сайта: бавно се надува и свива */
+.nav__mark {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  animation: mark-breathe 6s ease-in-out infinite;
+}
+
+@keyframes mark-breathe {
+  50% { scale: 1.08; filter: drop-shadow(0 0 8px rgba(126, 224, 161, 0.5)); }
+}
 .nav__logo span { color: var(--c-accent); }
 
 /* Въздухомерът до логото. --air (цветът) идва от js/hero.js */
@@ -1813,6 +1832,8 @@ input[type="range"] {
 }
 
 .footer__about { display: grid; gap: 4px; }
+.footer__brand { display: flex; align-items: center; gap: 12px; }
+.footer__mark { width: 40px; height: 40px; flex-shrink: 0; }
 .footer__authors strong { color: var(--c-accent); }
 .footer__sources { font-size: 0.85rem; }
 
@@ -1844,24 +1865,25 @@ input[type="range"] {
   inset: 0;
   z-index: 400;
   display: grid;
-  place-items: center;
+  place-content: center;
+  justify-items: center;
+  gap: 22px;
   background: var(--c-bg);
   pointer-events: none;
   animation: intro-out 0.7s var(--ease-out) 1.6s forwards;
 }
 .no-intro .intro { display: none; }
-.intro__circle {
+/* Логото „диша“: вдишване (расте) и издишване (свива се) */
+.intro__logo {
   grid-area: 1 / 1;
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  border: 2px solid rgba(126, 224, 161, 0.6);
-  background: radial-gradient(circle, rgba(126, 224, 161, 0.25), transparent 70%);
-  box-shadow: var(--glow);
+  width: 150px;
+  height: 150px;
+  filter: drop-shadow(0 0 30px rgba(126, 224, 161, 0.35));
   animation: intro-breathe 1.6s ease-in-out forwards;
 }
+/* Двете думи са на едно място под логото и се сменят */
 .intro__word {
-  grid-area: 1 / 1;
+  grid-area: 2 / 1;
   font-family: var(--f-head);
   font-size: 1.3rem;
   color: var(--c-accent);
@@ -1871,9 +1893,9 @@ input[type="range"] {
 .intro__word--out { animation: intro-word 0.8s ease-in-out 0.8s forwards; }
 
 @keyframes intro-breathe {
-  from { scale: 0.5; }
-  50% { scale: 1.15; }
-  to { scale: 0.8; }
+  from { scale: 0.8; }
+  50% { scale: 1.1; }
+  to { scale: 0.95; }
 }
 @keyframes intro-word {
   30%, 70% { opacity: 1; }
@@ -2178,6 +2200,8 @@ input[type="range"] {
   .footer { --fade-bottom: 0px; }
   .section > .container::after { top: -8px; right: 16px; font-size: 3.4rem; }
   .air-chip { margin-left: 12px; padding: 5px 10px; }
+  .nav__logo { gap: 8px; font-size: 1rem; }
+  .nav__mark { width: 28px; height: 28px; }
   .air-chip__label { display: none; }   /* на телефон: само точка и дума */
   .hero__scroll { display: none; }
   .pledge__item { width: 76vw; min-height: 210px; }

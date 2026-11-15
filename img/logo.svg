@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Логото на „Долината диша“:
+       кръг с долината между Стара планина (вляво) и Средна гора (вдясно),
+       в долината изгрява розово слънце (Розовата долина),
+       а над нея духа вятър – две извити линии („диша“). -->
+  <defs>
+    <linearGradient id="logo-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#173a30"/>
+      <stop offset="1" stop-color="#0d1b16"/>
+    </linearGradient>
+    <linearGradient id="logo-sun" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffc2d6"/>
+      <stop offset="1" stop-color="#f07aa0"/>
+    </linearGradient>
+    <linearGradient id="logo-hills" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ee0a1"/>
+      <stop offset="1" stop-color="#2f8f5b"/>
+    </linearGradient>
+    <clipPath id="logo-disc"><circle cx="32" cy="32" r="30"/></clipPath>
+  </defs>
+
+  <circle cx="32" cy="32" r="30" fill="url(#logo-sky)"/>
+  <g clip-path="url(#logo-disc)">
+    <!-- Розовото слънце изгрява в долината -->
+    <circle cx="32" cy="40" r="9" fill="url(#logo-sun)"/>
+    <!-- Стара планина (по-висока) и Средна гора, а между тях – долината -->
+    <path d="M-2 50 L18 27 L32 44 L44 33 L66 50 V66 H-2 Z" fill="url(#logo-hills)"/>
+    <!-- Полето на дъното на долината -->
+    <path d="M-2 52 C16 47.5 48 47.5 66 52 V66 H-2 Z" fill="#1f5a3c"/>
+  </g>
+
+  <!-- Вятърът: две линии, които се извиват накрая – въздухът „диша“ -->
+  <g fill="none" stroke="#eafaf0" stroke-width="3" stroke-linecap="round">
+    <path d="M13 17 H35 C40.5 17 42.5 12.5 39.5 10 C37 8 33.5 10 34.5 13"/>
+    <path d="M20 24 H45 C50 24 52 28.5 49 31 C46.5 33 43.5 31 44.5 28"/>
+  </g>
+
+  <!-- Тънък светъл ръб -->
+  <circle cx="32" cy="32" r="30" fill="none" stroke="#7ee0a1" stroke-opacity="0.35" stroke-width="1.2"/>
+</svg>
