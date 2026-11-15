@@ -16,9 +16,16 @@
   <meta property="og:image:alt" content="Казанлъшката долина, погледната от връх Шипка">
   <meta name="twitter:card" content="summary_large_image">
   <title>Долината диша</title>
-  <!-- Логото: иконка в раздела на браузъра, иконка за началния екран на телефона и цвят на лентата му -->
-  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+  <!-- Логото като иконка навсякъде:
+       favicon.ico – за браузъри и места, които не разбират SVG (Windows, отметки);
+       logo.svg – острата иконка за Chrome, Edge и Firefox;
+       apple-touch-icon – iPhone и Safari; site.webmanifest – Android.
+       ?v=7 е номерът на версията: при ново лого го сменяме и браузърите
+       изтеглят новата иконка, вместо да показват старата от кеша. -->
+  <link rel="icon" href="favicon.ico?v=7" sizes="32x32">
+  <link rel="icon" href="img/logo.svg?v=7" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png?v=7">
+  <link rel="manifest" href="site.webmanifest?v=7">
   <meta name="theme-color" content="#0f1a17">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
