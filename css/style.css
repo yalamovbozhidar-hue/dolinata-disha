@@ -1280,6 +1280,98 @@ input[type="range"] {
   height: 260px;
 }
 
+/* =========================================
+   ПОЖАРИТЕ КРАЙ КАЗАНЛЪК
+   Две истински снимки и пет случая.
+   Лентата на всеки случай показва площта спрямо най-големия (--area от HTML).
+   ========================================= */
+.fires { margin-top: 56px; }
+.fires__title { font-family: var(--f-head); font-size: clamp(1.4rem, 3vw, 2rem); margin-bottom: 8px; }
+.fires__lead { color: var(--c-muted); max-width: 640px; margin-bottom: 24px; }
+
+.fires__photos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+.fires__photo {
+  overflow: hidden;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-surface);
+}
+.fires__photo img { width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; }
+.fires__photo figcaption { padding: 12px 16px 14px; font-size: 0.88rem; color: var(--c-muted); }
+.fires__photo:nth-child(2) { --delay: 0.15s; }
+
+/* Случаите: две колони, най-големият пожар заема целия ред */
+.fires__list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+.fire-case {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-surface);
+}
+.fire-case p { color: var(--c-muted); }
+.fire-case h4 { font-size: 1.15rem; }
+.fire-case__head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.fire-case__head time { color: var(--mood); }
+.fire-case__area { color: var(--c-text); font-family: var(--f-head); letter-spacing: 0; }
+
+/* Лентата расте до своята площ, щом картата се появи */
+.fire-case__bar {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+}
+.fire-case__bar span {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #ffb347, var(--c-fire), #d9480f);
+  box-shadow: 0 0 12px rgba(255, 138, 76, 0.6);
+  transition: width 1.6s var(--ease-out) 0.3s;
+}
+.fire-case.is-visible .fire-case__bar span { width: calc(var(--area) * 100%); }
+
+.fire-case--big {
+  grid-column: 1 / -1;
+  border-color: rgba(255, 138, 76, 0.45);
+  background:
+    radial-gradient(ellipse 60% 80% at 100% 0%, rgba(255, 106, 40, 0.16), transparent 70%),
+    var(--c-surface);
+  box-shadow: 0 0 40px rgba(255, 106, 40, 0.15);
+}
+.fire-case--big .fire-case__area { font-size: 1.6rem; color: var(--c-fire); text-shadow: 0 0 24px rgba(255, 138, 76, 0.5); }
+.fire-case--big h4 { font-size: 1.35rem; }
+.fire-case--big strong { color: var(--c-fire); }
+.fire-case .btn-row { margin-top: auto; }
+.fire-case > .action-btn { align-self: flex-start; margin-top: auto; }
+
+/* Малкият бутон към статията */
+.action-btn--small { padding: 5px 5px 5px 12px; gap: 8px; font-size: 0.85rem; }
+.action-btn--small .action-btn__arrow { width: 26px; height: 26px; }
+
 /* ----- 500 дка = 70 футболни игрища ----- */
 .burn { margin: 18px 0 6px; }
 .burn__grid {
@@ -2204,6 +2296,8 @@ input[type="range"] {
 @media (max-width: 860px) {
   .valley-map { grid-template-columns: 1fr; }
   .industry__layout { grid-template-columns: 1fr; }
+  .fires__photos,
+  .fires__list { grid-template-columns: 1fr; }
   .actions { grid-template-columns: 1fr; }
 
   /* Инверсията на телефон: рисунката е залепена горе, а стъпките минават под нея */
@@ -2305,6 +2399,7 @@ input[type="range"] {
   .reveal,
   .js .section > .container { opacity: 1; translate: none; scale: none; }
   .card__icon .draw { stroke-dashoffset: 0; }
+  .fire-case__bar span { width: calc(var(--area) * 100%); }
   .intro { display: none; }
   .statement__text { scale: none; }
   /* Игрищата показваме направо изгорели */
