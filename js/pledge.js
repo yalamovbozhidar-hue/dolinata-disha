@@ -72,6 +72,66 @@ function bloomRoses(done) {
 }
 
 /* -----------------------------------------
+   ЛИСТЕНЦА
+   Щом отметнеш и петото обещание, по целия екран
+   за няколко секунди падат розови листенца.
+   ----------------------------------------- */
+const PETAL_COLORS = ["#f07aa0", "#d6457a", "#f59ac0", "#ffc2d6"];
+const PETAL_DURATION = 6000; // ms; последната секунда избледняват
+
+function rainPetals() {
+  const canvas = document.createElement("canvas");
+  canvas.className = "petals";
+  canvas.setAttribute("aria-hidden", "true");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext("2d");
+
+  const petals = Array.from({ length: window.innerWidth < 720 ? 40 : 80 }, () => ({
+    x: Math.random() * canvas.width,
+    y: -20 - Math.random() * canvas.height * 0.7,   // започват над екрана, на различна височина
+    size: 6 + Math.random() * 8,
+    speed: 1.2 + Math.random() * 1.8,
+    angle: Math.random() * Math.PI * 2,
+    spin: (Math.random() - 0.5) * 0.08,
+    sway: Math.random() * Math.PI * 2,
+    color: PETAL_COLORS[Math.floor(Math.random() * PETAL_COLORS.length)],
+  }));
+
+  // Едно листенце: две извивки, които се срещат в двата края
+  function drawPetal(p) {
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.angle);
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.moveTo(0, -p.size);
+    ctx.quadraticCurveTo(p.size, -p.size * 0.2, 0, p.size);
+    ctx.quadraticCurveTo(-p.size, -p.size * 0.2, 0, -p.size);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  const start = performance.now();
+  function frame(now) {
+    const fade = clamp((PETAL_DURATION - (now - start)) / 1000, 0, 1);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.globalAlpha = fade;
+    petals.forEach((p) => {
+      p.y += p.speed;
+      p.sway += 0.02;
+      p.x += Math.sin(p.sway) * 1.2;   // люлеят се като истински листенца
+      p.angle += p.spin;
+      drawPetal(p);
+    });
+    if (fade > 0) requestAnimationFrame(frame);
+    else canvas.remove();
+  }
+  requestAnimationFrame(frame);
+}
+
+/* -----------------------------------------
    Отметките
    ----------------------------------------- */
 function loadPledges() {
@@ -83,10 +143,15 @@ function loadPledges() {
   }
 }
 
-function updatePledges() {
+// byUser = true, когато човекът сам е сменил отметка (а не при зареждане)
+function updatePledges(byUser) {
   const states = Array.from(pledgeBoxes, (box) => box.checked);
   const done = states.filter(Boolean).length;
   const total = pledgeBoxes.length;
+
+  // Листенцата падат само в момента, в който стане 5 от 5
+  const wasFull = roseFieldBox.classList.contains("is-full");
+  if (byUser === true && done === total && !wasFull && !reduceMotion) rainPetals();
 
   pledgeFill.style.width = `${(done / total) * 100}%`;
   pledgeText.textContent = done === total
@@ -101,6 +166,6 @@ function updatePledges() {
   }
 }
 
-pledgeBoxes.forEach((box) => box.addEventListener("change", updatePledges));
+pledgeBoxes.forEach((box) => box.addEventListener("change", () => updatePledges(true)));
 loadPledges();
 updatePledges();

@@ -289,11 +289,35 @@ if (!reduceMotion) {
   }, { passive: true });
 }
 
+/* -----------------------------------------
+   ВЪЗДУХОМЕРЪТ в менюто
+   Точката сменя цвета си от кафяво (смог) към зелено (чист въздух),
+   а думата – при всяка от трите граници.
+   ----------------------------------------- */
+const airChip = document.querySelector(".air-chip");
+const airValue = document.getElementById("air-chip-value");
+const AIR_DOT_COLORS = [[181, 154, 114], [126, 224, 161]]; // [смог, чисто]
+const AIR_LEVELS = [
+  { below: 0.35, label: "смог" },
+  { below: 0.75, label: "мъгла" },
+  { below: Infinity, label: "чист" },
+];
+let airShown = -1; // за коя стойност е показан въздухомерът
+
+function updateAirChip() {
+  if (Math.abs(clean - airShown) < 0.005) return; // няма видима промяна
+  airShown = clean;
+  airChip.style.setProperty("--air", mixColor(AIR_DOT_COLORS[0], AIR_DOT_COLORS[1], clean));
+  const label = AIR_LEVELS.find((level) => clean < level.below).label;
+  if (airValue.textContent !== label) airValue.textContent = label;
+}
+
 // Рисува един кадър от небето
 function drawSky() {
   drawValley(skyCtx, skyWidth, skyHeight, clean);
   drawSmog(skyWidth, skyHeight);
   drawWind(skyWidth, skyHeight);
+  updateAirChip();
 }
 
 // Анимационен цикъл: всеки кадър доближаваме clean до targetClean.

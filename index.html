@@ -40,6 +40,14 @@
     <nav class="nav" aria-label="Основна навигация">
       <a href="#home" class="nav__logo">Долината <span>диша</span></a>
 
+      <!-- Въздухомер: колко е чист въздухът над долината в момента (js/hero.js).
+           Само украса – същото се вижда и в небето зад сайта. -->
+      <span class="air-chip" aria-hidden="true">
+        <span class="air-chip__dot"></span>
+        <span class="air-chip__label">Въздух</span>
+        <strong class="air-chip__value" id="air-chip-value">смог</strong>
+      </span>
+
       <button class="nav__toggle" aria-label="Отвори менюто" aria-expanded="false" aria-controls="nav-menu">
         <span></span><span></span><span></span>
       </button>
@@ -72,6 +80,8 @@
           Скролни надолу: колкото повече знаеш и действаш, толкова по-чист става въздухът.
         </p>
       </div>
+      <!-- Знак „скролни надолу“: мишка с топче, което слиза -->
+      <span class="hero__scroll" aria-hidden="true"><span></span></span>
     </section>
 
     <!-- ===== 2. ПРОБЛЕМЪТ ===== -->
@@ -242,6 +252,22 @@
       </div>
     </section>
 
+    <!-- ===== ЛЕНТА С ПРИЗИВИ =====
+         Само украса: две ленти, които се движат в различни посоки.
+         js/effects.js повтаря текста, за да няма празно място. -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__row">
+        <p class="marquee__track">
+          <span>Дишай чисто</span><span>Не гори боклук</span><span>Само сухи дърва</span><span>Пеша и с колело</span>
+        </p>
+      </div>
+      <div class="marquee__row marquee__row--alt">
+        <p class="marquee__track">
+          <span>Пази гората</span><span>Сортирай</span><span>Подай сигнал</span><span>Долината диша</span>
+        </p>
+      </div>
+    </div>
+
     <!-- ===== 4. ОГЪН И ОТПАДЪЦИ ===== -->
     <section class="section threats" id="fire">
       <div class="container">
@@ -250,6 +276,8 @@
 
         <div class="threats__grid">
           <article class="threat threat--fire reveal">
+            <!-- Искри над снимката (js/fire.js) -->
+            <canvas class="embers embers--photo" aria-hidden="true"></canvas>
             <!-- Илюстративна снимка – авторът и лицензът са във футъра -->
             <img class="threat__img"
                  src="img/fire-1920.jpg"
@@ -261,6 +289,11 @@
               <h3>Горските пожари</h3>
               <p class="threat__stat"><span class="counter" data-target="500">0</span> дка</p>
               <p>Толкова храсти и гори обхвана пожарът между Казанлък и Мъглиж през август 2023 г., заради който бе обявено частично бедствено положение. Повечето пожари започват от човешка небрежност: хвърлен фас, палене на стърнища, искра.</p>
+              <!-- 500 дка, показани като футболни игрища. Игрищата се добавят от js/fire.js -->
+              <div class="burn">
+                <div class="burn__grid" id="burn-grid" aria-hidden="true"></div>
+                <p class="burn__caption">500 дка са колкото <strong>70 футболни игрища</strong> (105 × 68 м всяко).</p>
+              </div>
               <p class="source">Източници: <a href="https://www.bgonair.bg/a/2-bulgaria/316629-chastichno-bedstveno-polozhenie-pozharat-mezhdu-kazanlak-i-maglizh-obhvana-500-dka" target="_blank" rel="noopener">Bgonair</a>, <a href="https://btvnovinite.bg/bulgaria/golemijat-gorski-pozhar-mezhdu-kazanlak-i-maglizh-e-chastichno-ovladjan.html" target="_blank" rel="noopener">bTV</a></p>
             </div>
           </article>
@@ -285,7 +318,9 @@
     </section>
 
     <!-- ===== ИЗРЕЧЕНИЕ НА ЦЯЛ ЕКРАН ===== -->
-    <section class="statement">
+    <section class="statement statement--embers">
+      <!-- Искри, които се издигат отдолу (js/fire.js) -->
+      <canvas class="embers" aria-hidden="true"></canvas>
       <h2 class="statement__text statement__text--fire split-words">Всичко, което изгаряме и изхвърляме, <em>остава тук.</em></h2>
       <p class="statement__sub reveal">
         Затова и решението е тук – започва от това къде изхвърляме
@@ -440,6 +475,7 @@
   <!-- ===== ФУТЪР ===== -->
   <footer class="footer">
     <div class="container footer__inner">
+      <p class="footer__big reveal">Нека долината <em>диша.</em></p>
       <div class="footer__about">
         <p><strong>Долината диша</strong> – училищен проект, Казанлък, 2026</p>
         <p class="footer__authors">
@@ -475,7 +511,9 @@
   <script src="js/utils.js" defer></script>
   <script src="js/nav.js" defer></script>
   <script src="js/effects.js" defer></script>
+  <script src="js/tilt.js" defer></script>
   <script src="js/hero.js" defer></script>
+  <script src="js/fire.js" defer></script>
   <script src="js/simulator.js" defer></script>
   <script src="js/game.js" defer></script>
   <script src="js/compare.js" defer></script>

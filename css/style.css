@@ -39,6 +39,20 @@ body {
   overflow-x: hidden;
 }
 
+/* Маркиран текст и лентата за скрол – в цветовете на сайта */
+::selection { background: var(--c-accent); color: var(--c-bg); }
+html { scrollbar-color: #3d7a57 var(--c-bg); }
+
+/* Тъмни краища на екрана (винетка) – като на кино */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.45) 100%);
+}
+
 /* Филмово зърно: фин шум върху небето, под съдържанието */
 body::after {
   content: "";
@@ -125,7 +139,7 @@ main:focus { outline: none; }
 }
 
 .nav {
-  max-width: var(--max-w);
+  max-width: 1240px;   /* малко по-широко от съдържанието – да се събере и въздухомерът */
   height: 100%;
   margin: 0 auto;
   padding: 0 20px;
@@ -134,8 +148,37 @@ main:focus { outline: none; }
   justify-content: space-between;
 }
 
-.nav__logo { font-family: var(--f-head); font-weight: 800; font-size: 1.1rem; }
+.nav__logo { font-family: var(--f-head); font-weight: 800; font-size: 1.1rem; white-space: nowrap; }
 .nav__logo span { color: var(--c-accent); }
+
+/* Въздухомерът до логото. --air (цветът) идва от js/hero.js */
+.air-chip {
+  --air: #b59a72;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 auto 0 18px;   /* прилепва до логото, менюто остава вдясно */
+  padding: 5px 12px 5px 10px;
+  border: 1px solid var(--c-border);
+  border-radius: 999px;
+  background: rgba(15, 26, 23, 0.55);
+  color: var(--c-muted);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+.air-chip__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--air);
+  box-shadow: 0 0 10px var(--air);
+  animation: air-pulse 2.4s ease-in-out infinite;
+}
+.air-chip__value { color: var(--air); }
+
+@keyframes air-pulse {
+  50% { scale: 1.5; opacity: 0.6; }
+}
 
 .nav__menu { display: flex; gap: 8px; list-style: none; }
 
@@ -145,6 +188,7 @@ main:focus { outline: none; }
   border-radius: 999px;
   color: var(--c-muted);
   font-weight: 600;
+  white-space: nowrap;
   transition: color 0.2s, background 0.2s;
 }
 .nav__link:hover,
@@ -219,7 +263,47 @@ main:focus { outline: none; }
   letter-spacing: -0.02em;
   margin-bottom: 28px;
 }
-.hero__accent { color: var(--c-accent); text-shadow: 0 0 40px rgba(126, 224, 161, 0.5); }
+/* „диша.“ наистина диша: бавно вдишване и издишване (6 секунди) */
+.hero__accent {
+  display: inline-block;
+  color: var(--c-accent);
+  text-shadow: 0 0 40px rgba(126, 224, 161, 0.5);
+  transform-origin: left 70%;
+  animation: breathe 6s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  50% { scale: 1.04; text-shadow: 0 0 70px rgba(126, 224, 161, 0.9); }
+}
+
+/* Знакът „скролни“: мишка, в която топчето слиза надолу */
+.hero__scroll {
+  position: absolute;
+  top: calc(100vh - 76px);    /* долу в първия екран, а не в края на секцията */
+  top: calc(100svh - 76px);
+  left: 50%;
+  translate: -50% 0;
+  width: 26px;
+  height: 42px;
+  border: 2px solid rgba(232, 239, 233, 0.6);
+  border-radius: 14px;
+}
+.hero__scroll span {
+  position: absolute;
+  top: 7px;
+  left: 50%;
+  width: 4px;
+  height: 8px;
+  margin-left: -2px;
+  border-radius: 2px;
+  background: var(--c-accent);
+  animation: scroll-dot 1.8s var(--ease-out) infinite;
+}
+
+@keyframes scroll-dot {
+  from { translate: 0 0; opacity: 1; }
+  to { translate: 0 16px; opacity: 0; }
+}
 
 .hero__text {
   max-width: 520px;
@@ -244,28 +328,92 @@ main:focus { outline: none; }
 /* =========================================
    СЕКЦИИ – общо
    ========================================= */
-.section { padding: 70px 0; }
+main { counter-reset: section; }   /* номерата 01, 02… на секциите */
+
+.section {
+  --mood: var(--c-accent);   /* цветът на настроението на секцията */
+  padding: 70px 0;
+  counter-increment: section;
+}
+.problem { --mood: #e0b072; }     /* смог */
+.simulator { --mood: #8cc8ff; }   /* небе */
+.threats { --mood: #ff8a4c; }     /* огън */
+.gallery,
+.action { --mood: #f59ac0; }      /* рози */
 
 /* Всяка секция е „стъклен“ панел над небето */
 .section > .container {
+  position: relative;
+  isolation: isolate;   /* украсите със z-index: -1 остават вътре в панела */
+  overflow: clip;
   width: calc(100% - 40px);
   padding: 64px 48px;
-  border: 1px solid var(--c-border);
+  border: 1px solid color-mix(in srgb, var(--mood) 18%, transparent);
   border-radius: 28px;
   /* Без backdrop-filter: размазването над движещото се небе
-     се преизчислява всеки кадър и прави скрола накъсан */
-  background: rgba(15, 26, 23, 0.88);
+     се преизчислява всеки кадър и прави скрола накъсан.
+     Отгоре: цветно сияние в ъглите според настроението. */
+  background:
+    radial-gradient(ellipse 60% 45% at 100% 0%, color-mix(in srgb, var(--mood) 16%, transparent), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 0% 100%, color-mix(in srgb, var(--mood) 7%, transparent), transparent 70%),
+    rgba(15, 26, 23, 0.88);
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
 }
 
+/* Голям прозрачен номер в ъгъла: 01, 02… */
+.section > .container::after {
+  content: counter(section, decimal-leading-zero);
+  position: absolute;
+  top: 28px;
+  right: 40px;
+  z-index: -1;
+  font-family: var(--f-head);
+  font-weight: 800;
+  font-size: clamp(4rem, 11vw, 8.5rem);
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1.5px color-mix(in srgb, var(--mood) 28%, transparent);
+  pointer-events: none;
+}
+
+/* Петно светлина, което следва мишката (позицията идва от js/tilt.js) */
+.section > .container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  width: 700px;
+  height: 700px;
+  margin: -350px 0 0 -350px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--mood) 9%, transparent), transparent 65%);
+  translate: var(--mx, -9999px) var(--my, -9999px);
+  opacity: 0;
+  transition: opacity 0.6s;
+  pointer-events: none;
+}
+.section > .container:hover::before { opacity: 1; }
+
 .section__eyebrow {
-  color: var(--c-accent);
-  text-shadow: var(--glow);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--mood, var(--c-accent));
+  text-shadow: 0 0 24px color-mix(in srgb, var(--mood, var(--c-accent)) 45%, transparent);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 0.85rem;
   margin-bottom: 12px;
+}
+.section__eyebrow::before {
+  content: "";
+  width: 32px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  box-shadow: 0 0 10px currentColor;
 }
 
 .section__title {
@@ -338,6 +486,18 @@ main:focus { outline: none; }
 .photo.is-visible img,
 .threat.is-visible .threat__img { scale: 1; }
 
+/* Снимките се разкриват отгоре надолу като завеса.
+   Анимация, а не transition: след края clip-path изчезва
+   и не изрязва рамката на фокуса. */
+.js :is(.photo, .compare, .threat, .gallery__item).is-visible {
+  animation: wipe-in 1.4s var(--ease-out) var(--delay, 0s) backwards;
+}
+
+@keyframes wipe-in {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0); }
+}
+
 /* =========================================
    ИЗРЕЧЕНИЕ НА ЦЯЛ ЕКРАН
    Прозрачна секция – вижда се небето отзад.
@@ -396,6 +556,24 @@ main:focus { outline: none; }
       rgba(15, 26, 23, 0.95) 100%);
 }
 
+/* Вариант с огън: оранжево сияние отдолу и искри (canvas от js/fire.js) */
+.statement--embers {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 90% 60% at 50% 115%, rgba(255, 106, 40, 0.6), rgba(140, 40, 10, 0.25) 50%, transparent 78%),
+    radial-gradient(ellipse at center, rgba(10, 18, 16, 0.7) 0%, rgba(10, 18, 16, 0) 70%);
+}
+.embers {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
 .statement__sub {
   max-width: 560px;
   margin: 0 auto;
@@ -425,7 +603,49 @@ main:focus { outline: none; }
     border-color 0.3s,
     box-shadow 0.3s;
 }
-.card:hover { transform: translateY(-6px); border-color: var(--c-accent); box-shadow: var(--glow); }
+.card:hover {
+  transform: translateY(-6px);
+  border-color: color-mix(in srgb, var(--mood) 50%, transparent);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35), 0 0 30px color-mix(in srgb, var(--mood) 20%, transparent);
+}
+
+/* -----------------------------------------
+   3D карти (класът .tilt се слага от js/tilt.js – само при мишка)
+   --mx и --my = къде е мишката върху картата
+   ----------------------------------------- */
+.tilt { position: relative; }
+
+/* Ръбът на картата светва около мишката */
+.tilt::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), var(--mood), transparent 70%);
+  /* Маската оставя само рамката: цялата площ минус вътрешността */
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+/* Меко петно светлина върху самата карта */
+.tilt::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.08), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.tilt:hover::before,
+.tilt:hover::after { opacity: 1; }
 .card:nth-child(2) { --delay: 0.1s; }
 .card:nth-child(3) { --delay: 0.2s; }
 .card:nth-child(4) { --delay: 0.3s; }
@@ -578,6 +798,65 @@ main:focus { outline: none; }
 .compare figcaption strong { color: var(--c-text); }
 
 /* =========================================
+   ЛЕНТА С ПРИЗИВИ
+   Две наклонени ленти, които се движат в различни посоки.
+   Текстът е повторен два пъти (js/effects.js), затова
+   преместване с -50% връща лентата точно в началото.
+   ========================================= */
+.marquee {
+  overflow: hidden;
+  padding: 70px 0;
+}
+.marquee__row {
+  position: relative;
+  z-index: 1;
+  width: 110%;
+  margin-left: -5%;
+  padding: 14px 0;
+  rotate: -3deg;
+  background: var(--c-accent);
+  color: var(--c-bg);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45), var(--glow);
+}
+.marquee__row--alt {
+  z-index: 0;
+  margin-top: -18px;
+  rotate: 2deg;
+  background: #10201b;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--c-accent);   /* само контур на буквите */
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+}
+
+.marquee__track {
+  display: flex;
+  width: max-content;
+}
+.js .marquee__track { animation: marquee 32s linear infinite; }
+.js .marquee__row--alt .marquee__track { animation-direction: reverse; }
+
+.marquee__track span {
+  display: flex;
+  align-items: center;
+  font-family: var(--f-head);
+  font-weight: 800;
+  font-size: clamp(1.3rem, 3.4vw, 2.6rem);
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+/* Звездичка между призивите */
+.marquee__track span::after {
+  content: "✦";
+  margin: 0 0.8em;
+  font-size: 0.7em;
+}
+
+@keyframes marquee {
+  to { translate: -50% 0; }
+}
+
+/* =========================================
    СИМУЛАТОР
    ========================================= */
 .sim {
@@ -666,10 +945,15 @@ input[type="range"] {
 }
 
 .threat {
+  position: relative;
   background: var(--c-surface);
   border: 1px solid var(--c-border);
   border-radius: var(--radius);
   overflow: hidden;
+  transition:
+    opacity 0.9s var(--ease-out) var(--delay, 0s),
+    translate 1s var(--ease-out) var(--delay, 0s),
+    transform 0.4s var(--ease-out);
 }
 
 .threat__img {
@@ -692,6 +976,51 @@ input[type="range"] {
   color: var(--c-text) !important;
 }
 .threat--fire .threat__stat { color: var(--c-fire) !important; }
+
+/* Искрите над снимката на пожара – само върху снимката (260 px) */
+.embers--photo {
+  inset: 0 0 auto 0;
+  z-index: 1;
+  height: 260px;
+}
+
+/* ----- 500 дка = 70 футболни игрища ----- */
+.burn { margin: 18px 0 6px; }
+.burn__grid {
+  display: grid;
+  grid-template-columns: repeat(14, 1fr);
+  gap: 4px;
+  margin-bottom: 10px;
+}
+.burn__pitch {
+  position: relative;
+  aspect-ratio: 105 / 68;   /* размерите на игрището */
+  border-radius: 3px;
+  background: #2f6b45;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+/* Средната линия на игрището */
+.burn__pitch::after {
+  content: "";
+  position: absolute;
+  top: 15%;
+  bottom: 15%;
+  left: 50%;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.3);
+}
+/* Огънят минава през всяко игрище: зелено → пламък → пепел.
+   --delay идва от js/fire.js (по-далечните игрища пламват по-късно) */
+.burn__grid.is-burning .burn__pitch { animation: pitch-burn 1.6s ease var(--delay) forwards; }
+
+@keyframes pitch-burn {
+  35% { background: #ffb347; box-shadow: 0 0 14px #ff8a4c; }
+  65% { background: #d9480f; box-shadow: 0 0 8px #d9480f; }
+  to { background: #3d2a22; box-shadow: none; }
+}
+
+.burn__caption { font-size: 0.9rem; }
+.burn__caption strong { color: var(--c-fire); }
 
 /* Малък ред „Източник: …“ под всеки факт */
 .source {
@@ -851,6 +1180,7 @@ input[type="range"] {
   border-radius: var(--radius);
   background: var(--c-surface);
   cursor: zoom-in;
+  transition: transform 0.4s var(--ease-out);
 }
 .gallery__open img {
   display: block;
@@ -991,6 +1321,16 @@ input[type="range"] {
 .rose__petal--inner { fill: #f07aa0; }
 .rose__swirl { fill: none; stroke: #9c2556; stroke-width: 1.2; }
 
+/* Падащите листенца при 5 от 5 (canvas от js/pledge.js) */
+.petals {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
 /* =========================================
    ФУТЪР
    ========================================= */
@@ -1007,6 +1347,25 @@ input[type="range"] {
   align-items: center;
   justify-content: space-between;
 }
+/* Голямото изречение в края */
+.footer__big {
+  flex-basis: 100%;
+  margin-bottom: 28px;
+  font-family: var(--f-head);
+  font-weight: 800;
+  font-size: clamp(2.2rem, 6.4vw, 5.6rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--c-text);
+}
+.footer__big em {
+  font-style: normal;
+  background: linear-gradient(90deg, var(--c-accent), #f59ac0);   /* от зелено към розово */
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 .footer__about { display: grid; gap: 4px; }
 .footer__authors strong { color: var(--c-accent); }
 .footer__sources { font-size: 0.85rem; }
@@ -1042,6 +1401,12 @@ input[type="range"] {
   .gallery__item--big .gallery__open img { height: auto; aspect-ratio: 4 / 3; }
 }
 
+/* Между 1001 и 1239 px менюто не се събира с въздухомера – скриваме го.
+   Под 1000 px менюто е в бургера и въздухомерът пак се вижда. */
+@media (min-width: 1001px) and (max-width: 1239px) {
+  .air-chip { display: none; }
+}
+
 @media (max-width: 1000px) {
   .nav__toggle { display: flex; }
 
@@ -1072,6 +1437,12 @@ input[type="range"] {
 @media (max-width: 720px) {
   .section { padding: 40px 0; }
   .section > .container { width: calc(100% - 24px); padding: 40px 20px; border-radius: 22px; }
+  .section > .container::after { top: 20px; right: 18px; font-size: 3.4rem; }
+  .air-chip { margin-left: 12px; padding: 5px 10px; }
+  .air-chip__label { display: none; }   /* на телефон: само точка и дума */
+  .hero__scroll { display: none; }        /* на телефон пречи на текста, а и всички знаят да скролват */
+  .marquee { padding: 48px 0; }
+  .marquee__row { padding: 10px 0; }
   .hero__content { padding-bottom: 160px; }
 
   /* Играта на телефон: по-ниско поле, по-малки отпадъци и контейнери */
@@ -1091,6 +1462,8 @@ input[type="range"] {
   }
   .reveal,
   .js .section > .container { opacity: 1; translate: none; scale: none; }
+  /* Игрищата показваме направо изгорели */
+  .burn__grid.is-burning .burn__pitch { background: #3d2a22; }
   .photo img,
   .threat__img { scale: none; }
 }

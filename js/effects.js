@@ -155,3 +155,12 @@ if (!reduceMotion) {
   }, { passive: true });
   updateParallax();
 }
+
+/* -----------------------------------------
+   ЛЕНТАТА С ПРИЗИВИ
+   Повтаряме текста веднъж: докато първото копие излиза
+   отляво, второто вече е влязло отдясно – няма празно място.
+   ----------------------------------------- */
+document.querySelectorAll(".marquee__track").forEach((track) => {
+  track.append(...Array.from(track.children, (item) => item.cloneNode(true)));
+});
