@@ -30,7 +30,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Unbounded:wght@600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=9">
   <!-- Отбелязваме, че JavaScript работи – само тогава CSS скрива елементите за анимациите -->
   <script>
     document.documentElement.classList.add("js");
@@ -1269,21 +1269,23 @@
     </div>
   </footer>
 
-  <!-- Скриптовете: първо общите помощни функции, после всяка част поотделно -->
-  <script src="js/utils.js" defer></script>
-  <script src="js/nav.js" defer></script>
-  <script src="js/effects.js" defer></script>
-  <script src="js/tilt.js" defer></script>
-  <script src="js/hero.js" defer></script>
-  <script src="js/fire.js" defer></script>
-  <script src="js/simulator.js" defer></script>
-  <script src="js/game.js" defer></script>
-  <script src="js/compare.js" defer></script>
-  <script src="js/map.js" defer></script>
-  <script src="js/gallery.js" defer></script>
-  <script src="js/pledge.js" defer></script>
-  <script src="js/story.js" defer></script>
-  <script src="js/cursor.js" defer></script>
-  <script src="js/sound.js" defer></script>
+  <!-- Скриптовете: първо общите помощни функции, после всяка част поотделно.
+       ?v=9 е номерът на версията – при нова версия го сменяме и браузърът
+       изтегля новите файлове, вместо да ползва старите от кеша. -->
+  <script src="js/utils.js?v=9" defer></script>
+  <script src="js/nav.js?v=9" defer></script>
+  <script src="js/effects.js?v=9" defer></script>
+  <script src="js/tilt.js?v=9" defer></script>
+  <script src="js/hero.js?v=9" defer></script>
+  <script src="js/fire.js?v=9" defer></script>
+  <script src="js/simulator.js?v=9" defer></script>
+  <script src="js/game.js?v=9" defer></script>
+  <script src="js/compare.js?v=9" defer></script>
+  <script src="js/map.js?v=9" defer></script>
+  <script src="js/gallery.js?v=9" defer></script>
+  <script src="js/pledge.js?v=9" defer></script>
+  <script src="js/story.js?v=9" defer></script>
+  <script src="js/cursor.js?v=9" defer></script>
+  <script src="js/sound.js?v=9" defer></script>
 </body>
 </html>
