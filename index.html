@@ -521,23 +521,27 @@
           <article class="threat threat--fire reveal">
             <!-- Искри над снимката (js/fire.js) -->
             <canvas class="embers embers--photo" aria-hidden="true"></canvas>
-            <!-- Илюстративна снимка – авторът и лицензът са във футъра -->
+            <!-- Истински горски пожар в България (Рила, 2015) – авторът и лицензът са във футъра -->
             <img class="threat__img"
-                 src="img/fire-1920.jpg"
-                 srcset="img/fire-960.jpg 960w, img/fire-1920.jpg 1920w, img/fire-3840.jpg 3840w"
-                 sizes="(max-width: 860px) 100vw, 520px"
-                 width="1920" height="1440" loading="lazy" decoding="async"
-                 alt="Горски пожар вечер: пламъци зад силуета на гората (илюстративна снимка)">
+                 src="img/rila-fire-1024.jpg"
+                 width="1024" height="678" loading="lazy" decoding="async"
+                 alt="Гъст дим от горски пожар се издига над залесените долини на Рила">
+            <span class="threat__label">Горски пожар в Рила, 2015 г.</span>
             <div class="threat__body">
               <h3>Горските пожари</h3>
-              <p class="threat__stat"><span class="counter" data-target="500">0</span> дка</p>
-              <p>Толкова храсти и гори обхвана пожарът между Казанлък и Мъглиж през август 2023 г., заради който бе обявено частично бедствено положение. Повечето пожари започват от човешка небрежност: хвърлен фас, палене на стърнища, искра.</p>
-              <!-- 500 дка, показани като футболни игрища. Игрищата се добавят от js/fire.js -->
+              <p class="threat__stat"><small>поне</small> <span class="counter" data-target="3000">0</span> дка</p>
+              <p>Толкова изгоряха само в трите най-големи пожара около Казанлък от 2019 до 2023 г. – колкото около <strong>420 футболни игрища</strong>. Повечето пожари започват от човешка небрежност: хвърлен фас, палене на стърнища, искра.</p>
+              <!-- Квадратчетата се добавят от js/fire.js: всяко е 50 дка, оцветено според годината на пожара -->
               <div class="burn">
                 <div class="burn__grid" id="burn-grid" aria-hidden="true"></div>
-                <p class="burn__caption">500 дка са колкото <strong>70 футболни игрища</strong> (105 × 68 м всяко).</p>
+                <ul class="burn__legend">
+                  <li class="burn__key burn__key--2019"><b>2019</b> Горно Черковище – 500 дка</li>
+                  <li class="burn__key burn__key--2022"><b>2022</b> „Старите лозя“ – 2000 дка</li>
+                  <li class="burn__key burn__key--2023"><b>2023</b> Казанлък – Мъглиж – 500 дка</li>
+                </ul>
+                <p class="burn__caption">Всяко квадратче е 50 дка – колкото 7 футболни игрища (105 × 68 м).</p>
               </div>
-              <p class="source">Източници: <a href="https://www.bgonair.bg/a/2-bulgaria/316629-chastichno-bedstveno-polozhenie-pozharat-mezhdu-kazanlak-i-maglizh-obhvana-500-dka" target="_blank" rel="noopener">Bgonair</a>, <a href="https://btvnovinite.bg/bulgaria/golemijat-gorski-pozhar-mezhdu-kazanlak-i-maglizh-e-chastichno-ovladjan.html" target="_blank" rel="noopener">bTV</a></p>
+              <p class="source">Източници: <a href="https://bntnews.bg/bg/a/pozhart-v-kanlshko-obkhvana-500-dka" target="_blank" rel="noopener">БНТ</a>, <a href="https://btvnovinite.bg/bulgaria/pozharat-v-kazanlak-e-potushen.html" target="_blank" rel="noopener">bTV</a>, <a href="https://dnes.dir.bg/intsidenti/pozharat-kray-kazanlak-e-izpepelil-2000-dka-i-desetki-vili-ne-za-parvi-izbuhva-tam" target="_blank" rel="noopener">„Днес“</a>, <a href="https://www.bgonair.bg/a/2-bulgaria/316629-chastichno-bedstveno-polozhenie-pozharat-mezhdu-kazanlak-i-maglizh-obhvana-500-dka" target="_blank" rel="noopener">Bgonair</a></p>
             </div>
           </article>
 
@@ -549,10 +553,16 @@
                  sizes="(max-width: 860px) 100vw, 520px"
                  width="1920" height="1446" loading="lazy" decoding="async"
                  alt="Изхвърлени отпадъци и стари уреди в гора (илюстративна снимка)">
+            <span class="threat__label">Илюстративна снимка</span>
             <div class="threat__body">
               <h3>Нерегламентирани сметища</h3>
               <p class="threat__stat">Строителни отпадъци, гуми, пластмаса</p>
               <p>В РИОСВ – Стара Загора редовно постъпват сигнали за незаконно изхвърлени отпадъци около Казанлък. Когато такова сметище се запали, димът отново остава в долината.</p>
+              <ul class="danger-list">
+                <li><span aria-hidden="true">🔥</span> Сухите отпадъци лесно се запалват – и пожарът тръгва от сметището към гората.</li>
+                <li><span aria-hidden="true">☠️</span> Горящите гуми и пластмаса отделят гъст отровен дим.</li>
+                <li><span aria-hidden="true">💧</span> Течностите от старите уреди и бои попиват в почвата и стигат до водата.</li>
+              </ul>
               <div class="btn-row">
                 <a class="action-btn" href="https://riosv-stz.bg/" target="_blank" rel="noopener"><span class="action-btn__icon" aria-hidden="true">📣</span><span class="action-btn__text">Подай сигнал в РИОСВ<span class="sr-only"> (отваря се в нов раздел)</span></span><span class="action-btn__arrow" aria-hidden="true">→</span></a>
                 <a class="action-btn action-btn--ghost" href="tel:+35942692200"><span class="action-btn__icon" aria-hidden="true">📞</span><span class="action-btn__text">042 692 200</span><span class="action-btn__arrow" aria-hidden="true">→</span></a>
@@ -569,6 +579,10 @@
           <h3 class="fires__title">Пожарите край Казанлък</h3>
           <p class="fires__lead">
             Огънят се връща отново и отново. Ето пет случая около града – по данни на медиите и горските служители.
+          </p>
+          <p class="fires__scale">
+            <span class="fires__scale-bar" aria-hidden="true"></span>
+            Лентата показва колко голям е пожарът: цялата лента е 2000 дка – най-големият от петте.
           </p>
 
           <div class="fires__photos">
@@ -599,14 +613,14 @@
               <a class="action-btn action-btn--ghost action-btn--small" href="https://utroruse.com/article/16312/" target="_blank" rel="noopener"><span class="action-btn__icon" aria-hidden="true">📷</span><span class="action-btn__text">Снимка – „Утро“ / БГНЕС<span class="sr-only"> (отваря се в нов раздел)</span></span><span class="action-btn__arrow" aria-hidden="true">→</span></a>
             </li>
             <li class="fire-case reveal" style="--area: 0.25">
-              <p class="fire-case__head"><time datetime="2019-09-13">13 септември 2019</time><span class="fire-case__area">500 дка</span></p>
+              <p class="fire-case__head"><time datetime="2019-09-13">13 септември 2019</time><span class="fire-case__area"><span class="counter" data-target="500">0</span> дка</span></p>
               <h4>Над с. Горно Черковище</h4>
               <div class="fire-case__bar" aria-hidden="true"><span></span></div>
               <p>От тях 50 дка борова гора. Силен вятър разрастваше огъня, прокопаха се противопожарни ивици.</p>
               <a class="action-btn action-btn--ghost action-btn--small" href="https://bntnews.bg/bg/a/pozhart-v-kanlshko-obkhvana-500-dka" target="_blank" rel="noopener"><span class="action-btn__icon" aria-hidden="true">📷</span><span class="action-btn__text">Видео – БНТ<span class="sr-only"> (отваря се в нов раздел)</span></span><span class="action-btn__arrow" aria-hidden="true">→</span></a>
             </li>
             <li class="fire-case fire-case--big reveal" style="--area: 1">
-              <p class="fire-case__head"><time datetime="2022-07-19">19 юли 2022</time><span class="fire-case__area">2000 дка</span></p>
+              <p class="fire-case__head"><time datetime="2022-07-19">19 юли 2022</time><span class="fire-case__area"><span class="counter" data-target="2000">0</span> дка</span></p>
               <h4>„Старите лозя“, източният край на Казанлък</h4>
               <div class="fire-case__bar" aria-hidden="true"><span></span></div>
               <p>
@@ -628,13 +642,106 @@
               <a class="action-btn action-btn--ghost action-btn--small" href="https://dnes.dir.bg/intsidenti/pozhar-izbuhna-vav-voenen-poligon-tyulbeto-pri-obezvrezhdane-na-boepripasi-video" target="_blank" rel="noopener"><span class="action-btn__icon" aria-hidden="true">📷</span><span class="action-btn__text">Видео – „Днес“ (dir.bg)<span class="sr-only"> (отваря се в нов раздел)</span></span><span class="action-btn__arrow" aria-hidden="true">→</span></a>
             </li>
             <li class="fire-case reveal" style="--area: 0.25">
-              <p class="fire-case__head"><time datetime="2023-08">август 2023</time><span class="fire-case__area">500 дка</span></p>
+              <p class="fire-case__head"><time datetime="2023-08">август 2023</time><span class="fire-case__area"><span class="counter" data-target="500">0</span> дка</span></p>
               <h4>Между Казанлък и Мъглиж</h4>
               <div class="fire-case__bar" aria-hidden="true"><span></span></div>
-              <p>Храсти и гори; беше обявено частично бедствено положение (виж по-горе: 70 футболни игрища).</p>
+              <p>Храсти и гори; беше обявено частично бедствено положение.</p>
               <a class="action-btn action-btn--ghost action-btn--small" href="https://www.bgonair.bg/a/2-bulgaria/316629-chastichno-bedstveno-polozhenie-pozharat-mezhdu-kazanlak-i-maglizh-obhvana-500-dka" target="_blank" rel="noopener"><span class="action-btn__icon" aria-hidden="true">📷</span><span class="action-btn__text">Снимки – Bgonair<span class="sr-only"> (отваря се в нов раздел)</span></span><span class="action-btn__arrow" aria-hidden="true">→</span></a>
             </li>
           </ol>
+        </div>
+
+        <!-- КАКВО МОЖЕШ ДА НАПРАВИШ: карти, които се обръщат при натискане (js/fire.js).
+             Отпред – какво води до пожар или сметище, отзад – какво да правиш вместо това. -->
+        <div class="prevent">
+          <h3 class="fires__title">Какво можеш да направиш</h3>
+          <p class="fires__lead">Натисни картата – отзад е какво да правиш вместо това.</p>
+          <div class="prevent__grid">
+            <button class="flip reveal" type="button" aria-pressed="false">
+              <span class="flip__inner">
+                <span class="flip__face flip__front">
+                  <span class="flip__badge" aria-hidden="true">✕</span>
+                  <span class="flip__icon" aria-hidden="true">🚬</span>
+                  <span class="flip__text">Фас от колата или в сухата трева</span>
+                  <span class="flip__hint" aria-hidden="true">Обърни ↻</span>
+                </span>
+                <span class="flip__face flip__back">
+                  <span class="flip__badge" aria-hidden="true">✓</span>
+                  <span class="flip__text">Гаси фаса докрай и го хвърли в кошче. Една искра стига, за да пламне суха трева.</span>
+                </span>
+              </span>
+            </button>
+            <button class="flip reveal" type="button" aria-pressed="false">
+              <span class="flip__inner">
+                <span class="flip__face flip__front">
+                  <span class="flip__badge" aria-hidden="true">✕</span>
+                  <span class="flip__icon" aria-hidden="true">🌾</span>
+                  <span class="flip__text">Палене на стърнища и сухи треви</span>
+                  <span class="flip__hint" aria-hidden="true">Обърни ↻</span>
+                </span>
+                <span class="flip__face flip__back">
+                  <span class="flip__badge" aria-hidden="true">✓</span>
+                  <span class="flip__text">Забранено е и е опасно – при вятър огънят бързо излиза от контрол. Остатъците се изорават.</span>
+                </span>
+              </span>
+            </button>
+            <button class="flip reveal" type="button" aria-pressed="false">
+              <span class="flip__inner">
+                <span class="flip__face flip__front">
+                  <span class="flip__badge" aria-hidden="true">✕</span>
+                  <span class="flip__icon" aria-hidden="true">🔥</span>
+                  <span class="flip__text">Огън на пикник където ти падне</span>
+                  <span class="flip__hint" aria-hidden="true">Обърни ↻</span>
+                </span>
+                <span class="flip__face flip__back">
+                  <span class="flip__badge" aria-hidden="true">✓</span>
+                  <span class="flip__text">Пали огън само на обозначени места, далеч от дървета, и го гаси изцяло с вода и пръст.</span>
+                </span>
+              </span>
+            </button>
+            <button class="flip reveal" type="button" aria-pressed="false">
+              <span class="flip__inner">
+                <span class="flip__face flip__front">
+                  <span class="flip__badge" aria-hidden="true">✕</span>
+                  <span class="flip__icon" aria-hidden="true">🍾</span>
+                  <span class="flip__text">Бутилки и стъкла в гората</span>
+                  <span class="flip__hint" aria-hidden="true">Обърни ↻</span>
+                </span>
+                <span class="flip__face flip__back">
+                  <span class="flip__badge" aria-hidden="true">✓</span>
+                  <span class="flip__text">Прибирай ги. На силно слънце стъклото може да събере лъчите като лупа.</span>
+                </span>
+              </span>
+            </button>
+            <button class="flip reveal" type="button" aria-pressed="false">
+              <span class="flip__inner">
+                <span class="flip__face flip__front">
+                  <span class="flip__badge" aria-hidden="true">✕</span>
+                  <span class="flip__icon" aria-hidden="true">🗑️</span>
+                  <span class="flip__text">Стари мебели и строителни отпадъци край пътя</span>
+                  <span class="flip__hint" aria-hidden="true">Обърни ↻</span>
+                </span>
+                <span class="flip__face flip__back">
+                  <span class="flip__badge" aria-hidden="true">✓</span>
+                  <span class="flip__text">Не ги изхвърляй в природата – попитай общината как се събират едрите отпадъци.</span>
+                </span>
+              </span>
+            </button>
+            <button class="flip reveal" type="button" aria-pressed="false">
+              <span class="flip__inner">
+                <span class="flip__face flip__front">
+                  <span class="flip__badge" aria-hidden="true">✕</span>
+                  <span class="flip__icon" aria-hidden="true">📞</span>
+                  <span class="flip__text">Видиш дим или пожар</span>
+                  <span class="flip__hint" aria-hidden="true">Обърни ↻</span>
+                </span>
+                <span class="flip__face flip__back">
+                  <span class="flip__badge" aria-hidden="true">✓</span>
+                  <span class="flip__text">Звънни на 112 веднага – кажи къде точно си и какво гори. Не чакай някой друг да звънне.</span>
+                </span>
+              </span>
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -655,41 +762,102 @@
         <div class="industry__layout">
           <!-- Рисунка (SVG), а не снимка: свободни снимки на заводите в долината няма -->
           <figure class="industry__art reveal">
-            <svg viewBox="0 0 520 340" role="img" aria-labelledby="industry-art-title">
-              <title id="industry-art-title">Рисунка: завод с два комина и филтър, а до него – станция, която измерва въздуха</title>
+            <svg viewBox="0 0 640 400" role="img" aria-labelledby="industry-art-title">
+              <title id="industry-art-title">Рисунка: завод с хале и комин; преди комина димът минава през филтър, а до завода има станция, която измерва въздуха</title>
               <defs>
-                <linearGradient id="industry-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a3a5c"/><stop offset="1" stop-color="#c9a48f"/></linearGradient>
+                <linearGradient id="ind-sky" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#1c2b48"/>
+                  <stop offset="0.65" stop-color="#7a6a8a"/>
+                  <stop offset="1" stop-color="#e2a98f"/>
+                </linearGradient>
+                <linearGradient id="ind-wall" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#4a5370"/>
+                  <stop offset="1" stop-color="#343b52"/>
+                </linearGradient>
+                <linearGradient id="ind-stack" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0" stop-color="#6a7390"/>
+                  <stop offset="1" stop-color="#454d66"/>
+                </linearGradient>
               </defs>
-              <rect width="520" height="340" fill="url(#industry-sky)"/>
-              <path class="industry__hill" d="M0 250 C90 200 170 230 260 205 C350 180 430 220 520 196 V340 H0 Z"/>
-              <!-- Димът от комините -->
-              <g class="industry__smoke">
-                <circle cx="150" cy="70" r="14"/><circle cx="150" cy="70" r="14"/><circle cx="150" cy="70" r="14"/>
-                <circle cx="210" cy="92" r="12"/><circle cx="210" cy="92" r="12"/><circle cx="210" cy="92" r="12"/>
+
+              <!-- Небе, слънце и хълмове -->
+              <rect width="640" height="400" fill="url(#ind-sky)"/>
+              <circle cx="530" cy="250" r="36" fill="#ffd9b5" opacity="0.85"/>
+              <path d="M0 262 C80 228 160 244 240 226 C330 206 420 240 500 220 C560 206 610 222 640 214 V400 H0 Z" fill="#40536f"/>
+              <path d="M0 302 C120 274 220 294 320 284 C430 272 520 298 640 286 V400 H0 Z" fill="#2c4a3a"/>
+              <rect y="330" width="640" height="70" fill="#1d3329"/>
+
+              <!-- Димът от комина – след филтъра е светъл и рядък -->
+              <g class="ind-smoke">
+                <circle cx="441" cy="86" r="10"/><circle cx="441" cy="86" r="10"/><circle cx="441" cy="86" r="10"/>
+                <circle cx="441" cy="86" r="10"/><circle cx="441" cy="86" r="10"/>
               </g>
-              <!-- Заводът -->
-              <g class="industry__plant">
-                <rect x="140" y="78" width="20" height="160"/>
-                <rect x="200" y="100" width="20" height="138"/>
-                <path d="M90 300 V200 l50 -28 v28 l50 -28 v28 l50 -28 v28 l50 -28 V300 Z"/>
-                <rect x="60" y="240" width="300" height="60"/>
+
+              <!-- Халето с назъбен покрив и светещи прозорци -->
+              <g class="ind-hall">
+                <path d="M80 330 V252 l25 -24 v24 l25 -24 v24 l25 -24 v24 l25 -24 v24 l25 -24 v24 l25 -24 v24 l25 -24 v24 l25 -24 v24 V330 Z" fill="url(#ind-wall)"/>
+                <path d="M105 228 v24 M130 228 v24 M155 228 v24 M180 228 v24 M205 228 v24 M230 228 v24 M255 228 v24 M280 228 v24" stroke="#5d6888" stroke-width="2"/>
+                <g fill="#ffcf7a" opacity="0.85">
+                  <rect x="96" y="272" width="22" height="12" rx="2"/><rect x="128" y="272" width="22" height="12" rx="2"/>
+                  <rect x="160" y="272" width="22" height="12" rx="2"/><rect x="192" y="272" width="22" height="12" rx="2"/>
+                  <rect x="224" y="272" width="22" height="12" rx="2"/><rect x="256" y="272" width="22" height="12" rx="2"/>
+                </g>
+                <rect x="170" y="300" width="30" height="30" fill="#2a3045"/>
               </g>
-              <!-- Филтърът (кутията при комина) -->
-              <rect class="industry__filter" x="226" y="186" width="44" height="40" rx="4"/>
-              <text class="industry__tag" x="248" y="178">филтър</text>
-              <!-- Станцията за измерване и сигналът ѝ -->
-              <g class="industry__station">
-                <rect x="410" y="246" width="54" height="54" rx="4"/>
-                <path d="M437 246 V206"/>
-                <circle cx="437" cy="200" r="5"/>
+
+              <!-- Тръбата: от халето към филтъра и от филтъра към комина.
+                   Пунктирът в нея тече – така се вижда пътят на праха. -->
+              <path class="ind-duct" d="M296 280 H336 V250 M392 214 H430"/>
+              <path class="ind-flow" d="M296 280 H336 V250 M392 214 H430"/>
+
+              <!-- Филтърът (електрофилтър): задържа праха, преди да излезе от комина -->
+              <g class="ind-filter">
+                <rect x="320" y="190" width="72" height="64" rx="6"/>
+                <path d="M336 200 v44 M352 200 v44 M368 200 v44 M384 200 v44" stroke="#6f55b8" stroke-width="3"/>
+                <rect x="326" y="254" width="8" height="76" fill="#3a4258"/><rect x="378" y="254" width="8" height="76" fill="#3a4258"/>
               </g>
-              <g class="industry__waves">
-                <path d="M450 190 a16 16 0 0 1 0 22"/><path d="M458 182 a28 28 0 0 1 0 38"/>
+
+              <!-- Коминът с червено-бели ивици -->
+              <g>
+                <rect x="428" y="90" width="26" height="240" fill="url(#ind-stack)"/>
+                <rect x="428" y="90" width="26" height="12" fill="#e6e8ef"/>
+                <rect x="428" y="102" width="26" height="12" fill="#d9534f"/>
+                <rect x="428" y="114" width="26" height="12" fill="#e6e8ef"/>
+                <rect x="428" y="126" width="26" height="12" fill="#d9534f"/>
+                <rect x="422" y="322" width="38" height="8" fill="#2a3045"/>
               </g>
-              <text class="industry__tag" x="437" y="322">измерване</text>
-              <rect class="industry__ground" y="300" width="520" height="40"/>
+
+              <!-- Станцията за измерване на въздуха -->
+              <g class="ind-station">
+                <rect x="520" y="292" width="54" height="38" rx="4" fill="#6fd3c4"/>
+                <rect x="528" y="300" width="18" height="10" rx="2" fill="#1d3329" opacity="0.6"/>
+                <path d="M556 292 V236" stroke="#6fd3c4" stroke-width="3"/>
+                <rect x="549" y="228" width="14" height="12" rx="3" fill="#bdf0e8"/>
+                <path d="M520 292 l-14 -16 h24 Z" fill="#9fb3c8"/>
+              </g>
+              <g class="ind-waves">
+                <path d="M572 222 a14 14 0 0 1 0 22"/><path d="M580 214 a26 26 0 0 1 0 38"/>
+              </g>
+
+              <!-- Дървета отпред -->
+              <g fill="#24503a">
+                <circle cx="40" cy="314" r="18"/><circle cx="62" cy="320" r="13"/>
+                <circle cx="604" cy="312" r="18"/><circle cx="488" cy="322" r="11"/>
+              </g>
+
+              <!-- Номерата към легендата -->
+              <g class="ind-marker"><circle cx="476" cy="104" r="13"/><text x="476" y="109">1</text></g>
+              <g class="ind-marker"><circle cx="356" cy="172" r="13"/><text x="356" y="177">2</text></g>
+              <g class="ind-marker"><circle cx="556" cy="206" r="13"/><text x="556" y="211">3</text></g>
             </svg>
-            <figcaption>Рисунка – не е снимка на конкретен завод.</figcaption>
+            <figcaption>
+              <ol class="industry__legend">
+                <li><b>1</b> Комин – изпуска газовете високо, за да се разсеят.</li>
+                <li><b>2</b> Филтър – задържа праха, преди да стигне до комина.</li>
+                <li><b>3</b> Станция – измерва какво има във въздуха около завода.</li>
+              </ol>
+              <span class="industry__note">Рисунка – не е конкретен завод.</span>
+            </figcaption>
           </figure>
 
           <div class="industry__case reveal">
@@ -739,6 +907,14 @@
             <span class="action-card__icon" aria-hidden="true">📞</span>
             <h4>Подай сигнал</h4>
             <p>Дим, миризма или изхвърлени отпадъци? Обади се на „Зеления телефон“ на РИОСВ – Стара Загора.</p>
+            <div class="call-tips">
+              <p class="call-tips__title">Когато звъннеш, кажи:</p>
+              <ul>
+                <li><span aria-hidden="true">📍</span> <b>Къде</b> – село, местност или път</li>
+                <li><span aria-hidden="true">🕒</span> <b>Кога</b> го видя</li>
+                <li><span aria-hidden="true">📷</span> <b>Снимка</b> – само ако е безопасно</li>
+              </ul>
+            </div>
             <div class="btn-row btn-row--stack">
               <a class="action-btn action-btn--ghost" href="tel:+35942692200"><span class="action-btn__icon" aria-hidden="true">📞</span><span class="action-btn__text">042 692 200 <small>в работно време</small></span><span class="action-btn__arrow" aria-hidden="true">→</span></a>
               <a class="action-btn action-btn--ghost" href="tel:+359885632494"><span class="action-btn__icon" aria-hidden="true">🌙</span><span class="action-btn__text">0885 632 494 <small>извън работно време</small></span><span class="action-btn__arrow" aria-hidden="true">→</span></a>
@@ -749,8 +925,22 @@
             <span class="action-card__icon" aria-hidden="true">📊</span>
             <h4>Следи данните</h4>
             <p>Изпълнителната агенция по околна среда публикува всеки ден бюлетин за качеството на въздуха в страната.</p>
+            <!-- Европейският индекс: 6 степени, всеки час, за над 3500 станции -->
+            <div class="aqi">
+              <p class="aqi__title">Европейският индекс за въздуха има 6 степени:</p>
+              <ol class="aqi__scale">
+                <li>Добро</li>
+                <li>Задоволително</li>
+                <li>Умерено</li>
+                <li>Лошо</li>
+                <li>Много лошо</li>
+                <li>Изключително лошо</li>
+              </ol>
+              <p class="aqi__note">Изчислява се на всеки час от 5 замърсителя – фини прахови частици (ФПЧ10 и ФПЧ2.5), озон, азотен и серен диоксид – за над 3500 станции в Европа.</p>
+            </div>
             <div class="btn-row btn-row--stack">
               <a class="action-btn" href="https://riosv-stz.bg/info/192/ezhednevni-byuletini-za-sastoyanieto-na-vazduha" target="_blank" rel="noopener"><span class="action-btn__icon" aria-hidden="true">📊</span><span class="action-btn__text">Към бюлетина<span class="sr-only"> (отваря се в нов раздел)</span></span><span class="action-btn__arrow" aria-hidden="true">→</span></a>
+              <a class="action-btn action-btn--ghost" href="https://airindex.eea.europa.eu/" target="_blank" rel="noopener"><span class="action-btn__icon" aria-hidden="true">🗺️</span><span class="action-btn__text">Карта на въздуха в Европа (ЕАОС)<span class="sr-only"> (отваря се в нов раздел)</span></span><span class="action-btn__arrow" aria-hidden="true">→</span></a>
             </div>
           </article>
           <article class="action-card reveal">
@@ -864,14 +1054,24 @@
               <figcaption><span class="strip__num">01</span> Розовата долина между Балкана и Средна гора</figcaption>
             </figure>
             <figure class="strip__slide">
-              <button class="gallery__open" type="button" data-photo="rose-pickers" aria-label="Отвори в пълен размер: Розобер в Казанлък – празник с народни носии">
-                <img src="img/rose-pickers-1920.jpg"
-                     srcset="img/rose-pickers-960.jpg 960w, img/rose-pickers-1920.jpg 1920w, img/rose-pickers-3840.jpg 3840w"
+              <button class="gallery__open" type="button" data-photo="festival" aria-label="Отвори в пълен размер: Ритуалът „Розобер“ по време на Празника на розата">
+                <img src="img/festival-1920.jpg"
+                     srcset="img/festival-960.jpg 960w, img/festival-1920.jpg 1920w, img/festival-3840.jpg 3840w"
                      sizes="(max-width: 860px) 85vw, 800px"
-                     width="1920" height="1280" loading="lazy" decoding="async"
-                     alt="Млади момичета в народни носии сред розите">
+                     width="1920" height="1078" loading="lazy" decoding="async"
+                     alt="Много хора в народни носии с кошници за рози на поляна, а около тях – гости">
               </button>
-              <figcaption><span class="strip__num">02</span> Розобер в Казанлък – празник с народни носии</figcaption>
+              <figcaption><span class="strip__num">02</span> Ритуалът „Розобер“ по време на Празника на розата</figcaption>
+            </figure>
+            <figure class="strip__slide">
+              <button class="gallery__open" type="button" data-photo="rozovo" aria-label="Отвори в пълен размер: Маслодайни рози в село Розово, област Стара Загора">
+                <img src="img/rozovo-1920.jpg"
+                     srcset="img/rozovo-960.jpg 960w, img/rozovo-1920.jpg 1920w, img/rozovo-3840.jpg 3840w"
+                     sizes="(max-width: 860px) 85vw, 800px"
+                     width="1920" height="1440" loading="lazy" decoding="async"
+                     alt="Розов цвят маслодайна роза с пчела в него, а зад него – цяло поле с рози">
+              </button>
+              <figcaption><span class="strip__num">03</span> Маслодайни рози в село Розово, област Стара Загора</figcaption>
             </figure>
             <figure class="strip__slide">
               <button class="gallery__open" type="button" data-photo="valley" aria-label="Отвори в пълен размер: Язовир „Копринка“ и долината, погледнати от връх Шипка">
@@ -881,7 +1081,27 @@
                      width="1920" height="1086" loading="lazy" decoding="async"
                      alt="Казанлъшката долина и язовир „Копринка“ отвисоко, в ясен ден">
               </button>
-              <figcaption><span class="strip__num">03</span> Язовир „Копринка“ и долината, погледнати от връх Шипка</figcaption>
+              <figcaption><span class="strip__num">04</span> Язовир „Копринка“ и долината, погледнати от връх Шипка</figcaption>
+            </figure>
+            <figure class="strip__slide">
+              <button class="gallery__open" type="button" data-photo="shipka" aria-label="Отвори в пълен размер: Паметникът на свободата на връх Шипка">
+                <img src="img/shipka-1920.jpg"
+                     srcset="img/shipka-960.jpg 960w, img/shipka-1920.jpg 1920w, img/shipka-3840.jpg 3840w"
+                     sizes="(max-width: 860px) 85vw, 800px"
+                     width="1920" height="1298" loading="lazy" decoding="async"
+                     alt="Каменната кула на паметника на връх Шипка над зелена гора, под синьо небе">
+              </button>
+              <figcaption><span class="strip__num">05</span> Паметникът на свободата на връх Шипка</figcaption>
+            </figure>
+            <figure class="strip__slide">
+              <button class="gallery__open" type="button" data-photo="balkan" aria-label="Отвори в пълен размер: Стара планина и Бузлуджа, погледнати от връх Шипка">
+                <img src="img/balkan-1920.jpg"
+                     srcset="img/balkan-960.jpg 960w, img/balkan-1920.jpg 1920w, img/balkan-3840.jpg 3840w"
+                     sizes="(max-width: 860px) 85vw, 800px"
+                     width="1920" height="1239" loading="lazy" decoding="async"
+                     alt="Залесени зелени била на Стара планина, а далеч на хоризонта – връх Бузлуджа">
+              </button>
+              <figcaption><span class="strip__num">06</span> Стара планина и Бузлуджа, погледнати от връх Шипка</figcaption>
             </figure>
             <figure class="strip__slide">
               <button class="gallery__open" type="button" data-photo="buzludzha" aria-label="Отвори в пълен размер: Язовир „Копринка“ и село Шейново, погледнати от Бузлуджа">
@@ -891,7 +1111,7 @@
                      width="1920" height="1080" loading="lazy" decoding="async"
                      alt="Язовир „Копринка“ и село Шейново далеч долу в долината">
               </button>
-              <figcaption><span class="strip__num">04</span> Язовир „Копринка“ и село Шейново, погледнати от Бузлуджа</figcaption>
+              <figcaption><span class="strip__num">07</span> Язовир „Копринка“ и село Шейново, погледнати от Бузлуджа</figcaption>
             </figure>
             <figure class="strip__slide">
               <button class="gallery__open" type="button" data-photo="city" aria-label="Отвори в пълен размер: Казанлък отвисоко – градът, за чийто въздух става дума">
@@ -901,7 +1121,7 @@
                      width="1920" height="1440" loading="lazy" decoding="async"
                      alt="Покривите на Казанлък, погледнати отвисоко">
               </button>
-              <figcaption><span class="strip__num">05</span> Казанлък отвисоко – градът, за чийто въздух става дума</figcaption>
+              <figcaption><span class="strip__num">08</span> Казанлък отвисоко – градът, за чийто въздух става дума</figcaption>
             </figure>
           </div>
           <div class="strip__controls">
@@ -1029,17 +1249,20 @@
       <a href="#home" class="footer__top" aria-label="Към началото">↑</a>
       <!-- Снимките са от Wikimedia Commons – посочваме автора и лиценза, както изисква лицензът -->
       <details class="footer__credits">
-        <summary>Снимки и лицензи (Wikimedia Commons)</summary>
+        <summary>Снимки и лицензи (Wikimedia Commons и Flickr)</summary>
         <ul>
           <li><a href="https://commons.wikimedia.org/wiki/File:The_Koprinka_Reservoir_seen_from_Shipka_peak.jpg" target="_blank" rel="noopener">Язовир „Копринка“ от връх Шипка</a> – Ivano Giambattista, <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener">CC0</a></li>
           <li><a href="https://commons.wikimedia.org/wiki/File:Oestlicher_Teil_der_Stadt_Kasanlak.jpg" target="_blank" rel="noopener">Източната част на Казанлък</a> – Kazanlak Dani, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a></li>
           <li><a href="https://commons.wikimedia.org/wiki/File:House_chimney_with_dark_smoke_pollution_-_This_photo_has_been_released_into_the_public_domain._There_are_no_copyrights_you_can_use_and_modify_this_photo_without_asking,_and_without_attribution.jpg" target="_blank" rel="noopener">Комин с тъмен дим</a> – Kiwiev, <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener">CC0</a></li>
-          <li><a href="https://commons.wikimedia.org/wiki/File:High_Intensity_Fire_from_the_KNP_Complex.jpg_(704a5870-6772-4288-82f1-f39628facab4).jpg" target="_blank" rel="noopener">Горски пожар (САЩ)</a> – U.S. National Park Service, обществено достояние</li>
+          <li><a href="https://www.flickr.com/photos/45582668@N03/31246070582" target="_blank" rel="noopener">Горски пожар в Рила, 2015 г.</a> – Dāvis Kļaviņš (Flickr), <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/" target="_blank" rel="noopener">CC BY-NC-SA 2.0</a></li>
           <li><a href="https://commons.wikimedia.org/wiki/File:Bulgarian_regions_battling_with_fires_(Copernicus_2024-07-19).png" target="_blank" rel="noopener">Сателитна снимка на Старозагорско</a> – съдържа данни от Copernicus Sentinel-2, Европейски съюз (2024)</li>
           <li><a href="https://commons.wikimedia.org/wiki/File:3-501_AHB_Bambi_bucket_fire_suppression_near_Novo_Selo_Training_Area_(9249896).jpg" target="_blank" rel="noopener">Хеликоптер гаси пожар край „Ново село“</a> – U.S. Army, Sgt. Justin Lacy, обществено достояние</li>
           <li><a href="https://commons.wikimedia.org/wiki/File:Fly_tipping_near_High_Beech,_Essex.jpg" target="_blank" rel="noopener">Отпадъци в гора (Англия)</a> – The wub, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a></li>
           <li><a href="https://commons.wikimedia.org/wiki/File:VALLEY_OF_ROSES,_BULGARIA.jpg" target="_blank" rel="noopener">Розовата долина</a> – Jerrye and Roy Klotz MD, <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a></li>
-          <li><a href="https://commons.wikimedia.org/wiki/File:Young_rose_pickers_are_documenting_their_grandma%27s_outfits_(Kazanlak,_Bulgaria).jpg" target="_blank" rel="noopener">Розобер в Казанлък</a> – Dachegraphy, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a></li>
+          <li><a href="https://commons.wikimedia.org/wiki/File:Rose_Festival,_Bulgaria.jpg" target="_blank" rel="noopener">Ритуалът „Розобер“</a> – DocWoKav, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a></li>
+          <li><a href="https://commons.wikimedia.org/wiki/File:%D0%A1%D0%B5%D0%BB%D0%BE_%D0%A0%D0%BE%D0%B7%D0%BE%D0%B2%D0%BE.JPG" target="_blank" rel="noopener">Рози в село Розово</a> – Animsaj, <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a></li>
+          <li><a href="https://commons.wikimedia.org/wiki/File:Shipka_Monument_1.jpg" target="_blank" rel="noopener">Паметникът на връх Шипка</a> – Ivano Giambattista, <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener">CC0</a></li>
+          <li><a href="https://commons.wikimedia.org/wiki/File:The_Buzludzha_seen_from_Shipka_peak.jpg" target="_blank" rel="noopener">Стара планина и Бузлуджа от връх Шипка</a> – Ivano Giambattista, <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener">CC0</a></li>
           <li><a href="https://commons.wikimedia.org/wiki/File:Koprinka_lake,_Sheynovo_village_viewed_from_Buzludzha_03.JPG" target="_blank" rel="noopener">„Копринка“ и Шейново от Бузлуджа</a> – Scroch, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a></li>
         </ul>
       </details>

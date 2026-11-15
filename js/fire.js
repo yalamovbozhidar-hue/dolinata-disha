@@ -91,29 +91,43 @@ function startEmbers(canvas) {
 if (!reduceMotion) document.querySelectorAll(".embers").forEach(startEmbers);
 
 /* -----------------------------------------
-   70 ФУТБОЛНИ ИГРИЩА
-   Игрище 105 × 68 м = 7 140 м² = 7,14 дка.
-   500 дка : 7,14 дка ≈ 70 игрища.
-   Огънят тръгва от едно игрище и се разпространява към съседните.
+   ОБЩО ИЗГОРЕЛИ: 3000 дка
+   Всяко квадратче е 50 дка (колкото 7 футболни игрища:
+   игрище 105 × 68 м = 7,14 дка). Трите пожара пламват
+   един след друг: 2019 (10 квадратчета), 2022 (40) и 2023 (10).
    ----------------------------------------- */
 const burnGrid = document.getElementById("burn-grid");
-const PITCH_COUNT = 70;
-const PITCH_COLUMNS = 14;    // 14 × 5 = 70
-const FIRE_START = { col: 2, row: 2 };
+const BURN_FIRES = [
+  { year: 2019, squares: 10 },   // Горно Черковище – 500 дка
+  { year: 2022, squares: 40 },   // „Старите лозя“ – 2000 дка
+  { year: 2023, squares: 10 },   // Казанлък – Мъглиж – 500 дка
+];
 
-for (let i = 0; i < PITCH_COUNT; i++) {
-  const col = i % PITCH_COLUMNS;
-  const row = Math.floor(i / PITCH_COLUMNS);
-  // Колкото по-далеч от началото на пожара, толкова по-късно пламва
-  const distance = Math.hypot(col - FIRE_START.col, (row - FIRE_START.row) * 1.5);
-  const pitch = document.createElement("span");
-  pitch.className = "burn__pitch";
-  pitch.style.setProperty("--delay", `${Math.round(distance * 120 + Math.random() * 180)}ms`);
-  burnGrid.appendChild(pitch);
-}
+let burnDelay = 0;
+BURN_FIRES.forEach((fire) => {
+  for (let i = 0; i < fire.squares; i++) {
+    const square = document.createElement("span");
+    square.className = `burn__square burn__square--${fire.year}`;
+    square.style.setProperty("--delay", `${burnDelay + i * 45 + Math.round(Math.random() * 80)}ms`);
+    burnGrid.appendChild(square);
+  }
+  burnDelay += fire.squares * 45 + 300; // кратка пауза преди следващия пожар
+});
 
 new IntersectionObserver(([entry], observer) => {
   if (!entry.isIntersecting) return;
   burnGrid.classList.add("is-burning");
   observer.disconnect(); // гори само веднъж
-}, { threshold: 0.6 }).observe(burnGrid);
+}, { threshold: 0.5 }).observe(burnGrid);
+
+/* -----------------------------------------
+   КАРТИТЕ „КАКВО МОЖЕШ ДА НАПРАВИШ“
+   Натискане (или Enter / интервал) обръща картата.
+   aria-pressed казва на екранния четец дали е обърната.
+   ----------------------------------------- */
+document.querySelectorAll(".flip").forEach((card) => {
+  card.addEventListener("click", () => {
+    const flipped = card.classList.toggle("is-flipped");
+    card.setAttribute("aria-pressed", String(flipped));
+  });
+});
