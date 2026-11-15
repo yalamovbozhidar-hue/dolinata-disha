@@ -116,14 +116,29 @@ function splitIntoLetters(element) {
 }
 
 // При изключени анимации не разделяме – текстът си стои както е
+// Заглавието в началото се разделя веднага (то се вижда първо).
+// Останалите – чак когато наближат екрана: така при зареждане
+// страницата няма стотици допълнителни елементи и се рисува по-бързо.
+function prepareTitle(title) {
+  if (title.classList.contains("split-letters")) splitIntoLetters(title);
+  else splitIntoWords(title);
+  revealObserver.observe(title);
+}
+
 if (!reduceMotion) {
-  document.querySelectorAll(".split-words").forEach((title) => {
-    splitIntoWords(title);
-    revealObserver.observe(title);
-  });
-  document.querySelectorAll(".split-letters").forEach((title) => {
-    splitIntoLetters(title);
-    revealObserver.observe(title);
+  const titleObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        titleObserver.unobserve(entry.target);
+        prepareTitle(entry.target);
+      });
+    },
+    { rootMargin: "0px 0px 400px 0px" }   // 400 px преди да влезе в екрана
+  );
+  document.querySelectorAll(".split-words, .split-letters").forEach((title) => {
+    if (title.closest(".hero")) prepareTitle(title);
+    else titleObserver.observe(title);
   });
 }
 
@@ -233,3 +248,17 @@ const tintObserver = new IntersectionObserver(
   { rootMargin: "-45% 0px -50% 0px" }
 );
 document.querySelectorAll("main > section").forEach((section) => tintObserver.observe(section));
+
+/* -----------------------------------------
+   АНИМАЦИИТЕ СПИРАТ ИЗВЪН ЕКРАНА
+   Безкрайните малки анимации (дим в рисунките, реката на картата,
+   точките…) вървят само в секцията, която е на екрана или близо до нея.
+   Иначе браузърът ги смята на всеки кадър и телефонът се забавя.
+   ----------------------------------------- */
+const onscreenObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => entry.target.classList.toggle("is-onscreen", entry.isIntersecting));
+  },
+  { rootMargin: "200px 0px" }
+);
+document.querySelectorAll(".section, .statement, .marquee").forEach((part) => onscreenObserver.observe(part));

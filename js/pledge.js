@@ -201,9 +201,11 @@ function layoutPledgeTrack() {
 // При изключени анимации остава обикновена лента, която се плъзга с пръст
 if (!reduceMotion) {
   pledgeTrack.classList.add("is-pinned");
-  layoutPledgeTrack();
+  // Размерите се мерят чак след зареждането: иначе браузърът трябва да подреди
+  // цялата страница предварително, само заради тази секция
   window.addEventListener("resize", layoutPledgeTrack);
-  window.addEventListener("load", layoutPledgeTrack); // шрифтовете може да сменят височината
+  if (document.readyState === "complete") layoutPledgeTrack();
+  else window.addEventListener("load", layoutPledgeTrack, { once: true });
   window.addEventListener("scroll", () => {
     if (pledgeQueued) return;
     pledgeQueued = true;

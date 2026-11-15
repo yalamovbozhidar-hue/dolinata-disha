@@ -191,6 +191,17 @@ const cleanCtx = cleanView.getContext("2d");
 const windLayer = document.createElement("canvas");
 const windCtx = windLayer.getContext("2d");
 
+// Неподвижната част (небе, планини, град) се рисува в скрит canvas и после
+// само се копира. Рисуваме я наново, само когато въздухът или часът се сменят.
+const valleyCache = document.createElement("canvas");
+const valleyCacheCtx = valleyCache.getContext("2d");
+let cacheClean = -1;
+let cacheTime = -1;
+
+// На телефон небето се рисува в по-ниска резолюция – то е меко и разликата
+// не се вижда, а телефонът рисува почти 3 пъти по-малко пиксели
+const SKY_SCALE = window.innerWidth < 720 ? 0.6 : 1;
+
 let skyWidth = 0;
 let skyHeight = 0;
 let targetClean = 0;  // колко чист трябва да е въздухът според скрола (0–1)
@@ -203,9 +214,10 @@ let cleanViewTime = -1; // за кой час е нарисувана чиста
 // Небето и смогът са меки, затова не рисуваме в двойна резолюция
 // на острите екрани – така телефонът рисува 2–4 пъти по-малко пиксели.
 function resizeSky() {
-  skyWidth = window.innerWidth;
-  skyHeight = window.innerHeight;
-  [skyCanvas, cleanView, windLayer].forEach((canvas) => {
+  skyWidth = Math.round(window.innerWidth * SKY_SCALE);
+  skyHeight = Math.round(window.innerHeight * SKY_SCALE);
+  cacheClean = -1; // при нов размер кешът се рисува наново
+  [skyCanvas, cleanView, windLayer, valleyCache].forEach((canvas) => {
     canvas.width = skyWidth;
     canvas.height = skyHeight;
   });
@@ -657,10 +669,10 @@ function drawWind(w, h) {
 // да идва и докато страницата се скролва.
 if (!reduceMotion) {
   window.addEventListener("pointermove", (event) => {
-    if (event.pointerType !== "touch") blowWind(event.clientX, event.clientY);
+    if (event.pointerType !== "touch") blowWind(event.clientX * SKY_SCALE, event.clientY * SKY_SCALE);
   }, { passive: true });
   window.addEventListener("touchmove", (event) => {
-    blowWind(event.touches[0].clientX, event.touches[0].clientY);
+    blowWind(event.touches[0].clientX * SKY_SCALE, event.touches[0].clientY * SKY_SCALE);
   }, { passive: true });
 }
 
@@ -689,7 +701,13 @@ function updateAirChip() {
 
 // Рисува един кадър от небето
 function drawSky() {
-  drawValley(skyCtx, skyWidth, skyHeight, clean, dayTime);
+  // Долината – от кеша; наново само ако въздухът или часът са се сменили видимо
+  if (Math.abs(clean - cacheClean) > 0.002 || Math.abs(dayTime - cacheTime) > 0.002) {
+    drawValley(valleyCacheCtx, skyWidth, skyHeight, clean, dayTime);
+    cacheClean = clean;
+    cacheTime = dayTime;
+  }
+  skyCtx.drawImage(valleyCache, 0, 0);
   drawChimneySmoke(skyWidth, skyHeight);
   drawSmog(skyWidth, skyHeight);
   drawWind(skyWidth, skyHeight);
@@ -719,6 +737,10 @@ updateTargetClean();
 clean = targetClean; // при презареждане по средата на страницата започваме от правилното място
 dayTime = targetTime;
 
-// При изключени анимации рисуваме само при скрол и промяна на размера
-if (reduceMotion) drawSky();
-else animateSky();
+// При изключени анимации рисуваме само при скрол. Иначе: един кадър веднага,
+// а движението тръгва чак след като страницата се зареди – да не я забавя.
+drawSky();
+if (!reduceMotion) {
+  if (document.readyState === "complete") animateSky();
+  else window.addEventListener("load", () => setTimeout(animateSky, 200), { once: true });
+}

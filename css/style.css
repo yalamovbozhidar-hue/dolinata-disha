@@ -46,12 +46,15 @@ html { scrollbar-color: #3d7a57 var(--c-bg); }
 /* Тъмни краища на екрана (винетка) – като на кино */
 /* --tint е цветът на секцията в средата на екрана (js/effects.js).
    @property го прави „истински“ цвят – затова може плавно да преминава. */
-@property --tint {
+/* --tint (от js/effects.js) е на body и се сменя мигновено.
+   Плавният преход е само в слоя body::before (--tint-soft): ако преливаше
+   на самото body, браузърът щеше да преизчислява стила на всички елементи
+   на всеки кадър, докато трае преходът. */
+@property --tint-soft {
   syntax: "<color>";
-  inherits: true;
+  inherits: false;
   initial-value: rgba(0, 0, 0, 0);
 }
-body { transition: --tint 1.5s ease; }
 
 /* Тъмни краища на екрана (винетка) и меко сияние в цвета на секцията */
 body::before {
@@ -60,9 +63,11 @@ body::before {
   inset: 0;
   z-index: -1;
   pointer-events: none;
+  --tint-soft: var(--tint, rgba(0, 0, 0, 0));
+  transition: --tint-soft 1.5s ease;
   background:
-    radial-gradient(ellipse 120% 55% at 50% 100%, color-mix(in srgb, var(--tint) 20%, transparent), transparent 70%),
-    radial-gradient(ellipse 80% 40% at 50% 0%, color-mix(in srgb, var(--tint) 10%, transparent), transparent 70%),
+    radial-gradient(ellipse 120% 55% at 50% 100%, color-mix(in srgb, var(--tint-soft) 20%, transparent), transparent 70%),
+    radial-gradient(ellipse 80% 40% at 50% 0%, color-mix(in srgb, var(--tint-soft) 10%, transparent), transparent 70%),
     radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.45) 100%);
 }
 
@@ -357,7 +362,7 @@ html.menu-open .read-progress { opacity: 0; }   /* линията не се ви
   min-height: 100vh;
   min-height: 100svh; /* на телефон не зависи от лентата на браузъра */
   display: flex;
-  align-items: center;
+  align-items: flex-start;   /* отгоре, не центрирано: когато шрифтовете дойдат, блокът не „подскача“ */
   text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45);
 }
 /* Тъмна сянка отляво, за да се чете текстът върху светлото небе и смога */
@@ -378,7 +383,7 @@ html.menu-open .read-progress { opacity: 0; }   /* линията не се ви
   max-width: var(--max-w);
   width: 100%;
   margin: 0 auto;
-  padding: 120px 20px 200px;
+  padding: clamp(120px, 18vh, 190px) 20px 200px;
 }
 
 .hero__eyebrow {
@@ -2742,7 +2747,15 @@ input[type="range"] {
     padding: 20px 4px 40px;
   }
   /* На тесен екран надписите се виждат само на избраната точка – иначе се застъпват */
-  .map-pin:not([aria-pressed="true"]) .map-pin__label { display: none; }
+  /* Скрити само за очите – екранният четец пак чете името на точката */
+  .map-pin:not([aria-pressed="true"]) .map-pin__label {
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
   .sim,
   .threats__grid,
   .gallery__open img { height: auto; aspect-ratio: 4 / 3; }
@@ -2843,6 +2856,14 @@ input[type="range"] {
 @media (max-width: 380px) {
   .air-chip__value { display: none; }
   .air-chip { padding: 8px; }
+}
+
+/* Секция извън екрана: анимациите ѝ са на пауза (класът е от js/effects.js) */
+.js :is(.section, .statement, .marquee):not(.is-onscreen),
+.js :is(.section, .statement, .marquee):not(.is-onscreen) *,
+.js :is(.section, .statement, .marquee):not(.is-onscreen) *::before,
+.js :is(.section, .statement, .marquee):not(.is-onscreen) *::after {
+  animation-play-state: paused !important;
 }
 
 /* Уважаваме хората, които са изключили анимациите */

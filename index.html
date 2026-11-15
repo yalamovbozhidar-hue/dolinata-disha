@@ -15,13 +15,13 @@
   <!-- Банерът при споделяне (1200 × 630): логото и заглавието в средата,
        за да се виждат и когато приложението изреже снимката до квадрат.
        ?v=… кара Facebook, Viber и др. да изтеглят новия банер вместо стария. -->
-  <meta property="og:image" content="https://yalamovbozhidar-hue.github.io/dolinata-disha/img/og-banner.jpg?v=10">
+  <meta property="og:image" content="https://yalamovbozhidar-hue.github.io/dolinata-disha/img/og-banner.jpg?v=11">
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Логото „Долината диша“ над снимка на Казанлъшката долина: смогът, пожарите и сметищата – и какво можем да направим">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://yalamovbozhidar-hue.github.io/dolinata-disha/img/og-banner.jpg?v=10">
+  <meta name="twitter:image" content="https://yalamovbozhidar-hue.github.io/dolinata-disha/img/og-banner.jpg?v=11">
   <title>Долината диша</title>
   <!-- Логото като иконка навсякъде:
        favicon.ico – за браузъри и места, които не разбират SVG (Windows, отметки);
@@ -37,7 +37,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Unbounded:wght@600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=10">
+  <link rel="stylesheet" href="css/style.css?v=11">
   <!-- Отбелязваме, че JavaScript работи – само тогава CSS скрива елементите за анимациите -->
   <script>
     document.documentElement.classList.add("js");
@@ -480,10 +480,11 @@
           </div>
 
           <div class="sim__controls">
-            <label class="sim__label" for="clean-heating">
-              Домове с чисто отопление (газ, термопомпа, топлофикация):
-              <strong><output id="clean-heating-value">10</output>%</strong>
-            </label>
+            <!-- Числото е извън етикета – иначе HTML не е валиден (output вътре в label с for) -->
+            <p class="sim__label">
+              <label for="clean-heating">Домове с чисто отопление (газ, термопомпа, топлофикация):</label>
+              <strong><output id="clean-heating-value" for="clean-heating">10</output>%</strong>
+            </p>
             <input type="range" id="clean-heating" min="0" max="100" value="10" step="5">
 
             <fieldset class="sim__options">
@@ -583,7 +584,7 @@
         <!-- ПОЖАРИТЕ КРАЙ КАЗАНЛЪК
              Истински снимки със свободен лиценз и пет случая с източник.
              Снимките на медиите не са копирани – бутоните водят към статиите с тях.
-             --area = площта спрямо най-големия пожар (2000 дка) – за лентата. -->
+             Променливата area = площта спрямо най-големия пожар (2000 дка) – за лентата. -->
         <div class="fires">
           <h3 class="fires__title">Пожарите край Казанлък</h3>
           <p class="fires__lead">
@@ -878,25 +879,25 @@
             </p>
             <ol class="timeline">
               <li>
-                <time>януари 2023</time>
+                <time datetime="2023-01">януари 2023</time>
                 <p>РИОСВ одобрява доклада за ОВОС за разширяване на завода с нова инсталация за формалин.
                 Десетки жители протестират пред завода и обжалват решението.
                 <a class="timeline__src" href="https://utroruse.com/article/899855/" target="_blank" rel="noopener">БТА</a></p>
               </li>
               <li>
-                <time>февруари 2023</time>
+                <time datetime="2023-02">февруари 2023</time>
                 <p>Кметът на Казанлък и местен бизнес осигуряват три станции за измерване на въздуха –
                 при Голямо Дряново, язовир „Копринка“ и в общината.
                 <a class="timeline__src" href="https://www.kazanlak.bg/otnosno-razshiryavaneto-na-instalatsiyata-na-kastamonu-kmetat-galina-stoyanova-savmestno-sas-zainteresovaniya-mesten-biznes-predpriemat-merki-za-zakupuvane-na-tri-izmervatelni-stantsii-na-kachestvoto" target="_blank" rel="noopener">Община Казанлък</a></p>
               </li>
               <li>
-                <time>март 2023</time>
+                <time datetime="2023-03">март 2023</time>
                 <p>РИОСВ определя изводите в сигнал на сдружение „България за чиста Розова долина“
                 за формалдехид като „неверни и заблуждаващи“.
                 <a class="timeline__src" href="https://www.bta.bg/bg/news/bulgaria/433655-spored-riosv-stara-zagora-izlozhenite-v-signala-na-mestno-sdruzhenie-izvodi-za" target="_blank" rel="noopener">БТА</a></p>
               </li>
               <li>
-                <time>февруари 2025</time>
+                <time datetime="2025-02">февруари 2025</time>
                 <p>След нов сигнал РИОСВ проверява завода: филтърът работи, а емисиите са в нормите.
                 Данните от станциите извън националната система инспекцията не приема за надеждни.
                 <a class="timeline__src" href="https://www.focus-news.net/novini/regioni/RIOSV-Stara-Zagora-kum-Obshtina-Kazanluk-Ne-sa-dostoverni-dannite-ot-stanciite-za-zamursyavane-na-vuzduha-s-formaldehid-2462741" target="_blank" rel="noopener">Фокус</a></p>
@@ -1144,7 +1145,7 @@
 
     <!-- Прозорец за снимка в пълен размер – отваря се от js/gallery.js -->
     <dialog class="lightbox" id="lightbox" aria-label="Снимка в пълен размер">
-      <img class="lightbox__img" id="lightbox-img" src="img/roses-960.jpg" alt="Розовата долина">
+      <img class="lightbox__img" id="lightbox-img" src="img/roses-960.jpg" alt="Розовата долина" loading="lazy">
       <p class="lightbox__caption" id="lightbox-caption"></p>
       <button class="lightbox__close" id="lightbox-close" type="button" aria-label="Затвори снимката">×</button>
     </dialog>
@@ -1318,20 +1319,20 @@
   <!-- Скриптовете: първо общите помощни функции, после всяка част поотделно.
        ?v=10 е номерът на версията – при нова версия го сменяме и браузърът
        изтегля новите файлове, вместо да ползва старите от кеша. -->
-  <script src="js/utils.js?v=10" defer></script>
-  <script src="js/nav.js?v=10" defer></script>
-  <script src="js/effects.js?v=10" defer></script>
-  <script src="js/tilt.js?v=10" defer></script>
-  <script src="js/hero.js?v=10" defer></script>
-  <script src="js/fire.js?v=10" defer></script>
-  <script src="js/simulator.js?v=10" defer></script>
-  <script src="js/game.js?v=10" defer></script>
-  <script src="js/compare.js?v=10" defer></script>
-  <script src="js/map.js?v=10" defer></script>
-  <script src="js/gallery.js?v=10" defer></script>
-  <script src="js/pledge.js?v=10" defer></script>
-  <script src="js/story.js?v=10" defer></script>
-  <script src="js/cursor.js?v=10" defer></script>
-  <script src="js/sound.js?v=10" defer></script>
+  <script src="js/utils.js?v=11" defer></script>
+  <script src="js/nav.js?v=11" defer></script>
+  <script src="js/effects.js?v=11" defer></script>
+  <script src="js/tilt.js?v=11" defer></script>
+  <script src="js/hero.js?v=11" defer></script>
+  <script src="js/fire.js?v=11" defer></script>
+  <script src="js/simulator.js?v=11" defer></script>
+  <script src="js/game.js?v=11" defer></script>
+  <script src="js/compare.js?v=11" defer></script>
+  <script src="js/map.js?v=11" defer></script>
+  <script src="js/gallery.js?v=11" defer></script>
+  <script src="js/pledge.js?v=11" defer></script>
+  <script src="js/story.js?v=11" defer></script>
+  <script src="js/cursor.js?v=11" defer></script>
+  <script src="js/sound.js?v=11" defer></script>
 </body>
 </html>
