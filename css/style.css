@@ -237,6 +237,14 @@ main:focus { outline: none; }
   align-items: center;
   text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45);
 }
+/* Тъмна сянка отляво, за да се чете текстът върху светлото небе и смога */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(8, 14, 22, 0.6) 0%, rgba(8, 14, 22, 0.3) 45%, rgba(8, 14, 22, 0) 70%);
+  pointer-events: none;
+}
 
 .hero__content {
   position: relative;
@@ -268,12 +276,11 @@ main:focus { outline: none; }
   display: inline-block;
   color: var(--c-accent);
   text-shadow: 0 0 40px rgba(126, 224, 161, 0.5);
-  transform-origin: left 70%;
   animation: breathe 6s ease-in-out infinite;
 }
 
 @keyframes breathe {
-  50% { scale: 1.04; text-shadow: 0 0 70px rgba(126, 224, 161, 0.9); }
+  50% { text-shadow: 0 0 70px rgba(126, 224, 161, 0.9); }
 }
 
 /* Знакът „скролни“: мишка, в която топчето слиза надолу */
@@ -457,6 +464,8 @@ main { counter-reset: section; }   /* номерата 01, 02… на секци
   transition-delay: calc(var(--i) * 70ms);
 }
 .split-words.is-visible .word { opacity: 1; transform: none; filter: none; }
+/* Голямото заглавие в началото се появява без размазване – по-спокойно */
+.hero__title .word { filter: none; }
 
 /* Анимация при скрол */
 .reveal {

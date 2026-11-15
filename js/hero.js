@@ -1,29 +1,52 @@
 /* =========================================
    НЕБЕТО НАД ДОЛИНАТА (фон на целия сайт)
    Canvas с position: fixed стои зад съдържанието.
-   В началото долината е в гъст смог. Колкото повече
-   скролваш (т.е. колкото повече научаваш), толкова
-   по-чисто става небето, а планините – по-зелени.
+   Утринна долина: три пласта планини, град и редове рози.
+   В началото над града лежи ивица смог (инверсия).
+   Колкото повече скролваш (т.е. колкото повече научаваш),
+   толкова повече се разсейва смогът, а долината се оцветява.
    ========================================= */
 const skyCanvas = document.getElementById("sky");
 const skyCtx = skyCanvas.getContext("2d");
 
 // Цветове: [в смог, в чист въздух]. Всеки цвят е [r, g, b].
+// Небето е утринно (синьо горе, розово-прасковено над планините).
+// Колкото по-далечна е планината, толкова по-синкава и бледа е – като в истински въздух.
 const SKY_COLORS = {
-  top: [[46, 43, 40], [16, 48, 92]],         // небето най-горе
-  middle: [[92, 83, 70], [40, 98, 152]],     // небето в средата
-  horizon: [[148, 130, 104], [118, 176, 206]], // небето над планините
-  balkan: [[70, 67, 60], [40, 96, 72]],      // Балканът отзад
-  valley: [[36, 34, 30], [22, 50, 38]],      // дъното на долината с града
-  sredna: [[25, 25, 23], [15, 38, 28]],      // Средна гора отпред
+  top: [[24, 40, 80], [18, 52, 108]],          // небето най-горе
+  middle: [[82, 112, 160], [70, 136, 198]],    // небето в средата
+  horizon: [[232, 180, 158], [255, 200, 168]], // зората над планините
+  far: [[118, 128, 168], [132, 150, 196]],     // далечните върхове на Балкана
+  ridge: [[72, 90, 118], [66, 104, 138]],      // главното било
+  hills: [[56, 76, 76], [46, 94, 82]],         // предпланините
+  valley: [[66, 74, 62], [62, 108, 72]],       // полето с града и розите
+  sredna: [[28, 40, 36], [22, 56, 42]],        // Средна гора отпред
 };
 
-// Върхове на Балкана: [x, y] в части от ширината и височината на екрана
-const BALKAN_PEAKS = [
-  [0, 0.66], [0.08, 0.58], [0.15, 0.63], [0.24, 0.52], [0.33, 0.61],
-  [0.4, 0.56], [0.49, 0.64], [0.57, 0.53], [0.67, 0.62], [0.75, 0.55],
-  [0.84, 0.63], [0.92, 0.56], [1, 0.61],
-];
+// Билата на планините: височина (в части от екрана) за 65 точки отляво надясно.
+// Всяка точка по средата = средното на съседките + случайно отклонение,
+// което с всяка стъпка намалява. Така върховете изглеждат естествено накъсани.
+function makeRidge(base, height, roughness) {
+  const n = 64;
+  const ys = [];
+  ys[0] = base - Math.random() * height;
+  ys[n] = base - Math.random() * height;
+  let spread = height;
+  for (let step = n; step > 1; step /= 2) {
+    for (let i = step / 2; i < n; i += step) {
+      ys[i] = (ys[i - step / 2] + ys[i + step / 2]) / 2 + (Math.random() - 0.5) * spread;
+    }
+    spread *= roughness;
+  }
+  return ys;
+}
+
+// Три пласта планини – от най-далечния към най-близкия
+const RIDGES = {
+  far: makeRidge(0.47, 0.14, 0.55),
+  ridge: makeRidge(0.57, 0.1, 0.55),
+  hills: makeRidge(0.68, 0.05, 0.5),
+};
 
 // Сградите на града – създаваме ги веднъж, в части от екрана,
 // за да не се „разбъркват“ при промяна на размера
@@ -32,15 +55,32 @@ for (let x = 0.03; x < 0.97; x += 0.018 + Math.random() * 0.02) {
   buildings.push({ x, width: 0.01 + Math.random() * 0.012, height: 0.012 + Math.random() * 0.035 });
 }
 
+// Редовете рози в полето: по-близките са по-ниско, с по-едри точки и по-нарядко
+const ROSE_ROWS = [
+  { y: 0.765, size: 1.5, gap: 6 },
+  { y: 0.785, size: 2, gap: 8 },
+  { y: 0.808, size: 2.5, gap: 10 },
+  { y: 0.832, size: 3, gap: 12 },
+];
+
+// Птиците се връщат, когато въздухът се изчисти
+const birds = Array.from({ length: 6 }, () => ({
+  x: Math.random(),
+  y: 0.1 + Math.random() * 0.2,
+  speed: 0.0003 + Math.random() * 0.0004,
+  flap: Math.random() * Math.PI * 2,   // докъде е стигнал замахът с крилете
+  size: 5 + Math.random() * 4,
+}));
+
 // Облачетата смог – също в части от екрана.
 // На телефон са по-малко, за да върви плавно.
 const PUFF_COUNT = window.innerWidth < 720 ? 28 : 44;
 const smogPuffs = Array.from({ length: PUFF_COUNT }, (_, i) => ({
   x: Math.random(),
-  y: 0.25 + Math.random() * 0.7,          // повече смог в ниската част
-  radius: 0.12 + Math.random() * 0.2,     // спрямо по-голямата страна на екрана
+  y: 0.64 + Math.random() * 0.18,         // само в ивицата над града (инверсията)
+  radius: 0.06 + Math.random() * 0.1,     // спрямо по-голямата страна на екрана
   speed: 0.00004 + Math.random() * 0.0001,
-  alpha: 0.25 + Math.random() * 0.35,
+  alpha: 0.2 + Math.random() * 0.3,
   // Праг: облачетата с по-нисък праг изчезват по-рано –
   // така смогът изтънява постепенно, а не наведнъж
   threshold: i / PUFF_COUNT,
@@ -55,8 +95,8 @@ const puffSprite = document.createElement("canvas");
 puffSprite.width = puffSprite.height = 128;
 const puffCtx = puffSprite.getContext("2d");
 const puffGradient = puffCtx.createRadialGradient(64, 64, 0, 64, 64, 64);
-puffGradient.addColorStop(0, "rgba(160, 146, 122, 1)");
-puffGradient.addColorStop(1, "rgba(160, 146, 122, 0)");
+puffGradient.addColorStop(0, "rgba(156, 144, 126, 1)");
+puffGradient.addColorStop(1, "rgba(156, 144, 126, 0)");
 puffCtx.fillStyle = puffGradient;
 puffCtx.fillRect(0, 0, 128, 128);
 
@@ -110,7 +150,7 @@ function updateTargetClean() {
 const skyColor = (name, c) => mixColor(SKY_COLORS[name][0], SKY_COLORS[name][1], c);
 
 function drawSkyGradient(ctx, w, h, c) {
-  const gradient = ctx.createLinearGradient(0, 0, 0, h * 0.7);
+  const gradient = ctx.createLinearGradient(0, 0, 0, h * 0.6);
   gradient.addColorStop(0, skyColor("top", c));
   gradient.addColorStop(0.55, skyColor("middle", c));
   gradient.addColorStop(1, skyColor("horizon", c));
@@ -118,48 +158,73 @@ function drawSkyGradient(ctx, w, h, c) {
   ctx.fillRect(0, 0, w, h);
 }
 
-// Слънцето: бледо петно в смога, ярко и с ореол в чистия въздух
+// Утринното слънце: над инверсията то грее и при смог, а в чист въздух – по-ярко
 function drawSun(ctx, w, h, c) {
-  const x = w * 0.78;
-  const y = h * 0.22;
-  const r = Math.min(w, h) * 0.05;
+  const x = w * 0.74;
+  const y = h * 0.3;
+  const r = Math.min(w, h) * 0.045;
 
-  const glow = ctx.createRadialGradient(x, y, r * 0.5, x, y, r * 5);
-  glow.addColorStop(0, `rgba(255, 236, 170, ${0.05 + c * 0.35})`);
-  glow.addColorStop(1, "rgba(255, 236, 170, 0)");
+  const glow = ctx.createRadialGradient(x, y, r * 0.5, x, y, r * 7);
+  glow.addColorStop(0, `rgba(255, 224, 180, ${0.35 + c * 0.3})`);
+  glow.addColorStop(1, "rgba(255, 210, 170, 0)");
   ctx.fillStyle = glow;
-  ctx.fillRect(x - r * 5, y - r * 5, r * 10, r * 10);
+  ctx.fillRect(x - r * 7, y - r * 7, r * 14, r * 14);
 
-  ctx.fillStyle = `rgba(255, 238, 180, ${0.15 + c * 0.8})`;
+  ctx.fillStyle = `rgba(255, 240, 200, ${0.6 + c * 0.4})`;
   ctx.beginPath();
   ctx.arc(x, y, r, 0, Math.PI * 2);
   ctx.fill();
 }
 
-function drawBalkan(ctx, w, h, c) {
-  ctx.fillStyle = skyColor("balkan", c);
+// Един пласт планини по точките от RIDGES
+function drawRidge(ctx, w, h, c, name) {
+  const ys = RIDGES[name];
+  ctx.fillStyle = skyColor(name, c);
   ctx.beginPath();
   ctx.moveTo(0, h);
-  BALKAN_PEAKS.forEach(([x, y]) => ctx.lineTo(w * x, h * y));
+  ys.forEach((y, i) => ctx.lineTo((w * i) / (ys.length - 1), h * y));
   ctx.lineTo(w, h);
   ctx.fill();
 }
 
-// Дъното на долината с града и светлините в прозорците
+// Лека утринна мъгла в подножието на планината – дава дълбочина
+function drawMist(ctx, w, h, fromY, toY) {
+  const mist = ctx.createLinearGradient(0, h * fromY, 0, h * toY);
+  mist.addColorStop(0, "rgba(214, 196, 200, 0)");
+  mist.addColorStop(1, "rgba(214, 196, 200, 0.3)");
+  ctx.fillStyle = mist;
+  ctx.fillRect(0, h * fromY, w, h * (toY - fromY));
+}
+
+// Полето с града, светлините в прозорците и редовете рози
 function drawCity(ctx, w, h, c) {
   const groundY = h * 0.74;
   ctx.fillStyle = skyColor("valley", c);
   ctx.fillRect(0, groundY, w, h - groundY);
 
+  ctx.fillStyle = skyColor("sredna", c); // сградите са тъмни силуети
   buildings.forEach((b) => {
     ctx.fillRect(w * b.x, groundY - h * b.height, w * b.width, h * b.height + 1);
   });
 
   // Светлините се виждат през смога и избледняват на дневна светлина
-  ctx.fillStyle = `rgba(255, 210, 122, ${0.25 + (1 - c) * 0.45})`;
+  ctx.fillStyle = `rgba(255, 210, 122, ${0.3 + (1 - c) * 0.45})`;
   buildings.forEach((b, i) => {
     if (i % 2 === 0) ctx.fillRect(w * (b.x + b.width / 3), groundY - h * b.height * 0.6, 2, 2);
   });
+
+  // Розите: пунктирни редове – в чист въздух розовото се вижда по-ярко
+  ctx.save();
+  ctx.strokeStyle = `rgba(240, 122, 160, ${0.25 + c * 0.55})`;
+  ROSE_ROWS.forEach((row) => {
+    ctx.lineWidth = row.size;
+    ctx.setLineDash([row.size, row.gap]);
+    ctx.beginPath();
+    ctx.moveTo(0, h * row.y);
+    ctx.lineTo(w, h * row.y);
+    ctx.stroke();
+  });
+  ctx.restore();
 }
 
 function drawSrednaGora(ctx, w, h, c) {
@@ -173,16 +238,45 @@ function drawSrednaGora(ctx, w, h, c) {
   ctx.fill();
 }
 
-// Цялата долина без смога: небе, слънце, планини, град
+// Цялата долина без смога: небе, слънце, три пласта планини, поле и Средна гора
 function drawValley(ctx, w, h, c) {
   drawSkyGradient(ctx, w, h, c);
   drawSun(ctx, w, h, c);
-  drawBalkan(ctx, w, h, c);
+  drawRidge(ctx, w, h, c, "far");
+  drawMist(ctx, w, h, 0.4, 0.58);
+  drawRidge(ctx, w, h, c, "ridge");
+  drawMist(ctx, w, h, 0.55, 0.68);
+  drawRidge(ctx, w, h, c, "hills");
   drawCity(ctx, w, h, c);
   drawSrednaGora(ctx, w, h, c);
 }
 
-// Смогът: облачета, които бавно се носят, плюс общ „похлупак“
+// Птиците: малки извити черти, които размахват криле.
+// Появяват се постепенно, когато въздухът е над 40% чист.
+function drawBirds(w, h) {
+  const visible = clamp((clean - 0.4) / 0.6, 0, 1);
+  if (visible === 0) return;
+  skyCtx.strokeStyle = `rgba(16, 26, 40, ${visible * 0.75})`;
+  skyCtx.lineWidth = 1.6;
+  birds.forEach((bird) => {
+    const x = bird.x * w;
+    const y = bird.y * h;
+    const wing = Math.sin(bird.flap) * bird.size * 0.6;
+    skyCtx.beginPath();
+    skyCtx.moveTo(x - bird.size, y - wing);
+    skyCtx.quadraticCurveTo(x - bird.size / 2, y - bird.size * 0.3, x, y);
+    skyCtx.quadraticCurveTo(x + bird.size / 2, y - bird.size * 0.3, x + bird.size, y - wing);
+    skyCtx.stroke();
+
+    if (!reduceMotion) {
+      bird.x += bird.speed;
+      bird.flap += 0.15;
+      if (bird.x > 1.1) bird.x = -0.1; // излетя вдясно – връща се отляво
+    }
+  });
+}
+
+// Смогът: облачета, които бавно се носят, плюс „похлупак“ – ивица над града
 function drawSmog(w, h) {
   const smog = 1 - clean;
   const size = Math.max(w, h);
@@ -206,12 +300,15 @@ function drawSmog(w, h) {
   });
   skyCtx.globalAlpha = 1;
 
-  // Похлупакът: инверсията държи мръсния въздух ниско над града
-  const haze = skyCtx.createLinearGradient(0, h * 0.3, 0, h);
-  haze.addColorStop(0, "rgba(130, 118, 96, 0)");
-  haze.addColorStop(1, `rgba(130, 118, 96, ${smog * 0.55})`);
-  skyCtx.fillStyle = haze;
-  skyCtx.fillRect(0, 0, w, h);
+  // Похлупакът: при инверсия мръсният въздух стои ниско над града като ивица,
+  // а над нея небето е чисто
+  const band = skyCtx.createLinearGradient(0, h * 0.6, 0, h * 0.92);
+  band.addColorStop(0, "rgba(150, 136, 116, 0)");
+  band.addColorStop(0.35, `rgba(150, 136, 116, ${smog * 0.55})`);
+  band.addColorStop(0.7, `rgba(138, 124, 104, ${smog * 0.5})`);
+  band.addColorStop(1, "rgba(120, 108, 92, 0)");
+  skyCtx.fillStyle = band;
+  skyCtx.fillRect(0, h * 0.6, w, h * 0.32);
 }
 
 /* -----------------------------------------
@@ -317,6 +414,7 @@ function drawSky() {
   drawValley(skyCtx, skyWidth, skyHeight, clean);
   drawSmog(skyWidth, skyHeight);
   drawWind(skyWidth, skyHeight);
+  drawBirds(skyWidth, skyHeight);
   updateAirChip();
 }
 
