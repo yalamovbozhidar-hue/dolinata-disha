@@ -62,6 +62,7 @@ let selectedBin = 0;      // кой контейнер е избран с кла
 let draggedItem = null;   // отпадъкът, който влачим в момента
 let dragOffsetX = 0;
 let dragOffsetY = 0;
+let streak = 0;           // поредни верни – за надписа „Серия ×N“
 
 // ----- Рекорд (localStorage може да е забранен, затова try/catch) -----
 function loadBestScore() {
@@ -148,17 +149,91 @@ function flashBin(binName, isCorrect) {
   setTimeout(() => button.classList.remove(className), 400);
 }
 
+/* ----- Ефекти: искри, „+10“ / „−5“, серия и разклащане -----
+   Всички са само украса (aria-hidden) – точките и подсказките
+   се казват и с текст. При изключени анимации ги няма. */
+const SPARK_COLORS = {
+  correct: ["#7ee0a1", "#c8f7d8", "#f2c94c"],
+  wrong: ["#ff6b5a", "#ffb199"],
+  record: ["#7ee0a1", "#f2c94c", "#78b2f2", "#f59ac0", "#ff8a4c"],
+};
+
+// Слага декоративен елемент в полето и го маха, щом анимацията му свърши
+function addEffect(className, x, y, text) {
+  const el = document.createElement("span");
+  el.className = className;
+  el.setAttribute("aria-hidden", "true");
+  el.style.left = `${x}px`;
+  el.style.top = `${y}px`;
+  if (text) el.textContent = text;
+  el.addEventListener("animationend", () => el.remove());
+  gameField.appendChild(el);
+  return el;
+}
+
+// Искри, които се разлитат във всички посоки от точката (x, y)
+function burst(x, y, colors, count, reach) {
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const distance = reach * (0.4 + Math.random() * 0.6);
+    const spark = addEffect("game__spark", x, y);
+    spark.style.setProperty("--dx", `${Math.cos(angle) * distance}px`);
+    spark.style.setProperty("--dy", `${Math.sin(angle) * distance - reach * 0.3}px`); // малко нагоре
+    spark.style.background = colors[i % colors.length];
+  }
+}
+
+// Центърът на контейнера спрямо игралното поле
+function binCenter(binName) {
+  const button = binButtons.find((b) => b.dataset.bin === binName);
+  const fieldRect = gameField.getBoundingClientRect();
+  const rect = button.getBoundingClientRect();
+  return { x: rect.left - fieldRect.left + rect.width / 2, y: rect.top - fieldRect.top + 10 };
+}
+
+function showSortEffects(binName, isCorrect) {
+  if (reduceMotion) return;
+  const { x, y } = binCenter(binName);
+
+  if (isCorrect) {
+    burst(x, y, SPARK_COLORS.correct, 14, 70);
+    addEffect("game__float game__float--plus", x, y - 34, `+${POINTS_CORRECT}`);
+    // От 3 поредни верни нагоре показваме серията
+    if (streak >= 3) {
+      gameField.querySelector(".game__streak")?.remove();
+      addEffect("game__streak", fieldWidth() / 2, 16, `Серия ×${streak}`);
+    }
+  } else {
+    burst(x, y, SPARK_COLORS.wrong, 8, 40);
+    addEffect("game__float game__float--minus", x, y - 34, `−${POINTS_WRONG}`);
+    shakeField();
+  }
+}
+
+// Полето се разклаща и леко почервенява
+function shakeField() {
+  gameField.classList.remove("is-shaking");
+  void gameField.offsetWidth; // рестартира анимацията, ако вече тече
+  gameField.classList.add("is-shaking");
+}
+gameField.addEventListener("animationend", (event) => {
+  if (event.target === gameField) gameField.classList.remove("is-shaking");
+});
+
 // Пуска отпадъка в избрания контейнер и проверява дали е вярно
 function sortItem(item, binName) {
   const isCorrect = item.type.bin === binName;
   if (isCorrect) {
+    streak++;
     changeScore(POINTS_CORRECT);
     showHint("");
   } else {
+    streak = 0;
     changeScore(-POINTS_WRONG);
     showHint(wrongBinHint(item.type, binName));
   }
   flashBin(binName, isCorrect);
+  showSortEffects(binName, isCorrect);
   removeItem(item);
 }
 
@@ -268,6 +343,8 @@ function gameLoop(now) {
     if (item !== draggedItem) item.y += fallSpeed * dt;
 
     if (item.y + item.size >= ground && item !== draggedItem) {
+      streak = 0;
+      if (!reduceMotion) addEffect("game__float game__float--minus", item.x + item.size / 2, ground - 20, `−${POINTS_WRONG}`);
       changeScore(-POINTS_WRONG);
       showHint(`„${item.type.name}“ падна на земята. Отпадъците не бива да остават в природата!`);
       removeItem(item);
@@ -297,6 +374,7 @@ function startGame() {
   draggedItem = null;
 
   score = 0;
+  streak = 0;
   elapsed = 0;
   spawnTimer = 0;
   gameScoreEl.textContent = 0;
@@ -326,6 +404,10 @@ function endGame() {
   }
 
   gameOverlayTitle.textContent = isNewRecord ? "Нов рекорд! 🏆" : "Край на играта!";
+  // Нов рекорд – конфети от средата на полето
+  if (isNewRecord && score > 0 && !reduceMotion) {
+    burst(fieldWidth() / 2, gameField.clientHeight / 2, SPARK_COLORS.record, 60, 220);
+  }
   gameOverlayText.textContent = `Събра ${score} точки. Най-добър резултат: ${bestScore}.`;
   gameStartButton.textContent = "Играй пак";
   gameOverlay.hidden = false;

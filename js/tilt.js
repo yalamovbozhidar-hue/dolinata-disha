@@ -33,7 +33,7 @@ if (canHover && !reduceMotion) {
   });
 
   // Картите: наклон по двете оси според мястото на мишката
-  document.querySelectorAll(".card, .threat, .gallery__open").forEach((card) => {
+  document.querySelectorAll(".card, .threat").forEach((card) => {
     card.classList.add("tilt");
 
     trackPointer(card, (x, y, rect) => {

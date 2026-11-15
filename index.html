@@ -212,6 +212,110 @@
       </p>
     </section>
 
+    <!-- ===== КАРТА НА ДОЛИНАТА (js/map.js) =====
+         Рисувана схема: планините, реката, язовирът и градовете.
+         Точките са бутони – работят с мишка, пръст и клавиатура. -->
+    <section class="section map-section" id="map">
+      <div class="container">
+        <p class="section__eyebrow">Картата</p>
+        <h2 class="section__title split-words">Долината отгоре</h2>
+        <p class="section__lead">
+          Стара планина на север, Средна гора на юг, а помежду им – Казанлък.
+          Натисни точка на картата, за да научиш повече.
+        </p>
+
+        <div class="valley-map reveal">
+          <div class="valley-map__frame">
+            <svg class="valley-map__svg" viewBox="0 0 800 460" aria-hidden="true">
+              <defs>
+                <!-- Полето: от по-светло (север) към по-тъмно (юг) -->
+                <linearGradient id="map-field" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#3f6b4a"/>
+                  <stop offset="1" stop-color="#2c5139"/>
+                </linearGradient>
+                <!-- Розовите полета: розови точки -->
+                <pattern id="map-roses" width="12" height="10" patternUnits="userSpaceOnUse">
+                  <circle cx="3" cy="3" r="1.6" fill="#f07aa0"/>
+                  <circle cx="9" cy="8" r="1.6" fill="#f59ac0"/>
+                </pattern>
+              </defs>
+
+              <rect width="800" height="460" fill="url(#map-field)"/>
+
+              <!-- Розови полета из долината -->
+              <g class="valley-map__roses" fill="url(#map-roses)">
+                <rect x="120" y="190" width="120" height="50" rx="10"/>
+                <rect x="470" y="200" width="90" height="40" rx="10"/>
+                <rect x="210" y="320" width="110" height="34" rx="10"/>
+                <rect x="620" y="320" width="120" height="36" rx="10"/>
+              </g>
+
+              <!-- Стара планина (север) -->
+              <path class="valley-map__balkan" d="M0 0 H800 V118 C730 132 690 112 640 126 C590 140 540 116 480 128 C430 138 380 120 330 134 C270 150 220 124 160 132 C100 140 50 122 0 130 Z"/>
+              <g class="valley-map__peaks">
+                <path d="M60 70 l22 -30 l22 30 Z"/><path d="M150 56 l26 -36 l26 36 Z"/><path d="M240 76 l20 -28 l20 28 Z"/>
+                <path d="M290 64 l18 -26 l18 26 Z"/><path d="M372 84 l21 -30 l21 30 Z"/><path d="M470 66 l24 -34 l24 34 Z"/>
+                <path d="M560 80 l20 -28 l20 28 Z"/><path d="M650 58 l26 -36 l26 36 Z"/><path d="M730 76 l22 -30 l22 30 Z"/>
+              </g>
+              <text class="valley-map__area" x="40" y="108">Стара планина</text>
+
+              <!-- Средна гора (юг) -->
+              <path class="valley-map__sredna" d="M0 460 H800 V372 C740 360 700 382 640 370 C580 358 530 384 470 374 C410 364 360 388 300 376 C240 364 180 386 120 372 C70 362 30 378 0 370 Z"/>
+              <text class="valley-map__area" x="40" y="440">Средна гора</text>
+
+              <!-- Река Тунджа и язовир „Копринка“ -->
+              <path class="valley-map__river" d="M0 268 C80 262 160 290 250 284 C330 280 360 304 430 308 C500 312 560 318 640 312 C700 308 750 326 800 332"/>
+              <ellipse class="valley-map__lake" cx="296" cy="284" rx="46" ry="15"/>
+              <text class="valley-map__river-name" x="660" y="340">р. Тунджа</text>
+
+              <!-- Похлупакът: зиме смогът стои над града -->
+              <ellipse class="valley-map__smog" cx="400" cy="250" rx="120" ry="42"/>
+              <text class="valley-map__smog-label" x="400" y="204">похлупак при инверсия</text>
+
+              <!-- Пътят през Шипченския проход -->
+              <path class="valley-map__road" d="M400 260 C380 220 340 170 320 110 C314 92 312 76 308 60"/>
+            </svg>
+
+            <button class="map-pin" type="button" data-place="kazanlak"
+                    style="--x: 50.00%; --y: 56.52%" aria-pressed="false" aria-controls="map-info">
+              <span class="map-pin__label">Казанлък</span>
+            </button>
+            <button class="map-pin" type="button" data-place="shipka-peak"
+                    style="--x: 38.50%; --y: 13.04%" aria-pressed="false" aria-controls="map-info">
+              <span class="map-pin__label">Връх Шипка</span>
+            </button>
+            <button class="map-pin" type="button" data-place="buzludzha"
+                    style="--x: 49.12%; --y: 17.39%" aria-pressed="false" aria-controls="map-info">
+              <span class="map-pin__label">Бузлуджа</span>
+            </button>
+            <button class="map-pin map-pin--water" type="button" data-place="koprinka"
+                    style="--x: 37.00%; --y: 61.74%" aria-pressed="false" aria-controls="map-info">
+              <span class="map-pin__label">Язовир „Копринка“</span>
+            </button>
+            <button class="map-pin map-pin--small" type="button" data-place="maglizh"
+                    style="--x: 71.50%; --y: 63.26%" aria-pressed="false" aria-controls="map-info">
+              <span class="map-pin__label">Мъглиж</span>
+            </button>
+            <button class="map-pin map-pin--fire" type="button" data-place="fire"
+                    style="--x: 60.75%; --y: 60.00%" aria-pressed="false" aria-controls="map-info">
+              <span class="map-pin__label">Пожарът 2023</span>
+            </button>
+          </div>
+
+          <!-- Описанието на избраното място (попълва се от js/map.js) -->
+          <div class="valley-map__info" id="map-info" aria-live="polite">
+            <p class="valley-map__kind" id="map-info-kind">Град</p>
+            <h3 class="valley-map__title" id="map-info-title">Казанлък</h3>
+            <p class="valley-map__text" id="map-info-text">
+              Градът е на дъното на котловината между двете планини.
+              Зиме студеният въздух остава долу и димът от комините се събира над него.
+            </p>
+            <p class="valley-map__note">Схема – разстоянията са приблизителни.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ===== 3. СИМУЛАТОР ===== -->
     <section class="section simulator" id="simulator">
       <div class="container">
@@ -394,40 +498,69 @@
         <h2 class="section__title split-words">Долината, която пазим</h2>
         <p class="section__lead">
           Розите, язовирът, планините – ето заради какво си струва да пазим въздуха чист.
-          Натисни снимка, за да я видиш в пълен размер.
+          Плъзни лентата и натисни снимка, за да я видиш в пълен размер.
         </p>
 
-        <div class="gallery__grid">
-          <figure class="gallery__item gallery__item--big reveal">
-            <button class="gallery__open" type="button" data-photo="roses" aria-label="Отвори в пълен размер: Розовата долина между Балкана и Средна гора">
-              <img src="img/roses-1920.jpg"
-                   srcset="img/roses-960.jpg 960w, img/roses-1920.jpg 1920w, img/roses-3840.jpg 3840w"
-                   sizes="(max-width: 860px) 100vw, 1020px"
-                   width="1920" height="1289" loading="lazy" decoding="async"
-                   alt="Розови насаждения в долината, а зад тях – заснежените върхове на Балкана">
-            </button>
-            <figcaption>Розовата долина между Балкана и Средна гора</figcaption>
-          </figure>
-          <figure class="gallery__item reveal">
-            <button class="gallery__open" type="button" data-photo="rose-pickers" aria-label="Отвори в пълен размер: Розобер в Казанлък – празник с народни носии">
-              <img src="img/rose-pickers-1920.jpg"
-                   srcset="img/rose-pickers-960.jpg 960w, img/rose-pickers-1920.jpg 1920w, img/rose-pickers-3840.jpg 3840w"
-                   sizes="(max-width: 860px) 100vw, 500px"
-                   width="1920" height="1280" loading="lazy" decoding="async"
-                   alt="Млади момичета в народни носии сред розите">
-            </button>
-            <figcaption>Розобер в Казанлък – празник с народни носии</figcaption>
-          </figure>
-          <figure class="gallery__item reveal">
-            <button class="gallery__open" type="button" data-photo="buzludzha" aria-label="Отвори в пълен размер: Язовир „Копринка“ и село Шейново, погледнати от Бузлуджа">
-              <img src="img/buzludzha-1920.jpg"
-                   srcset="img/buzludzha-960.jpg 960w, img/buzludzha-1920.jpg 1920w, img/buzludzha-3840.jpg 3840w"
-                   sizes="(max-width: 860px) 100vw, 500px"
-                   width="1920" height="1080" loading="lazy" decoding="async"
-                   alt="Язовир „Копринка“ и село Шейново далеч долу в долината">
-            </button>
-            <figcaption>Язовир „Копринка“ и село Шейново, погледнати от Бузлуджа</figcaption>
-          </figure>
+        <!-- Лентата: плъзга се с пръст, с мишка (js/gallery.js), със стрелките или с бутоните -->
+        <div class="strip reveal">
+          <div class="strip__track" id="strip-track" tabindex="0" role="region"
+               aria-label="Галерия: плъзни или ползвай стрелките ← →">
+            <figure class="strip__slide">
+              <button class="gallery__open" type="button" data-photo="roses" aria-label="Отвори в пълен размер: Розовата долина между Балкана и Средна гора">
+                <img src="img/roses-1920.jpg"
+                     srcset="img/roses-960.jpg 960w, img/roses-1920.jpg 1920w, img/roses-3840.jpg 3840w"
+                     sizes="(max-width: 860px) 85vw, 800px"
+                     width="1920" height="1289" loading="lazy" decoding="async"
+                     alt="Розови насаждения в долината, а зад тях – заснежените върхове на Балкана">
+              </button>
+              <figcaption><span class="strip__num">01</span> Розовата долина между Балкана и Средна гора</figcaption>
+            </figure>
+            <figure class="strip__slide">
+              <button class="gallery__open" type="button" data-photo="rose-pickers" aria-label="Отвори в пълен размер: Розобер в Казанлък – празник с народни носии">
+                <img src="img/rose-pickers-1920.jpg"
+                     srcset="img/rose-pickers-960.jpg 960w, img/rose-pickers-1920.jpg 1920w, img/rose-pickers-3840.jpg 3840w"
+                     sizes="(max-width: 860px) 85vw, 800px"
+                     width="1920" height="1280" loading="lazy" decoding="async"
+                     alt="Млади момичета в народни носии сред розите">
+              </button>
+              <figcaption><span class="strip__num">02</span> Розобер в Казанлък – празник с народни носии</figcaption>
+            </figure>
+            <figure class="strip__slide">
+              <button class="gallery__open" type="button" data-photo="valley" aria-label="Отвори в пълен размер: Язовир „Копринка“ и долината, погледнати от връх Шипка">
+                <img src="img/valley-1920.jpg"
+                     srcset="img/valley-960.jpg 960w, img/valley-1920.jpg 1920w, img/valley-3840.jpg 3840w"
+                     sizes="(max-width: 860px) 85vw, 800px"
+                     width="1920" height="1086" loading="lazy" decoding="async"
+                     alt="Казанлъшката долина и язовир „Копринка“ отвисоко, в ясен ден">
+              </button>
+              <figcaption><span class="strip__num">03</span> Язовир „Копринка“ и долината, погледнати от връх Шипка</figcaption>
+            </figure>
+            <figure class="strip__slide">
+              <button class="gallery__open" type="button" data-photo="buzludzha" aria-label="Отвори в пълен размер: Язовир „Копринка“ и село Шейново, погледнати от Бузлуджа">
+                <img src="img/buzludzha-1920.jpg"
+                     srcset="img/buzludzha-960.jpg 960w, img/buzludzha-1920.jpg 1920w, img/buzludzha-3840.jpg 3840w"
+                     sizes="(max-width: 860px) 85vw, 800px"
+                     width="1920" height="1080" loading="lazy" decoding="async"
+                     alt="Язовир „Копринка“ и село Шейново далеч долу в долината">
+              </button>
+              <figcaption><span class="strip__num">04</span> Язовир „Копринка“ и село Шейново, погледнати от Бузлуджа</figcaption>
+            </figure>
+            <figure class="strip__slide">
+              <button class="gallery__open" type="button" data-photo="city" aria-label="Отвори в пълен размер: Казанлък отвисоко – градът, за чийто въздух става дума">
+                <img src="img/city-1920.jpg"
+                     srcset="img/city-960.jpg 960w, img/city-1920.jpg 1920w, img/city-3840.jpg 3840w"
+                     sizes="(max-width: 860px) 85vw, 800px"
+                     width="1920" height="1440" loading="lazy" decoding="async"
+                     alt="Покривите на Казанлък, погледнати отвисоко">
+              </button>
+              <figcaption><span class="strip__num">05</span> Казанлък отвисоко – градът, за чийто въздух става дума</figcaption>
+            </figure>
+          </div>
+          <div class="strip__controls">
+            <button class="strip__btn" type="button" data-dir="-1" aria-label="Предишна снимка">←</button>
+            <div class="strip__progress" aria-hidden="true"><span id="strip-progress"></span></div>
+            <button class="strip__btn" type="button" data-dir="1" aria-label="Следваща снимка">→</button>
+          </div>
         </div>
       </div>
     </section>
@@ -517,6 +650,7 @@
   <script src="js/simulator.js" defer></script>
   <script src="js/game.js" defer></script>
   <script src="js/compare.js" defer></script>
+  <script src="js/map.js" defer></script>
   <script src="js/gallery.js" defer></script>
   <script src="js/pledge.js" defer></script>
 </body>

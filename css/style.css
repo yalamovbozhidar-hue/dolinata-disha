@@ -498,7 +498,7 @@ main { counter-reset: section; }   /* номерата 01, 02… на секци
 /* Снимките се разкриват отгоре надолу като завеса.
    Анимация, а не transition: след края clip-path изчезва
    и не изрязва рамката на фокуса. */
-.js :is(.photo, .compare, .threat, .gallery__item).is-visible {
+.js :is(.photo, .compare, .threat, .strip, .valley-map).is-visible {
   animation: wipe-in 1.4s var(--ease-out) var(--delay, 0s) backwards;
 }
 
@@ -659,8 +659,7 @@ main { counter-reset: section; }   /* номерата 01, 02… на секци
 .card:nth-child(3) { --delay: 0.2s; }
 .card:nth-child(4) { --delay: 0.3s; }
 .photo:nth-child(2),
-.threat:nth-child(2),
-.gallery__item:nth-child(3) { --delay: 0.15s; }
+.threat:nth-child(2) { --delay: 0.15s; }
 
 /* Иконката: SVG в кръг със зелено сияние */
 .card__icon {
@@ -676,6 +675,14 @@ main { counter-reset: section; }   /* номерата 01, 02… на секци
   box-shadow: 0 0 24px rgba(126, 224, 161, 0.15);
 }
 .card__icon svg { width: 30px; height: 30px; }
+
+/* Линиите на иконата се рисуват, щом картата се появи (js/effects.js) */
+.card__icon .draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1.6s var(--ease-out) calc(var(--delay, 0s) + 0.35s);
+}
+.card.is-visible .card__icon .draw { stroke-dashoffset: 0; }
 .card:nth-child(2) .card__icon { color: var(--c-fire); background: rgba(255, 138, 76, 0.1); border-color: rgba(255, 138, 76, 0.3); }
 .card__title { font-size: 1.15rem; margin-bottom: 10px; }
 .card p { color: var(--c-muted); }
@@ -805,6 +812,144 @@ main { counter-reset: section; }   /* номерата 01, 02… на секци
   color: var(--c-muted);
 }
 .compare figcaption strong { color: var(--c-text); }
+
+/* =========================================
+   КАРТА НА ДОЛИНАТА
+   Точките са бутони върху SVG. --x и --y (в %) идват от HTML.
+   ========================================= */
+.map-section { --mood: #6fd3c4; }   /* тюркоазено – като на карта */
+
+.valley-map {
+  display: grid;
+  grid-template-columns: 1.7fr 1fr;
+  gap: 24px;
+  align-items: center;
+}
+
+.valley-map__frame {
+  position: relative;
+  aspect-ratio: 800 / 460;
+  overflow: hidden;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+.valley-map__svg { display: block; width: 100%; height: 100%; }
+
+.valley-map__balkan { fill: #24423a; }
+.valley-map__peaks { fill: #2f5548; }
+.valley-map__sredna { fill: #1f3a2f; }
+.valley-map__roses rect { opacity: 0.55; }
+.valley-map__area {
+  fill: rgba(232, 239, 233, 0.75);
+  font: 700 15px var(--f-body);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Реката „тече“: пунктирът се мести безкрайно */
+.valley-map__river {
+  fill: none;
+  stroke: #6fb6e8;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 14 8;
+  animation: river-flow 2.5s linear infinite;
+}
+.valley-map__lake { fill: #4f9bd6; stroke: #8cc8ff; stroke-width: 1.5; }
+.valley-map__river-name { fill: #9fd0f5; font: italic 600 13px var(--f-body); }
+
+@keyframes river-flow {
+  to { stroke-dashoffset: -22; }
+}
+
+/* Похлупакът над града бавно „диша“ */
+.valley-map__smog {
+  fill: rgba(170, 150, 120, 0.35);
+  stroke: rgba(200, 180, 150, 0.5);
+  stroke-dasharray: 4 6;
+  animation: smog-breathe 5s ease-in-out infinite;
+}
+.valley-map__smog-label { fill: #e8d6b8; font: 600 13px var(--f-body); text-anchor: middle; }
+
+@keyframes smog-breathe {
+  50% { opacity: 0.55; }
+}
+
+.valley-map__road { fill: none; stroke: rgba(232, 239, 233, 0.35); stroke-width: 2; stroke-dasharray: 2 5; }
+
+/* Точка на картата: кръгче с пулсиращ ореол */
+.map-pin {
+  --pin: var(--c-accent);
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 32px;
+  height: 32px;
+  translate: -50% -50%;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+.map-pin::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  background: var(--pin);
+  border: 2px solid #0f1a17;
+  box-shadow: 0 0 0 0 var(--pin);
+  animation: pin-pulse 2.4s ease-out infinite;
+  transition: inset 0.3s var(--ease-out);
+}
+.map-pin--small::before { inset: 10px; }
+.map-pin--water { --pin: #8cc8ff; }
+.map-pin--fire { --pin: var(--c-fire); }
+
+.map-pin:hover::before,
+.map-pin[aria-pressed="true"]::before { inset: 5px; }
+.map-pin[aria-pressed="true"]::before { box-shadow: 0 0 0 4px rgba(15, 26, 23, 0.6), 0 0 18px var(--pin); }
+
+@keyframes pin-pulse {
+  from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--pin) 70%, transparent); }
+  to { box-shadow: 0 0 0 14px transparent; }
+}
+
+.map-pin__label {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  translate: -50% 0;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(10, 18, 16, 0.85);
+  color: var(--c-text);
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: background 0.3s, color 0.3s;
+}
+.map-pin[aria-pressed="true"] .map-pin__label { background: var(--pin); color: var(--c-bg); }
+
+/* Описанието до картата */
+.valley-map__info {
+  padding: 26px;
+  border: 1px solid color-mix(in srgb, var(--mood) 30%, transparent);
+  border-radius: var(--radius);
+  background: var(--c-surface);
+}
+.valley-map__kind {
+  color: var(--mood);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.valley-map__title { margin: 6px 0 10px; font-family: var(--f-head); font-size: 1.35rem; line-height: 1.2; }
+.valley-map__text { color: var(--c-muted); }
+.valley-map__note { margin-top: 14px; font-size: 0.8rem; color: var(--c-muted); opacity: 0.8; }
 
 /* =========================================
    ЛЕНТА С ПРИЗИВИ
@@ -984,7 +1129,19 @@ input[type="range"] {
   font-size: 1.6rem;
   color: var(--c-text) !important;
 }
-.threat--fire .threat__stat { color: var(--c-fire) !important; }
+/* Голямото число за пожара: свети и „подскача“, когато броячът свърши */
+.threat--fire .threat__stat {
+  font-size: clamp(2.4rem, 5vw, 3.4rem);
+  line-height: 1.1;
+  color: var(--c-fire) !important;
+  text-shadow: 0 0 30px rgba(255, 138, 76, 0.45);
+}
+.counter { display: inline-block; }
+.counter.is-done { animation: counter-pop 0.6s var(--ease-out); }
+
+@keyframes counter-pop {
+  40% { scale: 1.15; text-shadow: 0 0 40px rgba(255, 138, 76, 0.9); }
+}
 
 /* Искрите над снимката на пожара – само върху снимката (260 px) */
 .embers--photo {
@@ -1162,6 +1319,78 @@ input[type="range"] {
   75% { translate: 5px 0; }
 }
 
+/* ----- Ефекти в играта (js/game.js) ----- */
+/* Искра: лети към --dx/--dy, смалява се и изчезва */
+.game__spark {
+  position: absolute;
+  z-index: 4;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: spark-fly 0.75s var(--ease-out) forwards;
+}
+
+@keyframes spark-fly {
+  to { translate: var(--dx) var(--dy); scale: 0.2; opacity: 0; }
+}
+
+/* „+10“ и „−5“ изплуват нагоре */
+.game__float {
+  position: absolute;
+  z-index: 4;
+  translate: -50% 0;
+  font-family: var(--f-head);
+  font-weight: 800;
+  font-size: 1.4rem;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  animation: float-up 0.9s var(--ease-out) forwards;
+}
+.game__float--plus { color: var(--c-accent); }
+.game__float--minus { color: #ff7a6a; }
+
+@keyframes float-up {
+  from { opacity: 0; transform: translateY(10px) scale(0.8); }
+  20% { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(-56px); }
+}
+
+/* „Серия ×N“ горе в средата */
+.game__streak {
+  position: absolute;
+  z-index: 4;
+  translate: -50% 0;
+  padding: 6px 16px;
+  border: 1px solid var(--c-accent);
+  border-radius: 999px;
+  background: rgba(15, 26, 23, 0.85);
+  color: var(--c-accent);
+  font-weight: 800;
+  box-shadow: var(--glow);
+  pointer-events: none;
+  animation: streak-pop 1.3s var(--ease-out) forwards;
+}
+
+@keyframes streak-pop {
+  from { opacity: 0; scale: 0.6; }
+  15% { opacity: 1; scale: 1.12; }
+  30% { scale: 1; }
+  80% { opacity: 1; }
+  to { opacity: 0; transform: translateY(-10px); }
+}
+
+/* Грешка: полето се разклаща и почервенява за миг */
+.game__field.is-shaking { animation: field-shake 0.35s; }
+
+@keyframes field-shake {
+  20% { translate: -6px 0; box-shadow: inset 0 0 50px rgba(255, 90, 70, 0.35); }
+  40% { translate: 5px 0; }
+  60% { translate: -4px 0; }
+  80% { translate: 3px 0; }
+}
+
 .game__hint {
   min-height: 3.2em;   /* място за подсказката, за да не „подскача“ страницата */
   margin-top: 14px;
@@ -1173,13 +1402,6 @@ input[type="range"] {
 /* =========================================
    ГАЛЕРИЯ „ДОЛИНАТА, КОЯТО ПАЗИМ“
    ========================================= */
-.gallery__grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-.gallery__item--big { grid-column: 1 / -1; }   /* голямата снимка заема целия ред */
-
 .gallery__open {
   display: block;
   width: 100%;
@@ -1194,18 +1416,86 @@ input[type="range"] {
 .gallery__open img {
   display: block;
   width: 100%;
-  height: 300px;
+  height: 460px;
   object-fit: cover;
   transition: transform 0.8s var(--ease-out);
+  -webkit-user-drag: none;   /* влаченето с мишка мести лентата, а не снимката */
 }
-.gallery__item--big .gallery__open img { height: 460px; }
 .gallery__open:hover img,
 .gallery__open:focus-visible img { transform: scale(1.04); }
 
-.gallery__item figcaption {
-  margin-top: 10px;
-  font-size: 0.95rem;
-  color: var(--c-muted);
+/* ----- Лентата (js/gallery.js) ----- */
+.strip__track {
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;   /* спира точно на снимка */
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  border-radius: var(--radius);
+}
+.strip__track::-webkit-scrollbar { display: none; }
+.strip__track:focus-visible { outline: 3px solid var(--c-accent); outline-offset: 4px; }
+/* Докато влачим с мишката, спирането е изключено – иначе лентата „подскача“ */
+.strip__track.is-dragging { scroll-snap-type: none; cursor: grabbing; }
+
+.strip__slide {
+  position: relative;
+  flex: 0 0 82%;
+  scroll-snap-align: start;
+  transition: opacity 0.5s, scale 0.6s var(--ease-out);
+}
+/* Снимките отстрани са по-бледи и малко по-малки */
+.js .strip__slide:not(.is-current) { opacity: 0.5; scale: 0.96; }
+
+/* Надписът стои върху снимката, на тъмен преход */
+.strip__slide figcaption {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 48px 22px 18px;
+  border-radius: 0 0 var(--radius) var(--radius);
+  background: linear-gradient(transparent, rgba(5, 10, 8, 0.88));
+  font-weight: 600;
+  pointer-events: none;
+}
+.strip__num { margin-right: 8px; font-family: var(--f-head); color: var(--mood); }
+
+.strip__controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 18px;
+}
+.strip__btn {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border: 1px solid color-mix(in srgb, var(--mood) 40%, transparent);
+  border-radius: 50%;
+  background: var(--c-surface);
+  color: var(--c-text);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s, opacity 0.3s;
+}
+.strip__btn:hover:not(:disabled) { background: var(--mood); color: var(--c-bg); }
+.strip__btn:disabled { opacity: 0.35; cursor: default; }
+
+/* Лентата за напредък: колко от галерията си видял */
+.strip__progress {
+  flex: 1;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+}
+.strip__progress span {
+  display: block;
+  width: 20%;
+  height: 100%;
+  background: var(--mood);
+  box-shadow: 0 0 10px var(--mood);
+  transition: width 0.3s;
 }
 
 /* Прозорецът за снимка в цял екран (<dialog>) */
@@ -1401,13 +1691,15 @@ input[type="range"] {
    АДАПТИВНОСТ (телефон / таблет)
    ========================================= */
 @media (max-width: 860px) {
+  .valley-map { grid-template-columns: 1fr; }
+  /* На тесен екран надписите се виждат само на избраната точка – иначе се застъпват */
+  .map-pin:not([aria-pressed="true"]) .map-pin__label { display: none; }
   .sim,
   .threats__grid,
-  .photo-row,
-  .gallery__grid { grid-template-columns: 1fr; }
+  .photo-row { grid-template-columns: 1fr; }
   .photo img,
-  .gallery__open img,
-  .gallery__item--big .gallery__open img { height: auto; aspect-ratio: 4 / 3; }
+  .gallery__open img { height: auto; aspect-ratio: 4 / 3; }
+  .strip__slide { flex-basis: 88%; }
 }
 
 /* Между 1001 и 1239 px менюто не се събира с въздухомера – скриваме го.
@@ -1449,7 +1741,11 @@ input[type="range"] {
   .section > .container::after { top: 20px; right: 18px; font-size: 3.4rem; }
   .air-chip { margin-left: 12px; padding: 5px 10px; }
   .air-chip__label { display: none; }   /* на телефон: само точка и дума */
-  .hero__scroll { display: none; }        /* на телефон пречи на текста, а и всички знаят да скролват */
+  .hero__scroll { display: none; }
+  /* Надписите в самата карта стават твърде дребни – оставяме само точките */
+  .valley-map__area,
+  .valley-map__river-name,
+  .valley-map__smog-label { display: none; }        /* на телефон пречи на текста, а и всички знаят да скролват */
   .marquee { padding: 48px 0; }
   .marquee__row { padding: 10px 0; }
   .hero__content { padding-bottom: 160px; }
@@ -1471,6 +1767,7 @@ input[type="range"] {
   }
   .reveal,
   .js .section > .container { opacity: 1; translate: none; scale: none; }
+  .card__icon .draw { stroke-dashoffset: 0; }
   /* Игрищата показваме направо изгорели */
   .burn__grid.is-burning .burn__pitch { background: #3d2a22; }
   .photo img,

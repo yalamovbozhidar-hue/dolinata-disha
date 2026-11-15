@@ -21,9 +21,19 @@ function animateCounter(el) {
     const eased = 1 - Math.pow(1 - progress, 3); // плавно забавяне в края
     el.textContent = Math.round(target * eased);
     if (progress < 1) requestAnimationFrame(step);
+    else el.classList.add("is-done"); // числото „подскача“, щом стигне целта (CSS)
   }
   requestAnimationFrame(step);
 }
+
+// Иконите в картите се „рисуват“ линия по линия.
+// pathLength = 1 казва, че всяка линия е дълга 1 – тогава CSS
+// може да я крие и показва с stroke-dashoffset от 1 до 0.
+// Пунктирните линии (с stroke-dasharray) оставяме както са.
+document.querySelectorAll(".card__icon path:not([stroke-dasharray])").forEach((path) => {
+  path.setAttribute("pathLength", "1");
+  path.classList.add("draw");
+});
 
 // Когато елемент с клас .reveal влезе в екрана, му добавяме .is-visible
 const revealObserver = new IntersectionObserver(
