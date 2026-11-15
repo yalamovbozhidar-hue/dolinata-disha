@@ -1,7 +1,7 @@
 /* =========================================
    НАВИГАЦИЯ
-   Лепкаво меню, бургер за телефон, активна секция
-   и прогрес бар за прочетеното.
+   Плаващо меню-„хапче“, меню на цял екран за телефон,
+   активна секция с плъзгащо се „хапче“ и прогрес бар.
    ========================================= */
 const header = document.querySelector(".header");
 const navToggle = document.querySelector(".nav__toggle");
@@ -26,6 +26,8 @@ updateHeaderOnScroll();
 // ----- Бургер меню на телефон -----
 function setMenuOpen(isOpen) {
   navMenu.classList.toggle("is-open", isOpen);
+  // Докато менюто на цял екран е отворено, страницата отдолу не се скролва
+  document.documentElement.classList.toggle("menu-open", isOpen);
   navToggle.setAttribute("aria-expanded", String(isOpen));
   navToggle.setAttribute("aria-label", isOpen ? "Затвори менюто" : "Отвори менюто");
 }
@@ -57,14 +59,39 @@ document.addEventListener("click", (event) => {
   }
 });
 
+// ----- „Хапчето“ под активния линк (само на компютър) -----
+// Плъзга се към линка под мишката и се връща на активния, когато мишката излезе.
+const wideScreen = window.matchMedia("(min-width: 1001px)");
+let activeLink = null;
+
+function movePill(link) {
+  if (!wideScreen.matches || !link || link.classList.contains("nav__link--cta")) {
+    navMenu.style.setProperty("--pill-o", "0");
+    return;
+  }
+  navMenu.style.setProperty("--pill-x", `${link.offsetLeft}px`);
+  navMenu.style.setProperty("--pill-w", `${link.offsetWidth}px`);
+  navMenu.style.setProperty("--pill-o", "1");
+}
+
+navLinks.forEach((link) => link.addEventListener("pointerenter", () => movePill(link)));
+navMenu.addEventListener("pointerleave", () => movePill(activeLink));
+window.addEventListener("resize", () => movePill(activeLink));
+
+// Секциите без собствен линк в менюто отбелязват най-близкия
+const SECTION_LINK = { inversion: "problem", map: "problem", industry: "fire" };
+
 // ----- Маркираме активния линк според секцията на екрана -----
 const navSections = document.querySelectorAll("main section[id]");
 const sectionObserver = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
+      const id = SECTION_LINK[entry.target.id] || entry.target.id;
+      activeLink = Array.from(navLinks).find((link) => link.getAttribute("href") === `#${id}`) || null;
+      movePill(activeLink);
       navLinks.forEach((link) => {
-        const isActive = link.getAttribute("href") === `#${entry.target.id}`;
+        const isActive = link === activeLink;
         link.classList.toggle("is-active", isActive);
         // aria-current казва на екранния четец коя е текущата секция
         if (isActive) link.setAttribute("aria-current", "true");

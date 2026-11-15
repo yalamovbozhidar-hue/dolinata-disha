@@ -37,7 +37,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Unbounded:wght@600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=9">
+  <link rel="stylesheet" href="css/style.css?v=10">
   <!-- Отбелязваме, че JavaScript работи – само тогава CSS скрива елементите за анимациите -->
   <script>
     document.documentElement.classList.add("js");
@@ -65,8 +65,6 @@
   <!-- Небето над долината: фон зад целия сайт, рисува се от js/hero.js -->
   <canvas class="sky" id="sky" aria-hidden="true"></canvas>
 
-  <!-- Прогрес бар: колко от страницата е прочетено -->
-  <div class="read-progress" id="read-progress" aria-hidden="true"></div>
 
   <!-- ===== НАВИГАЦИЯ ===== -->
   <header class="header">
@@ -101,6 +99,9 @@
           <span class="nav__sound-label">Звук на долината</span>
         </button></li>
       </ul>
+
+      <!-- Прогрес бар: колко от страницата е прочетено (тънка линия в долния край на менюто) -->
+      <div class="read-progress" id="read-progress" aria-hidden="true"></div>
     </nav>
   </header>
 
@@ -109,16 +110,25 @@
     <!-- ===== 1. НАЧАЛО ===== -->
     <section class="hero" id="home">
       <div class="hero__content">
-        <p class="hero__eyebrow">Казанлъшка долина · Екологична инициатива</p>
+        <p class="hero__eyebrow"><span class="hero__dot" aria-hidden="true"></span>Казанлъшка долина · Екологична инициатива</p>
         <h1 class="hero__title split-words">Долината <span class="hero__accent">диша.</span><br>Но с какво?</h1>
         <p class="hero__text">
           Между Балкана и Средна гора лежи една затворена „купа“.
           Всичко, което изгаряме, изхвърляме и запалваме, остава вътре – при нас.
         </p>
-        <a href="#problem" class="btn">Виж проблема</a>
+        <div class="hero__actions">
+          <a href="#problem" class="btn">Виж проблема <span aria-hidden="true">→</span></a>
+          <a href="#simulator" class="btn btn--ghost">Изчисти небето</a>
+        </div>
+        <ul class="hero__features" aria-label="Какво има в сайта">
+          <li><span aria-hidden="true">🗺️</span> Карта на долината</li>
+          <li><span aria-hidden="true">🌬️</span> Симулатор</li>
+          <li><span aria-hidden="true">🎮</span> Мини игра</li>
+          <li><span aria-hidden="true">🌹</span> Обещания</li>
+        </ul>
         <p class="hero__hint">
-          <span class="hero__wind">🌬️ Движи мишката или пръста над мъглата – ти си вятърът.</span>
-          Скролни надолу: колкото повече знаеш и действаш, толкова по-чист става въздухът.
+          <span aria-hidden="true">✋</span> Движи мишката или пръста над мъглата – ти си вятърът.
+          Скролни надолу – и въздухът се изчиства.
         </p>
       </div>
       <!-- Знак „скролни надолу“: мишка с топче, което слиза -->
@@ -135,8 +145,9 @@
           какво горим, а и в това <strong>къде</strong> живеем.
         </p>
 
-        <div class="cards">
-          <article class="card reveal">
+        <!-- Bento мрежа: широка карта, висока карта със снимка и две малки -->
+        <div class="bento">
+          <article class="card card--wide reveal">
             <div class="card__icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <!-- Планини и „похлупак“ от смог над тях -->
@@ -146,9 +157,20 @@
             </div>
             <h3 class="card__title">Затворена котловина</h3>
             <p>Долината е заобиколена от планини. При зимни температурни инверсии студеният въздух остава долу и „заключва“ дима над града.</p>
+            <!-- Малка рисунка: котловината, капакът и димът под него -->
+            <svg class="card__art" viewBox="0 0 220 130" aria-hidden="true">
+              <path class="card__art-hills" d="M0 130 L48 34 L86 98 L110 86 L134 98 L176 26 L220 130 Z"/>
+              <path class="card__art-lid" d="M40 62 Q110 44 182 62"/>
+              <g class="card__art-smoke"><circle cx="92" cy="80" r="9"/><circle cx="112" cy="74" r="11"/><circle cx="132" cy="80" r="9"/></g>
+            </svg>
           </article>
-
-          <article class="card reveal">
+          <article class="card card--tall reveal">
+            <img class="card__photo" src="img/chimney-1920.jpg"
+                 srcset="img/chimney-960.jpg 960w, img/chimney-1920.jpg 1920w, img/chimney-3840.jpg 3840w"
+                 sizes="(max-width: 860px) 100vw, 380px"
+                 width="1920" height="1278" loading="lazy" decoding="async"
+                 alt="Комин на къща, от който излиза тъмен дим">
+            <div class="card__body">
             <div class="card__icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <!-- Пламък -->
@@ -158,8 +180,9 @@
             <h3 class="card__title">Отопление с дърва и въглища</h3>
             <p>Изгарянето на твърди горива в домовете е сред основните източници на фини прахови частици в региона, заедно с транспорта.</p>
             <p class="source">Източник: <a href="https://stz.riew.gov.bg/files/File/II.1%20%D0%9A%D0%90%D0%A7%D0%95%D0%A1%D0%A2%D0%92%D0%9E%20%D0%9D%D0%90%20%D0%90%D0%A2%D0%9C%D0%9E%D0%A1%D0%A4%D0%95%D0%A0%D0%9D%D0%98%D0%AF%20%D0%92%D0%AA%D0%97%D0%94%D0%A3%D0%A5.pdf" target="_blank" rel="noopener">РИОСВ – Стара Загора</a></p>
+              <p class="card__note">Тъмният дим означава непълно изгаряне – мокри дърва, въглища или боклук.</p>
+            </div>
           </article>
-
           <article class="card reveal">
             <div class="card__icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -172,7 +195,6 @@
             <h3 class="card__title">Удар по здравето</h3>
             <p>Фините прахови частици (ФПЧ2.5) са толкова малки, че проникват дълбоко в белите дробове и в кръвта. Най-уязвими са децата и възрастните.</p>
           </article>
-
           <article class="card reveal">
             <div class="card__icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -186,26 +208,6 @@
             <p>През 2017 г. Съдът на ЕС осъди България по дело на Европейската комисия, защото страната не се справя с мръсния въздух. Решението започва от всеки град.</p>
             <p class="source">Източник: <a href="https://www.capital.bg/kakvo_stava/2017/04/05/2948185_bulgariia_beshe_osudena_v_ljuksemburg_zaradi_mrusniia/" target="_blank" rel="noopener">„Капитал“</a></p>
           </article>
-        </div>
-
-        <!-- Снимки: браузърът сам избира размера (960, 1920 или 3840 px) според екрана -->
-        <div class="photo-row">
-          <figure class="photo photo--wide reveal">
-            <img src="img/city-1920.jpg"
-                 srcset="img/city-960.jpg 960w, img/city-1920.jpg 1920w, img/city-3840.jpg 3840w"
-                 sizes="(max-width: 860px) 100vw, 640px"
-                 width="1920" height="1440" loading="lazy" decoding="async"
-                 alt="Покривите на източната част на Казанлък, погледнати отвисоко">
-            <figcaption>Източната част на Казанлък, погледната отвисоко.</figcaption>
-          </figure>
-          <figure class="photo reveal">
-            <img src="img/chimney-1920.jpg"
-                 srcset="img/chimney-960.jpg 960w, img/chimney-1920.jpg 1920w, img/chimney-3840.jpg 3840w"
-                 sizes="(max-width: 860px) 100vw, 400px"
-                 width="1920" height="1278" loading="lazy" decoding="async"
-                 alt="Комин на къща, от който излиза тъмен дим">
-            <figcaption>Тъмният дим означава непълно изгаряне – мокри дърва, въглища или боклук.</figcaption>
-          </figure>
         </div>
 
         <!-- Сравнение „смог / чист въздух“ (js/compare.js).
@@ -1225,20 +1227,54 @@
 
   <!-- ===== ФУТЪР ===== -->
   <footer class="footer">
-    <div class="container footer__inner">
+    <div class="container">
       <p class="footer__big reveal">Нека долината <em>диша.</em></p>
-      <div class="footer__about">
-        <p class="footer__brand">
-          <img class="footer__mark" src="img/logo.svg" alt="" width="40" height="40">
-          <span><strong>Долината диша</strong> – училищен проект, Казанлък, 2026</span>
-        </p>
-        <p class="footer__authors">
-          Автори: <strong>Божидар Ялъмов</strong> (10б клас)
-          и <strong>Георги Даракчиев</strong> (10а клас)
-        </p>
+
+      <div class="footer__grid">
+        <div class="footer__col footer__col--brand">
+          <a href="#home" class="footer__brand">
+            <img class="footer__mark" src="img/logo.svg" alt="" width="44" height="44">
+            <span>Долината <em>диша</em></span>
+          </a>
+          <p>Ученически проект за въздуха, горите и отпадъците в Казанлъшката долина. Казанлък, 2026.</p>
+          <p class="footer__authors">
+            Автори: <strong>Божидар Ялъмов</strong> (10б клас)
+            и <strong>Георги Даракчиев</strong> (10а клас)
+          </p>
+        </div>
+
+        <nav class="footer__col" aria-label="Секциите на сайта">
+          <h3 class="footer__heading">Секции</h3>
+          <ul class="footer__links footer__links--two">
+            <li><a href="#problem">Проблемът</a></li>
+            <li><a href="#inversion">Инверсията</a></li>
+            <li><a href="#map">Картата</a></li>
+            <li><a href="#simulator">Симулатор</a></li>
+            <li><a href="#fire">Огън и отпадъци</a></li>
+            <li><a href="#industry">Заводите</a></li>
+            <li><a href="#game">Игра</a></li>
+            <li><a href="#gallery">Галерия</a></li>
+            <li><a href="#action">Действай</a></li>
+          </ul>
+        </nav>
+
+        <div class="footer__col">
+          <h3 class="footer__heading">Сигнал и данни</h3>
+          <ul class="footer__links">
+            <li><a href="tel:112"><span aria-hidden="true">🚨</span> 112 – при пожар</a></li>
+            <li><a href="tel:+35942692200"><span aria-hidden="true">📞</span> 042 692 200 – РИОСВ</a></li>
+            <li><a href="tel:+359885632494"><span aria-hidden="true">🌙</span> 0885 632 494 – РИОСВ, извън работно време</a></li>
+            <li><a href="https://riosv-stz.bg/info/192/ezhednevni-byuletini-za-sastoyanieto-na-vazduha" target="_blank" rel="noopener"><span aria-hidden="true">📊</span> Бюлетин за въздуха</a></li>
+            <li><a href="https://airindex.eea.europa.eu/" target="_blank" rel="noopener"><span aria-hidden="true">🗺️</span> Карта на въздуха (ЕАОС)</a></li>
+          </ul>
+        </div>
       </div>
-      <p class="footer__sources">
-        Източници: <a href="https://stz.riew.gov.bg/files/File/II.1%20%D0%9A%D0%90%D0%A7%D0%95%D0%A1%D0%A2%D0%92%D0%9E%20%D0%9D%D0%90%20%D0%90%D0%A2%D0%9C%D0%9E%D0%A1%D0%A4%D0%95%D0%A0%D0%9D%D0%98%D0%AF%20%D0%92%D0%AA%D0%97%D0%94%D0%A3%D0%A5.pdf" target="_blank" rel="noopener">РИОСВ – Стара Загора</a>,
+
+      <div class="footer__bottom">
+        <details class="footer__details">
+          <summary>Източници</summary>
+          <p class="footer__sources">
+          <a href="https://stz.riew.gov.bg/files/File/II.1%20%D0%9A%D0%90%D0%A7%D0%95%D0%A1%D0%A2%D0%92%D0%9E%20%D0%9D%D0%90%20%D0%90%D0%A2%D0%9C%D0%9E%D0%A1%D0%A4%D0%95%D0%A0%D0%9D%D0%98%D0%AF%20%D0%92%D0%AA%D0%97%D0%94%D0%A3%D0%A5.pdf" target="_blank" rel="noopener">РИОСВ – Стара Загора</a>,
         <a href="https://www.capital.bg/kakvo_stava/2017/04/05/2948185_bulgariia_beshe_osudena_v_ljuksemburg_zaradi_mrusniia/" target="_blank" rel="noopener">„Капитал“</a>,
         <a href="https://www.bgonair.bg/a/2-bulgaria/316629-chastichno-bedstveno-polozhenie-pozharat-mezhdu-kazanlak-i-maglizh-obhvana-500-dka" target="_blank" rel="noopener">Bgonair</a>,
         <a href="https://btvnovinite.bg/bulgaria/golemijat-gorski-pozhar-mezhdu-kazanlak-i-maglizh-e-chastichno-ovladjan.html" target="_blank" rel="noopener">bTV</a>,
@@ -1252,11 +1288,11 @@
         <a href="https://dnes.dir.bg/intsidenti/pozharat-kray-kazanlak-e-izpepelil-2000-dka-i-desetki-vili-ne-za-parvi-izbuhva-tam" target="_blank" rel="noopener">„Днес“ (юли 2022)</a>,
         <a href="https://zonayambol.com/2022/07/%D1%81%D0%BB%D1%83%D0%B6%D0%B8%D1%82%D0%B5%D0%BB%D0%B8-%D0%BD%D0%B0-%D1%8E%D0%B8%D0%B4%D0%BF-%D0%BE%D0%B2%D0%BB%D0%B0%D0%B4%D1%8F%D1%85%D0%B0-%D0%B3%D0%BE%D0%BB%D0%B5%D0%BC%D0%B8%D1%8F-%D0%B3%D0%BE/" target="_blank" rel="noopener">„Зона Ямбол“ (2022)</a>,
         <a href="https://dnes.dir.bg/intsidenti/pozhar-izbuhna-vav-voenen-poligon-tyulbeto-pri-obezvrezhdane-na-boepripasi-video" target="_blank" rel="noopener">„Днес“ (август 2022)</a>.
-      </p>
-      <a href="#home" class="footer__top" aria-label="Към началото">↑</a>
-      <!-- Снимките са от Wikimedia Commons – посочваме автора и лиценза, както изисква лицензът -->
-      <details class="footer__credits">
-        <summary>Снимки и лицензи (Wikimedia Commons и Flickr)</summary>
+          </p>
+        </details>
+        <!-- Снимките са от Wikimedia Commons и Flickr – посочваме автора и лиценза, както изисква лицензът -->
+        <details class="footer__details footer__credits">
+          <summary>Снимки и лицензи</summary>
         <ul>
           <li><a href="https://commons.wikimedia.org/wiki/File:The_Koprinka_Reservoir_seen_from_Shipka_peak.jpg" target="_blank" rel="noopener">Язовир „Копринка“ от връх Шипка</a> – Ivano Giambattista, <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener">CC0</a></li>
           <li><a href="https://commons.wikimedia.org/wiki/File:Oestlicher_Teil_der_Stadt_Kasanlak.jpg" target="_blank" rel="noopener">Източната част на Казанлък</a> – Kazanlak Dani, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a></li>
@@ -1272,27 +1308,30 @@
           <li><a href="https://commons.wikimedia.org/wiki/File:The_Buzludzha_seen_from_Shipka_peak.jpg" target="_blank" rel="noopener">Стара планина и Бузлуджа от връх Шипка</a> – Ivano Giambattista, <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener">CC0</a></li>
           <li><a href="https://commons.wikimedia.org/wiki/File:Koprinka_lake,_Sheynovo_village_viewed_from_Buzludzha_03.JPG" target="_blank" rel="noopener">„Копринка“ и Шейново от Бузлуджа</a> – Scroch, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a></li>
         </ul>
-      </details>
+        </details>
+        <p class="footer__copy">© 2026 · Казанлък</p>
+        <a href="#home" class="footer__top" aria-label="Към началото">↑</a>
+      </div>
     </div>
   </footer>
 
   <!-- Скриптовете: първо общите помощни функции, после всяка част поотделно.
-       ?v=9 е номерът на версията – при нова версия го сменяме и браузърът
+       ?v=10 е номерът на версията – при нова версия го сменяме и браузърът
        изтегля новите файлове, вместо да ползва старите от кеша. -->
-  <script src="js/utils.js?v=9" defer></script>
-  <script src="js/nav.js?v=9" defer></script>
-  <script src="js/effects.js?v=9" defer></script>
-  <script src="js/tilt.js?v=9" defer></script>
-  <script src="js/hero.js?v=9" defer></script>
-  <script src="js/fire.js?v=9" defer></script>
-  <script src="js/simulator.js?v=9" defer></script>
-  <script src="js/game.js?v=9" defer></script>
-  <script src="js/compare.js?v=9" defer></script>
-  <script src="js/map.js?v=9" defer></script>
-  <script src="js/gallery.js?v=9" defer></script>
-  <script src="js/pledge.js?v=9" defer></script>
-  <script src="js/story.js?v=9" defer></script>
-  <script src="js/cursor.js?v=9" defer></script>
-  <script src="js/sound.js?v=9" defer></script>
+  <script src="js/utils.js?v=10" defer></script>
+  <script src="js/nav.js?v=10" defer></script>
+  <script src="js/effects.js?v=10" defer></script>
+  <script src="js/tilt.js?v=10" defer></script>
+  <script src="js/hero.js?v=10" defer></script>
+  <script src="js/fire.js?v=10" defer></script>
+  <script src="js/simulator.js?v=10" defer></script>
+  <script src="js/game.js?v=10" defer></script>
+  <script src="js/compare.js?v=10" defer></script>
+  <script src="js/map.js?v=10" defer></script>
+  <script src="js/gallery.js?v=10" defer></script>
+  <script src="js/pledge.js?v=10" defer></script>
+  <script src="js/story.js?v=10" defer></script>
+  <script src="js/cursor.js?v=10" defer></script>
+  <script src="js/sound.js?v=10" defer></script>
 </body>
 </html>
