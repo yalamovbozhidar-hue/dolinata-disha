@@ -198,6 +198,19 @@ const valleyCacheCtx = valleyCache.getContext("2d");
 let cacheClean = -1;
 let cacheTime = -1;
 
+// На телефон небето не се рисува на всеки кадър, а само когато скролнеш:
+// така телефонът не се натоварва, докато зарежда и докато четеш.
+const staticSky = reduceMotion || window.innerWidth < 720;
+let skyQueued = false;
+function queueSkyDraw() {
+  if (skyQueued) return;
+  skyQueued = true;
+  requestAnimationFrame(() => {
+    skyQueued = false;
+    drawSky();
+  });
+}
+
 // На телефон небето се рисува в по-ниска резолюция – то е меко и разликата
 // не се вижда, а телефонът рисува почти 3 пъти по-малко пиксели
 const SKY_SCALE = window.innerWidth < 720 ? 0.6 : 1;
@@ -217,12 +230,12 @@ function resizeSky() {
   skyWidth = Math.round(window.innerWidth * SKY_SCALE);
   skyHeight = Math.round(window.innerHeight * SKY_SCALE);
   cacheClean = -1; // при нов размер кешът се рисува наново
+  if (staticSky) queueSkyDraw();
   [skyCanvas, cleanView, windLayer, valleyCache].forEach((canvas) => {
     canvas.width = skyWidth;
     canvas.height = skyHeight;
   });
   cleanViewTime = -1; // чистата долина ще се нарисува наново при нужда (виж drawWind)
-  if (reduceMotion) drawSky();
 }
 
 // Прогресът на скрола (0 → 1) определя колко чист е въздухът
@@ -234,10 +247,10 @@ function updateTargetClean() {
   // Денят минава през цялата страница: зора в началото, нощ във футъра
   targetTime = progress;
 
-  if (reduceMotion) {
+  if (staticSky) {
     clean = targetClean; // без плавен преход – рисуваме само при скрол
     dayTime = targetTime;
-    drawSky();
+    queueSkyDraw();
   }
 }
 
@@ -673,6 +686,7 @@ if (!reduceMotion) {
   }, { passive: true });
   window.addEventListener("touchmove", (event) => {
     blowWind(event.touches[0].clientX * SKY_SCALE, event.touches[0].clientY * SKY_SCALE);
+    if (staticSky) queueSkyDraw();
   }, { passive: true });
 }
 
@@ -737,10 +751,10 @@ updateTargetClean();
 clean = targetClean; // при презареждане по средата на страницата започваме от правилното място
 dayTime = targetTime;
 
-// При изключени анимации рисуваме само при скрол. Иначе: един кадър веднага,
-// а движението тръгва чак след като страницата се зареди – да не я забавя.
+// На телефон и при изключени анимации рисуваме само при скрол. Иначе: един кадър
+// веднага, а движението тръгва чак след като страницата се зареди – да не я забавя.
 drawSky();
-if (!reduceMotion) {
+if (!staticSky) {
   if (document.readyState === "complete") animateSky();
   else window.addEventListener("load", () => setTimeout(animateSky, 200), { once: true });
 }

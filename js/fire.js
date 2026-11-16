@@ -88,7 +88,8 @@ function startEmbers(canvas) {
 }
 
 // При изключени анимации остава само оранжевото сияние от CSS
-if (!reduceMotion) document.querySelectorAll(".embers").forEach(startEmbers);
+// На телефон също – там искрите тежат повече, отколкото добавят
+if (!reduceMotion && window.innerWidth >= 720) document.querySelectorAll(".embers").forEach(startEmbers);
 
 /* -----------------------------------------
    ОБЩО ИЗГОРЕЛИ: 3000 дка

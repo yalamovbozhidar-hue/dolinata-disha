@@ -102,3 +102,38 @@ const sectionObserver = new IntersectionObserver(
   { rootMargin: "-45% 0px -50% 0px" }
 );
 navSections.forEach((section) => sectionObserver.observe(section));
+
+// ----- Точно попадение при скок към секция -----
+// На телефон секциите далеч от екрана имат приблизителна височина, докато не се
+// покажат (content-visibility в CSS). Затова при дълъг скок браузърът може да
+// спре малко преди или след секцията. Щом превъртането свърши, проверяваме
+// и при нужда донагласяме (до 3 пъти).
+function settleOn(target, triesLeft = 3) {
+  let done = false;
+  const finish = () => {
+    if (done) return;
+    done = true;
+    window.removeEventListener("scrollend", finish);
+    window.removeEventListener("wheel", cancel);
+    window.removeEventListener("touchstart", cancel);
+    clearTimeout(timer);
+    const padding = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+    const miss = target.getBoundingClientRect().top - padding;
+    if (Math.abs(miss) > 4 && triesLeft > 0) {
+      target.scrollIntoView();
+      settleOn(target, triesLeft - 1);
+    }
+  };
+  // Ако човекът сам започне да скролва – не му пречим
+  const cancel = () => { done = true; window.removeEventListener("scrollend", finish); clearTimeout(timer); };
+  window.addEventListener("scrollend", finish, { once: true });
+  window.addEventListener("wheel", cancel, { once: true, passive: true });
+  window.addEventListener("touchstart", cancel, { once: true, passive: true });
+  const timer = setTimeout(finish, 2500); // за браузъри без събитието scrollend
+}
+
+document.addEventListener("click", (event) => {
+  const link = event.target instanceof Element ? event.target.closest('a[href^="#"]') : null;
+  const target = link && link.hash.length > 1 ? document.getElementById(link.hash.slice(1)) : null;
+  if (target) settleOn(target);
+});

@@ -136,4 +136,10 @@ stripTrack.addEventListener("click", (event) => {
   wasDragged = false;
 }, true);
 
-updateStrip();
+// Първото отбелязване чак когато лентата наближи екрана – иначе още при
+// зареждането браузърът ще трябва да пресметне целия ѝ размер
+new IntersectionObserver((entries, observer) => {
+  if (!entries[0].isIntersecting) return;
+  observer.disconnect();
+  updateStrip();
+}, { rootMargin: "300px 0px" }).observe(stripTrack);

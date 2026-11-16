@@ -2,6 +2,29 @@
    Долината диша – основни стилове
    ========================================= */
 
+/* ----- Резервни шрифтове ----- */
+/* Докато истинските шрифтове се зареждат, текстът се показва с Arial, но
+   разтеглен до същата ширина (измерено). Така редовете не „скачат“ (CLS). */
+@font-face {
+  font-family: "Manrope Fallback";
+  src: local("Arial");
+  size-adjust: 104%;
+}
+@font-face {
+  font-family: "Unbounded Fallback";
+  src: local("Arial Bold"), local("Arial");
+  font-weight: 600 900;
+  size-adjust: 119%;
+}
+
+/* Главните букви на Manrope са по-тесни от тези на Arial – отделен резервен шрифт */
+@font-face {
+  font-family: "Manrope Caps Fallback";
+  src: local("Arial Bold"), local("Arial");
+  font-weight: 600 900;
+  size-adjust: 93%;
+}
+
 /* ----- Променливи (цветове, шрифтове) ----- */
 :root {
   --c-bg: #0f1a17;          /* тъмнозелено-черно */
@@ -15,8 +38,8 @@
   --c-border: rgba(255, 255, 255, 0.08);
   --glow: 0 0 24px rgba(126, 224, 161, 0.45);   /* меко зелено сияние */
 
-  --f-head: "Unbounded", sans-serif;
-  --f-body: "Manrope", sans-serif;
+  --f-head: "Unbounded", "Unbounded Fallback", sans-serif;
+  --f-body: "Manrope", "Manrope Fallback", sans-serif;
 
   --radius: 18px;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);   /* плавно забавяне в края */
@@ -395,6 +418,7 @@ html.menu-open .read-progress { opacity: 0; }   /* линията не се ви
   border-radius: 999px;
   background: rgba(15, 26, 23, 0.5);
   color: var(--c-accent);
+  font-family: "Manrope", "Manrope Caps Fallback", sans-serif;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -2850,6 +2874,22 @@ input[type="range"] {
   .game__item-emoji { font-size: 1.8rem; }
   .bin { height: 84px; font-size: 0.7rem; }
   .game__bins { gap: 6px; padding: 0 6px 6px; }
+}
+
+/* Телефон: секциите далеч от екрана не се подреждат и не се рисуват, докато
+   не наближат (content-visibility). Така първото зареждане е много по-леко.
+   „auto 900px“ = приблизителна височина, докато секцията не е показана,
+   после браузърът запомня истинската. */
+@media (max-width: 719px) {
+  .section > .container,
+  .statement,
+  .marquee {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 900px;
+  }
+  .statement { contain-intrinsic-size: auto 90vh; }
+  .marquee { contain-intrinsic-size: auto 160px; }
+  .section > .container::after { top: 0; }   /* номерът да не се изрязва отгоре */
 }
 
 /* Много тесен телефон: въздухомерът е само точка, за да се събере бургерът */

@@ -15,13 +15,13 @@
   <!-- Банерът при споделяне (1200 × 630): логото и заглавието в средата,
        за да се виждат и когато приложението изреже снимката до квадрат.
        ?v=… кара Facebook, Viber и др. да изтеглят новия банер вместо стария. -->
-  <meta property="og:image" content="https://yalamovbozhidar-hue.github.io/dolinata-disha/img/og-banner.jpg?v=11">
+  <meta property="og:image" content="https://yalamovbozhidar-hue.github.io/dolinata-disha/img/og-banner.jpg?v=12">
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Логото „Долината диша“ над снимка на Казанлъшката долина: смогът, пожарите и сметищата – и какво можем да направим">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://yalamovbozhidar-hue.github.io/dolinata-disha/img/og-banner.jpg?v=11">
+  <meta name="twitter:image" content="https://yalamovbozhidar-hue.github.io/dolinata-disha/img/og-banner.jpg?v=12">
   <title>Долината диша</title>
   <!-- Логото като иконка навсякъде:
        favicon.ico – за браузъри и места, които не разбират SVG (Windows, отметки);
@@ -36,8 +36,10 @@
   <meta name="theme-color" content="#0f1a17">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Unbounded:wght@600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=11">
+  <!-- Шрифтовете се зареждат, без да спират първото рисуване на страницата -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Unbounded:wght@600;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Unbounded:wght@600;800&display=swap"></noscript>
+  <link rel="stylesheet" href="css/style.css?v=12">
   <!-- Отбелязваме, че JavaScript работи – само тогава CSS скрива елементите за анимациите -->
   <script>
     document.documentElement.classList.add("js");
@@ -111,7 +113,7 @@
     <section class="hero" id="home">
       <div class="hero__content">
         <p class="hero__eyebrow"><span class="hero__dot" aria-hidden="true"></span>Казанлъшка долина · Екологична инициатива</p>
-        <h1 class="hero__title split-words">Долината <span class="hero__accent">диша.</span><br>Но с какво?</h1>
+        <h1 class="hero__title split-words">Долината<br><span class="hero__accent">диша.</span><br>Но с какво?</h1>
         <p class="hero__text">
           Между Балкана и Средна гора лежи една затворена „купа“.
           Всичко, което изгаряме, изхвърляме и запалваме, остава вътре – при нас.
@@ -1319,20 +1321,20 @@
   <!-- Скриптовете: първо общите помощни функции, после всяка част поотделно.
        ?v=10 е номерът на версията – при нова версия го сменяме и браузърът
        изтегля новите файлове, вместо да ползва старите от кеша. -->
-  <script src="js/utils.js?v=11" defer></script>
-  <script src="js/nav.js?v=11" defer></script>
-  <script src="js/effects.js?v=11" defer></script>
-  <script src="js/tilt.js?v=11" defer></script>
-  <script src="js/hero.js?v=11" defer></script>
-  <script src="js/fire.js?v=11" defer></script>
-  <script src="js/simulator.js?v=11" defer></script>
-  <script src="js/game.js?v=11" defer></script>
-  <script src="js/compare.js?v=11" defer></script>
-  <script src="js/map.js?v=11" defer></script>
-  <script src="js/gallery.js?v=11" defer></script>
-  <script src="js/pledge.js?v=11" defer></script>
-  <script src="js/story.js?v=11" defer></script>
-  <script src="js/cursor.js?v=11" defer></script>
-  <script src="js/sound.js?v=11" defer></script>
+  <script src="js/utils.js?v=12" defer></script>
+  <script src="js/nav.js?v=12" defer></script>
+  <script src="js/effects.js?v=12" defer></script>
+  <script src="js/tilt.js?v=12" defer></script>
+  <script src="js/hero.js?v=12" defer></script>
+  <script src="js/fire.js?v=12" defer></script>
+  <script src="js/simulator.js?v=12" defer></script>
+  <script src="js/game.js?v=12" defer></script>
+  <script src="js/compare.js?v=12" defer></script>
+  <script src="js/map.js?v=12" defer></script>
+  <script src="js/gallery.js?v=12" defer></script>
+  <script src="js/pledge.js?v=12" defer></script>
+  <script src="js/story.js?v=12" defer></script>
+  <script src="js/cursor.js?v=12" defer></script>
+  <script src="js/sound.js?v=12" defer></script>
 </body>
 </html>
