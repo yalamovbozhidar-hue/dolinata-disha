@@ -551,6 +551,9 @@ main { counter-reset: section; }   /* номерата 01, 02… на секци
   --ridge-a: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 110' preserveAspectRatio='none'%3E%3Cpath d='M0 110V78l60-12 50 8 60-24 60 12 60-22 60 18 70-28 60 22 60-8 60 20 60-28 70 20 70-32 60 26 70-8 70 20 60-24 70 20 60-12 60 20 70-26 60 20 60-8v58z'/%3E%3C/svg%3E");
   --ridge-b: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 110' preserveAspectRatio='none'%3E%3Cpath d='M0 110V72c120-34 220 8 340-14s220-24 360 2 240-26 380-6 240 16 360-12v68z'/%3E%3C/svg%3E");
   --ridge-h: 110px;
+  /* Билото е поне 900 px широко. На телефон се вижда само средата му –
+     иначе 25-те върха се смачкват в 375 px и стават остри „зъби“ */
+  --ridge-w: max(100%, 900px);
   --band: rgba(13, 23, 20, 0.92);
 }
 
@@ -598,15 +601,36 @@ main { counter-reset: section; }   /* номерата 01, 02… на секци
     rgba(0, 0, 0, 0.05) calc(100% - var(--fade-bottom) * 0.1),
     transparent);
   -webkit-mask-image: var(--side-fade), var(--ridge), var(--bottom-fade);
-  -webkit-mask-size: 100% 100%, 100% var(--ridge-h), 100% 100%;
-  -webkit-mask-position: 0 0, 0 0, 0 0;
+  -webkit-mask-size: 100% 100%, var(--ridge-w) var(--ridge-h), 100% 100%;
+  -webkit-mask-position: 0 0, 50% 0, 0 0;
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-composite: source-in, source-over;
   mask-image: var(--side-fade), var(--ridge), var(--bottom-fade);
-  mask-size: 100% 100%, 100% var(--ridge-h), 100% 100%;
-  mask-position: 0 0, 0 0, 0 0;
+  mask-size: 100% 100%, var(--ridge-w) var(--ridge-h), 100% 100%;
+  mask-position: 0 0, 50% 0, 0 0;
   mask-repeat: no-repeat;
   mask-composite: intersect, add;
+}
+
+/* Всяка следваща секция застъпва края на предишната с височината на билото –
+   като планински вериги една зад друга, без празна ивица небе между тях */
+.section + .section { margin-top: calc(var(--ridge-h) * -1); }
+
+/* Билото леко „изгрява“, докато секцията влиза в екрана. Само преместване
+   (translate) – видеокартата го прави без преизчисляване на страницата.
+   Браузъри без анимации по скрол просто показват билото на мястото му. */
+@supports (animation-timeline: view()) {
+  /* Без футъра: той е най-долу и преместването му би удължило страницата */
+  .section::before,
+  .section::after {
+    animation: ridge-rise linear both;
+    animation-timeline: view();
+    animation-range: entry 0px entry 40vh;   /* изгрява през първите 40% от височината на екрана */
+  }
+}
+@keyframes ridge-rise {
+  from { translate: 0 calc(var(--ridge-h) * 0.8); }
+  to { translate: 0 0; }
 }
 
 /* Меко сияние в цвета на секцията точно зад билото – като светлина зад планина */
@@ -1325,6 +1349,7 @@ main { counter-reset: section; }   /* номерата 01, 02… на секци
 
 input[type="range"] {
   width: 100%;
+  height: 32px;   /* по-лесен за хващане с пръст */
   accent-color: var(--c-accent);
   margin-bottom: 24px;
   cursor: pointer;
@@ -1341,7 +1366,7 @@ input[type="range"] {
   cursor: pointer;
   color: var(--c-muted);
 }
-.check input { width: 18px; height: 18px; accent-color: var(--c-accent); }
+.check input { flex: none; width: 22px; height: 22px; accent-color: var(--c-accent); }
 .check:has(input:checked) { color: var(--c-text); }
 
 .meter {
@@ -2781,7 +2806,7 @@ input[type="range"] {
     white-space: nowrap;
   }
   .sim,
-  .threats__grid,
+  .threats__grid { grid-template-columns: 1fr; }
   .gallery__open img { height: auto; aspect-ratio: 4 / 3; }
   .strip__slide { flex-basis: 88%; }
 }
@@ -2843,7 +2868,9 @@ input[type="range"] {
 }
 
 @media (max-width: 720px) {
-  :root { --ridge-h: 56px; }
+  :root { --ridge-h: 64px; }
+  .section,
+  .footer { --side: 0px; }   /* тъмната лента е през целия екран – без светли ивици встрани */
   .section { padding: calc(var(--ridge-h) + 36px) 0 150px; }
   .section,
   .footer { --fade-bottom: 170px; }
