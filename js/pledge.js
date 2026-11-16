@@ -3,6 +3,7 @@
    Запазват се в браузъра (localStorage), за да
    останат отметнати и след презареждане.
    С всяко обещание в розовото поле цъфтят още рози.
+   Бутонът „Покани приятел“ споделя сайта.
    ========================================= */
 const pledgeBoxes = document.querySelectorAll("#pledge input");
 const pledgeFill = document.getElementById("pledge-fill");
@@ -69,6 +70,7 @@ function bloomRoses(done) {
     rose.classList.toggle("is-bloomed", shouldBloom);
   });
   roseFieldBox.classList.toggle("is-full", done === pledgeBoxes.length);
+  roseFieldBox.classList.toggle("has-roses", done > 0); // скрива подсказката в празното поле
 }
 
 /* -----------------------------------------
@@ -169,6 +171,36 @@ function updatePledges(byUser) {
 pledgeBoxes.forEach((box) => box.addEventListener("change", () => updatePledges(true)));
 loadPledges();
 updatePledges();
+
+/* -----------------------------------------
+   ПОКАНИ ПРИЯТЕЛ
+   На телефон се отваря менюто за споделяне (Web Share API).
+   Където го няма – копираме текста с линка, за да се постави в съобщение.
+   ----------------------------------------- */
+const pledgeShare = document.getElementById("pledge-share");
+const pledgeShareNote = document.getElementById("pledge-share-note");
+const SITE_URL = document.querySelector('meta[property="og:url"]').content;
+
+pledgeShare.addEventListener("click", async () => {
+  const done = Array.from(pledgeBoxes).filter((box) => box.checked).length;
+  const text = done > 0
+    ? `Дадох ${done} от ${pledgeBoxes.length} обещания за по-чист въздух в Казанлъшката долина. Дай и ти своите!`
+    : "Виж какво можем да направим за по-чист въздух в Казанлъшката долина.";
+
+  try {
+    if (navigator.share) {
+      await navigator.share({ title: document.title, text, url: SITE_URL });
+      pledgeShareNote.textContent = "";
+      return;
+    }
+    await navigator.clipboard.writeText(`${text} ${SITE_URL}`);
+    pledgeShareNote.textContent = "Линкът е копиран – постави го в съобщение до приятел.";
+  } catch (error) {
+    if (error.name === "AbortError") return; // човекът затвори менюто за споделяне
+    // Нито споделяне, нито копиране – показваме линка, за да се копира на ръка
+    pledgeShareNote.textContent = `Линк към сайта: ${SITE_URL}`;
+  }
+});
 
 /* -----------------------------------------
    КАРТИТЕ МИНАВАТ НАСТРАНИ

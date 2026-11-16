@@ -10,12 +10,16 @@ const sliderValue = document.getElementById("clean-heating-value");
 const checkboxes = document.querySelectorAll(".sim__options input");
 const statusText = document.getElementById("sim-status");
 const meterBar = document.getElementById("meter-bar");
+const simReset = document.getElementById("sim-reset");
+const SLIDER_START = slider.value; // началната стойност от HTML – за бутона „Върни както беше“
 
 // pollution: 1 = много замърсено, 0 = напълно чисто
 let pollution = 0.9;        // текуща стойност (плавно се мени)
 let targetPollution = 0.9;  // към коя стойност отиваме
 let smokeParticles = [];
 let simIsVisible = false;   // рисуваме само когато симулаторът е на екрана
+let simScale = 1;           // колко пиксела от canvas-а са един CSS пиксел (остри екрани)
+let simLastFrame = 0;       // кога е бил предишният кадър
 
 // Цветове на небето: [мръсно, чисто]
 const SKY_TOP = [[70, 66, 60], [74, 144, 226]];
@@ -24,9 +28,17 @@ const SKY_BOTTOM = [[140, 128, 108], [190, 225, 250]];
 // Комини на къщите (в проценти от ширината)
 const chimneys = [0.12, 0.22, 0.31, 0.43, 0.52, 0.61, 0.72, 0.83, 0.91];
 
+// На остър екран (телефон, лаптоп с HiDPI) рисуваме с повече пиксели – иначе
+// картинката е размазана. Най-много 2 пъти, за да не тежи.
 function resizeSim() {
-  simCanvas.width = simCanvas.offsetWidth;
-  simCanvas.height = simCanvas.offsetHeight;
+  simScale = Math.min(window.devicePixelRatio || 1, 2);
+  const width = Math.round(simCanvas.offsetWidth * simScale);
+  const height = Math.round(simCanvas.offsetHeight * simScale);
+  // На телефон „resize“ идва и когато лентата с адреса се скрие – тогава размерът е същият
+  if (width === simCanvas.width && height === simCanvas.height) return false;
+  simCanvas.width = width;
+  simCanvas.height = height;
+  return true;
 }
 
 // Изчислява замърсяването от избраните настройки
@@ -44,6 +56,9 @@ function calculatePollution() {
 
 function updateLabels() {
   sliderValue.textContent = slider.value;
+  slider.style.setProperty("--fill", `${slider.value}%`); // запълнената част на плъзгача (CSS)
+  // Бутонът за връщане работи само ако нещо е променено
+  simReset.disabled = slider.value === SLIDER_START && !Array.from(checkboxes).some((box) => box.checked);
   meterBar.style.width = `${Math.round((1 - targetPollution) * 100)}%`;
   meterBar.style.backgroundColor = mixColor([201, 88, 60], [126, 224, 161], 1 - targetPollution);
 
@@ -89,28 +104,34 @@ function drawLandscape(w, h) {
   });
 }
 
-// Добавя нови частици дим от комините според замърсяването
-function spawnSmoke(w, h) {
+// Добавя нови частици дим от комините според замърсяването.
+// speed = колко „кадъра при 60 в секунда“ са минали (виж drawSim).
+function spawnSmoke(w, h, speed) {
   chimneys.forEach((cx) => {
-    if (Math.random() < pollution * 0.35) {
+    if (Math.random() < pollution * 0.35 * speed) {
       smokeParticles.push({
         x: w * cx + w * 0.02,
         y: h * 0.82 - h * 0.17,
-        radius: 4 + Math.random() * 6,
-        vx: 0.2 + Math.random() * 0.4,
-        vy: -0.3 - Math.random() * 0.4,
+        radius: (4 + Math.random() * 6) * simScale,
+        vx: (0.2 + Math.random() * 0.4) * simScale,
+        vy: (-0.3 - Math.random() * 0.4) * simScale,
         life: 1,
       });
     }
   });
 }
 
-function drawSim() {
+function drawSim(now = performance.now()) {
   const w = simCanvas.width;
   const h = simCanvas.height;
 
+  // Екраните са различно бързи (60, 90, 120 кадъра в секунда). За да се движи
+  // димът еднакво навсякъде, смятаме колко време е минало от предишния кадър.
+  const speed = clamp((now - simLastFrame) / (1000 / 60), 0, 3);
+  simLastFrame = now;
+
   // Плавно доближаване до целевата стойност
-  pollution += (targetPollution - pollution) * 0.04;
+  pollution += (targetPollution - pollution) * Math.min(0.04 * speed, 1);
 
   // Небе
   const sky = simCtx.createLinearGradient(0, 0, 0, h);
@@ -128,12 +149,12 @@ function drawSim() {
   drawLandscape(w, h);
 
   // Дим от комините
-  spawnSmoke(w, h);
+  spawnSmoke(w, h, speed);
   smokeParticles.forEach((p) => {
-    p.x += p.vx;
-    p.y += p.vy;
-    p.radius += 0.15;
-    p.life -= 0.006;
+    p.x += p.vx * speed;
+    p.y += p.vy * speed;
+    p.radius += 0.15 * simScale * speed;
+    p.life -= 0.006 * speed;
     simCtx.fillStyle = `rgba(120, 110, 95, ${p.life * 0.5})`;
     simCtx.beginPath();
     simCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
@@ -154,13 +175,26 @@ function drawSim() {
 
 slider.addEventListener("input", calculatePollution);
 checkboxes.forEach((box) => box.addEventListener("change", calculatePollution));
-window.addEventListener("resize", resizeSim);
+
+// „Върни както беше“: плъзгачът и отметките се връщат в началото
+simReset.addEventListener("click", () => {
+  slider.value = SLIDER_START;
+  checkboxes.forEach((box) => { box.checked = false; });
+  calculatePollution();
+});
+window.addEventListener("resize", () => {
+  // Смяната на размера изчиства canvas-а; извън екрана цикълът не върви – рисуваме един кадър
+  if (resizeSim() && !simIsVisible) drawSim();
+});
 
 // Пестим батерията: анимацията спира, когато симулаторът е извън екрана
 const simObserver = new IntersectionObserver((entries) => {
   const wasVisible = simIsVisible;
   simIsVisible = entries[0].isIntersecting;
-  if (simIsVisible && !wasVisible) requestAnimationFrame(drawSim);
+  if (simIsVisible && !wasVisible) {
+    simLastFrame = performance.now();
+    requestAnimationFrame(drawSim);
+  }
 });
 
 resizeSim();

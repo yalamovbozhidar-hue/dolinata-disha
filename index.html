@@ -15,13 +15,13 @@
   <!-- Банерът при споделяне (1200 × 630): логото и заглавието в средата,
        за да се виждат и когато приложението изреже снимката до квадрат.
        ?v=… кара Facebook, Viber и др. да изтеглят новия банер вместо стария. -->
-  <meta property="og:image" content="https://yalamovbozhidar-hue.github.io/dolinata-disha/img/og-banner.jpg?v=13">
+  <meta property="og:image" content="https://yalamovbozhidar-hue.github.io/dolinata-disha/img/og-banner.jpg?v=14">
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Логото „Долината диша“ над снимка на Казанлъшката долина: смогът, пожарите и сметищата – и какво можем да направим">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://yalamovbozhidar-hue.github.io/dolinata-disha/img/og-banner.jpg?v=13">
+  <meta name="twitter:image" content="https://yalamovbozhidar-hue.github.io/dolinata-disha/img/og-banner.jpg?v=14">
   <title>Долината диша</title>
   <!-- Логото като иконка навсякъде:
        favicon.ico – за браузъри и места, които не разбират SVG (Windows, отметки);
@@ -39,7 +39,7 @@
   <!-- Шрифтовете се зареждат, без да спират първото рисуване на страницата -->
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Unbounded:wght@600;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Unbounded:wght@600;800&display=swap"></noscript>
-  <link rel="stylesheet" href="css/style.css?v=13">
+  <link rel="stylesheet" href="css/style.css?v=14">
   <!-- Отбелязваме, че JavaScript работи – само тогава CSS скрива елементите за анимациите -->
   <script>
     document.documentElement.classList.add("js");
@@ -318,6 +318,12 @@
               </g>
               <text class="story__label story__label--smog s3" x="300" y="330">смогът остава над града</text>
             </svg>
+            <!-- Трите стъпки като бутони: показват докъде си и водят към стъпката (js/story.js) -->
+            <div class="story__dots" role="group" aria-label="Стъпките на рисунката">
+              <button class="story__dot" type="button" data-step="1" aria-pressed="true">Денем</button>
+              <button class="story__dot" type="button" data-step="2" aria-pressed="false">Нощем</button>
+              <button class="story__dot" type="button" data-step="3" aria-pressed="false">Сутрин</button>
+            </div>
           </div>
 
           <div class="story__steps">
@@ -429,7 +435,7 @@
                     style="--x: 38.50%; --y: 13.04%" aria-pressed="false" aria-controls="map-info">
               <span class="map-pin__label">Връх Шипка</span>
             </button>
-            <button class="map-pin" type="button" data-place="buzludzha"
+            <button class="map-pin map-pin--right" type="button" data-place="buzludzha"
                     style="--x: 49.12%; --y: 17.39%" aria-pressed="false" aria-controls="map-info">
               <span class="map-pin__label">Бузлуджа</span>
             </button>
@@ -441,7 +447,7 @@
                     style="--x: 71.50%; --y: 63.26%" aria-pressed="false" aria-controls="map-info">
               <span class="map-pin__label">Мъглиж</span>
             </button>
-            <button class="map-pin map-pin--fire" type="button" data-place="fire"
+            <button class="map-pin map-pin--fire map-pin--below" type="button" data-place="fire"
                     style="--x: 60.75%; --y: 60.00%" aria-pressed="false" aria-controls="map-info">
               <span class="map-pin__label">Пожарът 2023</span>
             </button>
@@ -449,6 +455,18 @@
                     style="--x: 23.62%; --y: 46.96%" aria-pressed="false" aria-controls="map-info">
               <span class="map-pin__label">„Кастамону“</span>
             </button>
+          </div>
+
+          <!-- Същите места като списък – на телефон точките са малки и по-лесно се избира оттук.
+               Само за мишка и пръст: с клавиатура и екранен четец се ползват точките на картата. -->
+          <div class="map-chips" aria-hidden="true">
+            <button class="map-chip" type="button" tabindex="-1" data-place="kazanlak">Казанлък</button>
+            <button class="map-chip" type="button" tabindex="-1" data-place="shipka-peak">Връх Шипка</button>
+            <button class="map-chip" type="button" tabindex="-1" data-place="buzludzha">Бузлуджа</button>
+            <button class="map-chip map-chip--water" type="button" tabindex="-1" data-place="koprinka">„Копринка“</button>
+            <button class="map-chip" type="button" tabindex="-1" data-place="maglizh">Мъглиж</button>
+            <button class="map-chip map-chip--fire" type="button" tabindex="-1" data-place="fire">Пожарът 2023</button>
+            <button class="map-chip map-chip--factory" type="button" tabindex="-1" data-place="kastamonu">„Кастамону“</button>
           </div>
 
           <!-- Описанието на избраното място (попълва се от js/map.js) -->
@@ -459,6 +477,7 @@
               Градът е на дъното на котловината между двете планини.
               Зиме студеният въздух остава долу и димът от комините се събира над него.
             </p>
+            <a class="valley-map__link" id="map-info-link" href="#fire" hidden>Към секцията <span aria-hidden="true">→</span></a>
             <p class="valley-map__note">Схема – разстоянията са приблизителни.</p>
           </div>
         </div>
@@ -501,6 +520,7 @@
             <div class="meter" aria-hidden="true">
               <div class="meter__bar" id="meter-bar"></div>
             </div>
+            <button class="sim__reset" id="sim-reset" type="button" disabled>↺ Върни както беше</button>
             <p class="sim__note">* Опростена симулация с образователна цел, а не реални измервания.</p>
           </div>
         </div>
@@ -528,6 +548,9 @@
       <div class="container">
         <p class="section__eyebrow">Още заплахи</p>
         <h2 class="section__title split-letters">Огън и отпадъци</h2>
+        <p class="section__lead">
+          Смогът не е единствената заплаха за долината. Горските пожари и незаконните сметища също оставят следи – и често започват от нас.
+        </p>
 
         <div class="threats__grid">
           <article class="threat threat--fire reveal">
@@ -541,7 +564,7 @@
             <span class="threat__label">Горски пожар в Рила, 2015 г.</span>
             <div class="threat__body">
               <h3>Горските пожари</h3>
-              <p class="threat__stat"><small>поне</small> <span class="counter" data-target="3000">0</span> дка</p>
+              <p class="threat__stat"><small>поне</small> <span class="counter" data-target="3000">3000</span> дка</p>
               <p>Толкова изгоряха само в трите най-големи пожара около Казанлък от 2019 до 2023 г. – колкото около <strong>420 футболни игрища</strong>. Повечето пожари започват от човешка небрежност: хвърлен фас, палене на стърнища, искра.</p>
               <!-- Квадратчетата се добавят от js/fire.js: всяко е 50 дка, оцветено според годината на пожара -->
               <div class="burn">
@@ -625,14 +648,14 @@
               <a class="action-btn action-btn--ghost action-btn--small" href="https://utroruse.com/article/16312/" target="_blank" rel="noopener"><span class="action-btn__icon" aria-hidden="true">📷</span><span class="action-btn__text">Снимка – „Утро“ / БГНЕС<span class="sr-only"> (отваря се в нов раздел)</span></span><span class="action-btn__arrow" aria-hidden="true">→</span></a>
             </li>
             <li class="fire-case reveal" style="--area: 0.25">
-              <p class="fire-case__head"><time datetime="2019-09-13">13 септември 2019</time><span class="fire-case__area"><span class="counter" data-target="500">0</span> дка</span></p>
+              <p class="fire-case__head"><time datetime="2019-09-13">13 септември 2019</time><span class="fire-case__area"><span class="counter" data-target="500">500</span> дка</span></p>
               <h4>Над с. Горно Черковище</h4>
               <div class="fire-case__bar" aria-hidden="true"><span></span></div>
               <p>От тях 50 дка борова гора. Силен вятър разрастваше огъня, прокопаха се противопожарни ивици.</p>
               <a class="action-btn action-btn--ghost action-btn--small" href="https://bntnews.bg/bg/a/pozhart-v-kanlshko-obkhvana-500-dka" target="_blank" rel="noopener"><span class="action-btn__icon" aria-hidden="true">📷</span><span class="action-btn__text">Видео – БНТ<span class="sr-only"> (отваря се в нов раздел)</span></span><span class="action-btn__arrow" aria-hidden="true">→</span></a>
             </li>
             <li class="fire-case fire-case--big reveal" style="--area: 1">
-              <p class="fire-case__head"><time datetime="2022-07-19">19 юли 2022</time><span class="fire-case__area"><span class="counter" data-target="2000">0</span> дка</span></p>
+              <p class="fire-case__head"><time datetime="2022-07-19">19 юли 2022</time><span class="fire-case__area"><span class="counter" data-target="2000">2000</span> дка</span></p>
               <h4>„Старите лозя“, източният край на Казанлък</h4>
               <div class="fire-case__bar" aria-hidden="true"><span></span></div>
               <p>
@@ -654,7 +677,7 @@
               <a class="action-btn action-btn--ghost action-btn--small" href="https://dnes.dir.bg/intsidenti/pozhar-izbuhna-vav-voenen-poligon-tyulbeto-pri-obezvrezhdane-na-boepripasi-video" target="_blank" rel="noopener"><span class="action-btn__icon" aria-hidden="true">📷</span><span class="action-btn__text">Видео – „Днес“ (dir.bg)<span class="sr-only"> (отваря се в нов раздел)</span></span><span class="action-btn__arrow" aria-hidden="true">→</span></a>
             </li>
             <li class="fire-case reveal" style="--area: 0.25">
-              <p class="fire-case__head"><time datetime="2023-08">август 2023</time><span class="fire-case__area"><span class="counter" data-target="500">0</span> дка</span></p>
+              <p class="fire-case__head"><time datetime="2023-08">август 2023</time><span class="fire-case__area"><span class="counter" data-target="500">500</span> дка</span></p>
               <h4>Между Казанлък и Мъглиж</h4>
               <div class="fire-case__bar" aria-hidden="true"><span></span></div>
               <p>Храсти и гори; беше обявено частично бедствено положение.</p>
@@ -996,6 +1019,7 @@
           <p>Точки: <strong id="game-score">0</strong></p>
           <p>Време: <strong id="game-time">60</strong> с</p>
           <p>Рекорд: <strong id="game-best">0</strong></p>
+          <button class="game__pause" id="game-pause" type="button" hidden>Пауза</button>
         </div>
 
         <!-- Игровото поле: отпадъците се добавят тук от js/game.js -->
@@ -1036,7 +1060,7 @@
         <p class="game__help" id="game-help">
           Управление: влачи отпадъка с мишката или с пръст и го пусни върху контейнер.
           Можеш и само да натиснеш контейнер – в него отива най-ниският отпадък.
-          С клавиатура: ← и → избират контейнер, Enter или ↓ пуска най-ниския отпадък.
+          С клавиатура: ← и → избират контейнер, Enter или ↓ пуска най-ниския отпадък, а P спира играта на пауза.
         </p>
       </div>
     </section>
@@ -1048,7 +1072,7 @@
         <h2 class="section__title split-letters">Долината, която пазим</h2>
         <p class="section__lead">
           Розите, язовирът, планините – ето заради какво си струва да пазим въздуха чист.
-          Плъзни лентата и натисни снимка, за да я видиш в пълен размер.
+          Плъзни лентата и натисни снимка, за да я видиш в пълен размер – там можеш да ги разглеждаш със стрелките.
         </p>
 
         <!-- Лентата: плъзга се с пръст, с мишка (js/gallery.js), със стрелките или с бутоните -->
@@ -1148,7 +1172,9 @@
     <!-- Прозорец за снимка в пълен размер – отваря се от js/gallery.js -->
     <dialog class="lightbox" id="lightbox" aria-label="Снимка в пълен размер">
       <img class="lightbox__img" id="lightbox-img" src="img/roses-960.jpg" alt="Розовата долина" loading="lazy">
-      <p class="lightbox__caption" id="lightbox-caption"></p>
+      <p class="lightbox__caption"><span class="lightbox__count" id="lightbox-count"></span> <span id="lightbox-caption"></span></p>
+      <button class="lightbox__nav lightbox__nav--prev" id="lightbox-prev" type="button" aria-label="Предишна снимка">←</button>
+      <button class="lightbox__nav lightbox__nav--next" id="lightbox-next" type="button" aria-label="Следваща снимка">→</button>
       <button class="lightbox__close" id="lightbox-close" type="button" aria-label="Затвори снимката">×</button>
     </dialog>
 
@@ -1211,11 +1237,17 @@
             <div class="pledge__progress">
               <div class="pledge__bar"><div class="pledge__fill" id="pledge-fill"></div></div>
               <p id="pledge-text" role="status">0 от 5 обещания</p>
+              <!-- Споделяне: менюто на телефона (Web Share) или копиране на линка (js/pledge.js) -->
+              <button class="pledge__share" id="pledge-share" type="button">
+                <span aria-hidden="true">📣</span> Покани приятел
+              </button>
+              <p class="pledge__share-note" id="pledge-share-note" role="status"></p>
             </div>
 
         <!-- Розовото поле: с всяко обещание цъфтят още рози.
              Розите се добавят от js/pledge.js. -->
         <div class="rose-field" id="rose-field-box" aria-hidden="true">
+          <p class="rose-field__hint">Полето чака първото ти обещание 🌱</p>
           <svg class="rose-field__svg" id="rose-field" viewBox="0 0 800 200" preserveAspectRatio="xMidYMax slice">
             <path class="rose-field__hill rose-field__hill--far" d="M0 150 Q200 112 400 140 T800 128 V200 H0 Z"/>
             <path class="rose-field__hill" d="M0 172 Q220 146 420 168 T800 158 V200 H0 Z"/>
@@ -1227,6 +1259,21 @@
     </section>
 
   </main>
+
+  <!-- Точки за бърз преход: по една за всяка секция (само на широк екран).
+       js/nav.js отбелязва тази, която е на екрана.
+       Стоят след съдържанието, за да не се минава през тях с Tab преди него. -->
+  <nav class="dots" aria-label="Бърз преход между секциите">
+    <a class="dots__link" href="#problem"><span>Проблемът</span></a>
+    <a class="dots__link" href="#inversion"><span>Инверсията</span></a>
+    <a class="dots__link" href="#map"><span>Картата</span></a>
+    <a class="dots__link" href="#simulator"><span>Симулатор</span></a>
+    <a class="dots__link" href="#fire"><span>Огън и отпадъци</span></a>
+    <a class="dots__link" href="#industry"><span>Заводите</span></a>
+    <a class="dots__link" href="#game"><span>Игра</span></a>
+    <a class="dots__link" href="#gallery"><span>Галерия</span></a>
+    <a class="dots__link" href="#action"><span>Действай</span></a>
+  </nav>
 
   <!-- ===== ФУТЪР ===== -->
   <footer class="footer">
@@ -1319,22 +1366,22 @@
   </footer>
 
   <!-- Скриптовете: първо общите помощни функции, после всяка част поотделно.
-       ?v=10 е номерът на версията – при нова версия го сменяме и браузърът
+       ?v=14 е номерът на версията – при нова версия го сменяме и браузърът
        изтегля новите файлове, вместо да ползва старите от кеша. -->
-  <script src="js/utils.js?v=13" defer></script>
-  <script src="js/nav.js?v=13" defer></script>
-  <script src="js/effects.js?v=13" defer></script>
-  <script src="js/tilt.js?v=13" defer></script>
-  <script src="js/hero.js?v=13" defer></script>
-  <script src="js/fire.js?v=13" defer></script>
-  <script src="js/simulator.js?v=13" defer></script>
-  <script src="js/game.js?v=13" defer></script>
-  <script src="js/compare.js?v=13" defer></script>
-  <script src="js/map.js?v=13" defer></script>
-  <script src="js/gallery.js?v=13" defer></script>
-  <script src="js/pledge.js?v=13" defer></script>
-  <script src="js/story.js?v=13" defer></script>
-  <script src="js/cursor.js?v=13" defer></script>
-  <script src="js/sound.js?v=13" defer></script>
+  <script src="js/utils.js?v=14" defer></script>
+  <script src="js/nav.js?v=14" defer></script>
+  <script src="js/effects.js?v=14" defer></script>
+  <script src="js/tilt.js?v=14" defer></script>
+  <script src="js/hero.js?v=14" defer></script>
+  <script src="js/fire.js?v=14" defer></script>
+  <script src="js/simulator.js?v=14" defer></script>
+  <script src="js/game.js?v=14" defer></script>
+  <script src="js/compare.js?v=14" defer></script>
+  <script src="js/map.js?v=14" defer></script>
+  <script src="js/gallery.js?v=14" defer></script>
+  <script src="js/pledge.js?v=14" defer></script>
+  <script src="js/story.js?v=14" defer></script>
+  <script src="js/cursor.js?v=14" defer></script>
+  <script src="js/sound.js?v=14" defer></script>
 </body>
 </html>

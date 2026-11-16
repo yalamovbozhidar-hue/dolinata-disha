@@ -3,12 +3,19 @@
    Натиснатата снимка се отваря в цял екран в <dialog>.
    Първо показваме вече заредената снимка, а голямата
    версия (до 4K) зареждаме отделно и я сменяме, щом е готова.
+   В големия изглед снимките се сменят със стрелките или с пръст.
    ========================================= */
 const lightbox = document.getElementById("lightbox");
 const lightboxImg = document.getElementById("lightbox-img");
 const lightboxCaption = document.getElementById("lightbox-caption");
+const lightboxCount = document.getElementById("lightbox-count");
 const lightboxClose = document.getElementById("lightbox-close");
+const lightboxPrev = document.getElementById("lightbox-prev");
+const lightboxNext = document.getElementById("lightbox-next");
+const photoButtons = Array.from(document.querySelectorAll(".gallery__open"));
 let requestedPhoto = ""; // коя голяма снимка чакаме в момента
+let currentPhoto = 0;    // номерът на снимката, която е отворена
+let openedPhoto = 0;     // с коя снимка е отворен изгледът
 
 // Избира размер според екрана: 4K само ако екранът наистина е толкова голям
 function bestPhotoSize() {
@@ -16,16 +23,21 @@ function bestPhotoSize() {
   return screenPixels > 1920 ? 3840 : 1920;
 }
 
-function openPhoto(button) {
+// Показва снимка номер index в големия изглед (номерата се въртят в кръг)
+function showPhoto(index) {
+  currentPhoto = (index + photoButtons.length) % photoButtons.length;
+  const button = photoButtons[currentPhoto];
   const thumb = button.querySelector("img");
   // Надписът без номера отпред („01“ е в отделен <span>, текстът е последният възел)
   const caption = button.closest("figure").querySelector("figcaption").lastChild.textContent.trim();
 
-  // Веднага показваме снимката, която вече е заредена в страницата
-  lightboxImg.src = thumb.currentSrc || thumb.src;
+  // Веднага показваме снимката от лентата. Ако още не е заредена там
+  // (браузърът зарежда само близките до екрана), взимаме малката версия.
+  const loaded = thumb.complete && thumb.naturalWidth > 0;
+  lightboxImg.src = loaded ? (thumb.currentSrc || thumb.src) : `img/${button.dataset.photo}-960.jpg`;
   lightboxImg.alt = thumb.alt;
   lightboxCaption.textContent = caption;
-  lightbox.showModal(); // showModal пази фокуса вътре и се затваря с Esc
+  lightboxCount.textContent = `${currentPhoto + 1} / ${photoButtons.length}`;
 
   // После зареждаме по-голямата версия
   requestedPhoto = `img/${button.dataset.photo}-${bestPhotoSize()}.jpg`;
@@ -37,15 +49,47 @@ function openPhoto(button) {
   bigPhoto.src = requestedPhoto;
 }
 
-document.querySelectorAll(".gallery__open").forEach((button) => {
-  button.addEventListener("click", () => openPhoto(button));
+photoButtons.forEach((button, index) => {
+  button.addEventListener("click", () => {
+    openedPhoto = index;
+    showPhoto(index);
+    lightbox.showModal(); // showModal пази фокуса вътре и се затваря с Esc
+  });
 });
 
 lightboxClose.addEventListener("click", () => lightbox.close());
+lightboxPrev.addEventListener("click", () => showPhoto(currentPhoto - 1));
+lightboxNext.addEventListener("click", () => showPhoto(currentPhoto + 1));
+
+// Стрелките ← → на клавиатурата сменят снимката
+lightbox.addEventListener("keydown", (event) => {
+  if (event.key === "ArrowLeft") showPhoto(currentPhoto - 1);
+  else if (event.key === "ArrowRight") showPhoto(currentPhoto + 1);
+});
 
 // Клик извън снимката (върху тъмния фон) също затваря
 lightbox.addEventListener("click", (event) => {
   if (event.target === lightbox) lightbox.close();
+});
+
+// На телефон: плъзгане с пръст наляво/надясно сменя снимката
+let swipeStartX = null;
+lightbox.addEventListener("pointerdown", (event) => {
+  swipeStartX = event.pointerType === "touch" ? event.clientX : null;
+});
+lightbox.addEventListener("pointerup", (event) => {
+  if (swipeStartX === null) return;
+  const dx = event.clientX - swipeStartX;
+  swipeStartX = null;
+  if (Math.abs(dx) > 50) showPhoto(currentPhoto + (dx < 0 ? 1 : -1));
+});
+lightbox.addEventListener("pointercancel", () => { swipeStartX = null; });
+
+// При затваряне лентата отива на снимката, която гледахме последно
+lightbox.addEventListener("close", () => {
+  if (currentPhoto === openedPhoto) return; // не сме сменяли – лентата си остава на място
+  const slide = photoButtons[currentPhoto].closest(".strip__slide");
+  stripTrack.scrollTo({ left: slide.offsetLeft - stripTrack.firstElementChild.offsetLeft, behavior: "auto" });
 });
 
 /* -----------------------------------------

@@ -2,12 +2,14 @@
    НАВИГАЦИЯ
    Плаващо меню-„хапче“, меню на цял екран за телефон,
    активна секция с плъзгащо се „хапче“ и прогрес бар.
+   Точките вдясно (само на широк екран) отбелязват текущата секция.
    ========================================= */
 const header = document.querySelector(".header");
 const navToggle = document.querySelector(".nav__toggle");
 const navMenu = document.querySelector(".nav__menu");
 const navLinks = document.querySelectorAll(".nav__link");
 const readProgress = document.getElementById("read-progress");
+const navDots = document.querySelectorAll(".dots__link");
 
 // ----- Фон на менюто и прогрес бар при скрол -----
 function updateHeaderOnScroll() {
@@ -87,6 +89,15 @@ const sectionObserver = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
+
+      // Точките вдясно: всяка секция си има своя
+      navDots.forEach((dot) => {
+        const isCurrent = dot.getAttribute("href") === `#${entry.target.id}`;
+        dot.classList.toggle("is-active", isCurrent);
+        if (isCurrent) dot.setAttribute("aria-current", "true");
+        else dot.removeAttribute("aria-current");
+      });
+
       const id = SECTION_LINK[entry.target.id] || entry.target.id;
       activeLink = Array.from(navLinks).find((link) => link.getAttribute("href") === `#${id}`) || null;
       movePill(activeLink);

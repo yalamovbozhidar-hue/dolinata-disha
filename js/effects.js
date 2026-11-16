@@ -3,7 +3,8 @@
    Плавно появяване на елементите и броячи.
    ========================================= */
 
-// Брояч, който „върти“ числото от 0 до data-target
+// Брояч, който „върти“ числото от 0 до data-target.
+// В HTML стои истинското число – така се вижда и без JavaScript.
 function animateCounter(el) {
   const target = Number(el.dataset.target);
 
@@ -15,6 +16,7 @@ function animateCounter(el) {
 
   const duration = 1500;
   const start = performance.now();
+  el.textContent = 0;
 
   function step(now) {
     const progress = clamp((now - start) / duration, 0, 1);
@@ -35,7 +37,9 @@ document.querySelectorAll(".card__icon path:not([stroke-dasharray])").forEach((p
   path.classList.add("draw");
 });
 
-// Когато елемент с клас .reveal влезе в екрана, му добавяме .is-visible
+// Когато елемент с клас .reveal влезе в екрана, му добавяме .is-visible.
+// Гледаме кога горният му край мине над долните 15% на екрана, а не каква част
+// от него се вижда: много висока карта на нисък екран иначе никога не стига прага.
 const revealObserver = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
@@ -45,7 +49,7 @@ const revealObserver = new IntersectionObserver(
       revealObserver.unobserve(entry.target); // анимираме само веднъж
     });
   },
-  { threshold: 0.2 }
+  { rootMargin: "0px 0px -15% 0px" }
 );
 document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
 

@@ -3,6 +3,8 @@
    Отпадъци падат отгоре. Играчът ги пуска в правилния
    контейнер с влачене (мишка/пръст), с натискане на
    контейнер или с клавиатурата.
+   Играта спира сама на пауза, ако полето излезе от екрана
+   или човек смени раздела на браузъра.
    ========================================= */
 const gameField = document.getElementById("game-field");
 const gameOverlay = document.getElementById("game-overlay");
@@ -13,6 +15,7 @@ const gameScoreEl = document.getElementById("game-score");
 const gameTimeEl = document.getElementById("game-time");
 const gameBestEl = document.getElementById("game-best");
 const gameHint = document.getElementById("game-hint");
+const gamePauseButton = document.getElementById("game-pause");
 const binButtons = Array.from(document.querySelectorAll(".bin"));
 const binsRow = document.querySelector(".game__bins");
 
@@ -52,6 +55,8 @@ const BIN_CONTENTS = {
 
 // ----- Състояние на играта -----
 let isPlaying = false;
+let isPaused = false;     // играта е започнала, но времето е спряно
+let stats = { correct: 0, wrong: 0, missed: 0 }; // за равносметката накрая
 let score = 0;
 let bestScore = 0;
 let elapsed = 0;          // изминали секунди
@@ -225,10 +230,12 @@ function sortItem(item, binName) {
   const isCorrect = item.type.bin === binName;
   if (isCorrect) {
     streak++;
+    stats.correct++;
     changeScore(POINTS_CORRECT);
     showHint("");
   } else {
     streak = 0;
+    stats.wrong++;
     changeScore(-POINTS_WRONG);
     showHint(wrongBinHint(item.type, binName));
   }
@@ -248,7 +255,7 @@ function binAtPoint(x, y) {
 
 gameField.addEventListener("pointerdown", (event) => {
   const el = event.target.closest(".game__item");
-  if (!isPlaying || !el) return;
+  if (!isPlaying || isPaused || !el) return;
 
   draggedItem = fallingItems.find((item) => item.el === el);
   const fieldRect = gameField.getBoundingClientRect();
@@ -284,7 +291,7 @@ gameField.addEventListener("pointercancel", endDrag);
 // ----- Натискане на контейнер: в него отива най-ниският отпадък -----
 binButtons.forEach((button, index) => {
   button.addEventListener("click", () => {
-    if (!isPlaying) return;
+    if (!isPlaying || isPaused) return;
     selectBin(index);
     const item = getLowestItem();
     if (item) sortItem(item, button.dataset.bin);
@@ -299,6 +306,15 @@ function selectBin(index) {
 
 gameField.addEventListener("keydown", (event) => {
   if (!isPlaying) return;
+
+  // P спира и пуска играта (event.code е мястото на клавиша – работи и на кирилица)
+  if (event.code === "KeyP") {
+    if (isPaused) resumeGame();
+    else pauseGame(true);
+    event.preventDefault();
+    return;
+  }
+  if (isPaused) return;
 
   // Enter/интервал върху самия бутон-контейнер вече работи като клик
   const isOnBinButton = event.target.classList.contains("bin");
@@ -318,7 +334,7 @@ gameField.addEventListener("keydown", (event) => {
 
 // ----- Главният цикъл на играта -----
 function gameLoop(now) {
-  if (!isPlaying) return;
+  if (!isPlaying || isPaused) return;
 
   // dt = колко секунди са минали от предишния кадър (ограничено,
   // за да няма скок, ако разделът е бил скрит)
@@ -344,6 +360,7 @@ function gameLoop(now) {
 
     if (item.y + item.size >= ground && item !== draggedItem) {
       streak = 0;
+      stats.missed++;
       if (!reduceMotion) addEffect("game__float game__float--minus", item.x + item.size / 2, ground - 20, `−${POINTS_WRONG}`);
       changeScore(-POINTS_WRONG);
       showHint(`„${item.type.name}“ падна на земята. Отпадъците не бива да остават в природата!`);
@@ -375,6 +392,8 @@ function startGame() {
 
   score = 0;
   streak = 0;
+  stats = { correct: 0, wrong: 0, missed: 0 };
+  isPaused = false;
   elapsed = 0;
   spawnTimer = 0;
   gameScoreEl.textContent = 0;
@@ -384,6 +403,7 @@ function startGame() {
 
   isPlaying = true;
   gameOverlay.hidden = true;
+  gamePauseButton.hidden = false;
   gameField.classList.add("is-playing");
   gameField.focus({ preventScroll: true }); // за да работят стрелките веднага
 
@@ -391,10 +411,57 @@ function startGame() {
   requestAnimationFrame(gameLoop);
 }
 
+// ----- Пауза -----
+// byUser = true, когато човекът сам е спрял играта (бутон или клавиш P).
+// Тогава местим фокуса върху „Продължи“; при автоматична пауза не го пипаме.
+function pauseGame(byUser) {
+  if (!isPlaying || isPaused) return;
+  isPaused = true;
+
+  // Отпадък, хванат точно в този момент, се пуска и ще продължи да пада
+  if (draggedItem) {
+    draggedItem.el.classList.remove("is-dragging");
+    draggedItem = null;
+  }
+
+  gameOverlayTitle.textContent = "Пауза";
+  gameOverlayText.textContent = "Времето е спряно. Отпадъците те чакат.";
+  gameStartButton.textContent = "Продължи";
+  gameOverlay.hidden = false;
+  gamePauseButton.hidden = true;
+  if (byUser) gameStartButton.focus({ preventScroll: true });
+}
+
+function resumeGame() {
+  isPaused = false;
+  gameOverlay.hidden = true;
+  gamePauseButton.hidden = false;
+  gameField.focus({ preventScroll: true });
+  lastFrameTime = performance.now(); // времето на паузата не се брои
+  requestAnimationFrame(gameLoop);
+}
+
+gamePauseButton.addEventListener("click", () => pauseGame(true));
+
+// Полето излезе от екрана или разделът е скрит → пауза, за да не тече времето напразно
+new IntersectionObserver(([entry]) => {
+  if (!entry.isIntersecting) pauseGame(false);
+}).observe(gameField);
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) pauseGame(false);
+});
+
 function endGame() {
   isPlaying = false;
+  isPaused = false;
+  gamePauseButton.hidden = true;
   gameField.classList.remove("is-playing");
   binButtons.forEach((button) => button.classList.remove("is-selected"));
+
+  // Каквото е останало във въздуха, изчезва – играта свърши
+  fallingItems.forEach((item) => item.el.remove());
+  fallingItems = [];
+  draggedItem = null;
 
   const isNewRecord = score > bestScore;
   if (isNewRecord) {
@@ -408,11 +475,17 @@ function endGame() {
   if (isNewRecord && score > 0 && !reduceMotion) {
     burst(fieldWidth() / 2, gameField.clientHeight / 2, SPARK_COLORS.record, 60, 220);
   }
-  gameOverlayText.textContent = `Събра ${score} точки. Най-добър резултат: ${bestScore}.`;
+  gameOverlayText.textContent =
+    `Събра ${score} точки: ${stats.correct} верни, ${stats.wrong} грешни и ${stats.missed} изпуснати. ` +
+    `Най-добър резултат: ${bestScore}.`;
   gameStartButton.textContent = "Играй пак";
   gameOverlay.hidden = false;
   gameStartButton.focus({ preventScroll: true });
 }
 
-gameStartButton.addEventListener("click", startGame);
+// Същият бутон: „Старт“ / „Играй пак“ започва нова игра, „Продължи“ маха паузата
+gameStartButton.addEventListener("click", () => {
+  if (isPaused) resumeGame();
+  else startGame();
+});
 loadBestScore();
